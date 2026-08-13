@@ -1,7 +1,23 @@
 {
-  "name": "vaultis",
+  "name": "vault",
+  "version": "0.1.0",
+  "description": "The world's most secure Password Manager",
+  "keywords": [
+      "vault",
+      "password manager",
+      "password",
+      "manager",
+      "secrets",
+      "alphabets",
+      "encryption"
+  ],
+  "license": "MIT",
+  "author": {
+      "name": "Lucas O.S.",
+      "email": "lucas@sizo.dev",
+      "url": "https://sizo.dev"
+  },
   "type": "module",
-  "version": "1.0.0",
   "engines": {
     "node": ">=22.12.0"
   },
@@ -12,13 +28,18 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/react": "^5.0.3",
-    "@tailwindcss/vite": "^4.2.2",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
-    "astro": "^6.1.7",
-    "react": "^19.2.5",
-    "react-dom": "^19.2.5",
-    "tailwindcss": "^4.2.2"
+    "@astrojs/node": "^11.1.0",
+    "@astrojs/react": "^6.0.2",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "astro": "^7.2.0",
+    "random-seed": "^0.3.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "tailwindcss": "^4.3.3"
+  },
+  "devDependencies": {
+    "@types/random-seed": "^0.3.5"
   }
 }

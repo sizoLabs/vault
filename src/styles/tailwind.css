@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+@theme {
+
+    /* Fonts */
+
+    --font-inter-black: "Inter Black";
+    --font-inter-extrabold: "Inter ExtraBold";
+    --font-inter-bold: "Inter Bold";
+    --font-inter-semibold: "Inter SemiBold";
+    --font-inter: "Inter Regular";
+    --font-inter-medium: "Inter Medium";
+    --font-inter-light: "Inter Light";
+    --font-inter-thin: "Inter Thin";
+
+    --font-monospace: "Courier New", Courier, monospace;
+
+    --font-tabler: "Tabler";
+
+    /* Colors */
+
+    --color-primary: #8A5FFF;
+    --color-primary-light: #AF8BF2;
+    --color-secondary: #FF4EF8;
+    --color-secondary-light: #FF9CFB;
+    --color-darker: #191A1B;
+
+}

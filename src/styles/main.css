@@ -1,0 +1,48 @@
+@import "./tailwind.css";
+@import "./fonts.css";
+@import "./utils.css";
+@import "./alert.css";
+@import "./text.css";
+
+
+body, html {
+    margin: 0;
+    padding: 0;
+}
+
+*:focus, *:focus-visible {
+    outline: none !important;
+}
+
+html {
+    @apply h-full w-full scroll-smooth relative
+}
+
+body {
+    word-break: break-word;
+    @apply h-full w-full bg-white dark:bg-darker dark:text-white text-white scroll-smooth font-inter text-[15px] antialiased md:subpixel-antialiased overflow-x-hidden selection:text-primary selection:bg-primary/10
+}
+
+*:focus, *:focus-visible {
+    outline: none !important;
+}
+
+b, strong {
+    @apply font-inter-bold
+}
+
+:global(html) {
+    scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    :global(html) {
+        scroll-behavior: auto;
+    }
+}
+
+@property --num {
+    syntax: "<integer>";
+    initial-value: 2541;
+    inherits: false;
+}

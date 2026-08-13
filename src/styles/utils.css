@@ -1,0 +1,131 @@
+/* Utils */
+
+/* Squircle */
+
+.squircle {
+    corner-shape: squircle;
+}
+
+.squircle-sm {
+    border-radius: 10px;
+}
+
+.squircle-md {
+    border-radius: 30px;
+}
+
+.squircle-lg {
+    border-radius: 50px;
+}
+
+.squircle-xl {
+    border-radius: 80px;
+}
+
+.squircle-full {
+    border-radius: 100px;
+}
+
+.pixelated {
+    image-rendering: pixelated;
+}
+
+/* Masks */
+
+.mask-to-top,
+.mask-to-bottom,
+.mask-to-left,
+.mask-to-right {
+    --mask-fade: 100%;
+    -webkit-mask-size: 100%;
+    mask-size: 100%;
+}
+
+.mask-to-top {
+    -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,1) calc(100% - var(--mask-fade)), rgba(0,0,0,0) 100%);
+    mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,1) calc(100% - var(--mask-fade)), rgba(0,0,0,0) 100%);
+}
+
+.mask-to-bottom {
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) calc(100% - var(--mask-fade)), rgba(0,0,0,0) 100%);
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) calc(100% - var(--mask-fade)), rgba(0,0,0,0) 100%);
+}
+
+.mask-to-left {
+    -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,1) calc(100% - var(--mask-fade)), rgba(0,0,0,0) 100%);
+    mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,1) calc(100% - var(--mask-fade)), rgba(0,0,0,0) 100%);
+}
+
+.mask-to-right {
+    -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,1) calc(100% - var(--mask-fade)), rgba(0,0,0,0) 100%);
+    mask-image: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,1) calc(100% - var(--mask-fade)), rgba(0,0,0,0) 100%);
+}
+
+.mask-fade-5   { --mask-fade: 5%; }
+.mask-fade-10  { --mask-fade: 10%; }
+.mask-fade-15  { --mask-fade: 15%; }
+.mask-fade-20  { --mask-fade: 20%; }
+.mask-fade-25  { --mask-fade: 25%; }
+.mask-fade-30  { --mask-fade: 30%; }
+.mask-fade-35  { --mask-fade: 35%; }
+.mask-fade-40  { --mask-fade: 40%; }
+.mask-fade-45  { --mask-fade: 45%; }
+.mask-fade-50  { --mask-fade: 50%; }
+.mask-fade-55  { --mask-fade: 55%; }
+.mask-fade-60  { --mask-fade: 60%; }
+.mask-fade-65  { --mask-fade: 65%; }
+.mask-fade-70  { --mask-fade: 70%; }
+.mask-fade-75  { --mask-fade: 75%; }
+.mask-fade-80  { --mask-fade: 80%; }
+.mask-fade-85  { --mask-fade: 85%; }
+.mask-fade-90  { --mask-fade: 90%; }
+.mask-fade-95  { --mask-fade: 95%; }
+
+/* Scroll */
+
+*::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+*::-webkit-scrollbar-thumb {
+    @apply bg-white dark:bg-white rounded-full
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    @apply bg-white dark:bg-white rounded-full
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    overflow: hidden;
+}
+
+.no-scrollbar-but-scroll {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.no-scrollbar-but-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+/* Spin */
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.animate-spin {
+    animation: spin 0.5s linear;
+}

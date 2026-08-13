@@ -1,0 +1,176 @@
+.text {
+    @apply text-[15px] md:text-[18px] leading-5 md:leading-7 text-white/90;
+}
+
+.text > *:first-child {
+    @apply mt-0;
+}
+
+.text > *:last-child {
+    @apply mb-0;
+}
+
+.text h1,
+.text h2,
+.text h3,
+.text h4,
+.text h5,
+.text h6,
+.text p,
+.text ul,
+.text ol,
+.text li,
+.text blockquote,
+.text pre,
+.text table,
+.text hr,
+.text img,
+.text a,
+.text b,
+.text strong,
+.text em,
+.text i,
+.text small,
+.text code,
+.text kbd,
+.text mark,
+.text sup,
+.text sub {
+    @apply m-0;
+}
+
+.text h1,
+.text h2,
+.text h3,
+.text h4,
+.text h5,
+.text h6 {
+    @apply text-white leading-tight font-inter-black;
+}
+
+.text h1 {
+    @apply text-3xl md:text-4xl mt-5;
+}
+
+.text h2 {
+    @apply text-2xl md:text-3xl mt-4 mb-0;
+}
+
+.text h3 {
+    @apply text-xl md:text-2xl mt-4 mb-0;
+}
+
+.text h4 {
+    @apply text-lg md:text-xl my-3;
+}
+
+.text h5 {
+    @apply text-base md:text-lg my-3;
+}
+
+.text h6 {
+    @apply text-sm md:text-base my-3;
+}
+
+.text p,
+.text ul,
+.text ol,
+.text blockquote,
+.text pre,
+.text table,
+.text hr,
+.text img {
+    @apply my-4;
+}
+
+.text ul,
+.text ol {
+    @apply pl-6;
+}
+
+.text ul {
+    list-style: disc;
+}
+
+.text ol {
+    list-style: decimal;
+}
+
+.text li {
+    @apply mb-2;
+}
+
+.text li > ul,
+.text li > ol {
+    @apply mt-2 mb-0;
+}
+
+.text b,
+.text strong {
+    @apply font-inter-bold text-white;
+}
+
+.text em,
+.text i {
+    @apply italic text-white/90;
+}
+
+.text small {
+    @apply text-[12px] text-white/60;
+}
+
+.text a {
+    @apply text-primary-light underline underline-offset-4 decoration-primary/60 transition-colors duration-200 hover:text-primary;
+}
+
+.text code,
+.text kbd {
+    @apply rounded-md border border-white/10 bg-white/5 px-1.5 py-0.5 text-[13px] font-inter-medium text-white;
+}
+
+.text pre {
+    @apply overflow-x-auto rounded-lg border border-white/10 bg-white/5 p-4 text-[13px] leading-6 text-white/90;
+}
+
+.text pre code,
+.text pre kbd {
+    @apply border-0 bg-transparent p-0 text-inherit;
+}
+
+.text blockquote {
+    @apply border-l-2 border-primary/60 pl-4 italic text-white/80;
+}
+
+.text hr {
+    @apply border-0 border-t border-white/10;
+}
+
+.text mark {
+    @apply rounded-md bg-primary/20 px-1 text-primary-light;
+}
+
+.text sup,
+.text sub {
+    @apply text-[10px] leading-none;
+}
+
+.text img {
+    @apply max-w-full rounded-lg border border-white/10;
+}
+
+.text table {
+    @apply w-full border-collapse border border-white/10 text-left;
+}
+
+.text th,
+.text td {
+    @apply border border-white/10 px-3 py-2 align-top;
+}
+
+.text th {
+    @apply bg-white/5 font-inter-bold text-white;
+}
+
+.text td {
+    @apply text-white/80;
+}

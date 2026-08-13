@@ -1,0 +1,52 @@
+.alert {
+    corner-shape: squircle;
+    border-radius: 50px;
+    opacity: 0;
+    transform: translateX(calc(100% + 2rem));
+    transition: transform 0.35s ease-in-out, opacity 0.25s ease-in-out;
+    @apply absolute z-50 top-5 right-5 bg-white/5 text-white border border-darker/10 dark:border-white/10 py-2.5 pb-2 pl-0.75 pr-5 text-[15px] backdrop-blur-xl
+}
+
+.alert.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.alert.error span {
+    corner-shape: squircle;
+    border-radius: 50px;
+    @apply bg-rose-500/15 text-rose-500 border-rose-500 border px-2 py-2 mr-2
+}
+
+.alert.success span {
+    corner-shape: squircle;
+    border-radius: 50px;
+    @apply bg-emerald-500/15 text-emerald-500 border-emerald-500 border px-2 py-2 mr-2
+}
+
+.alert.info span {
+    corner-shape: squircle;
+    border-radius: 50px;
+    @apply bg-cyan-500/15 text-cyan-500 border-cyan-500 border px-2 py-2 mr-2
+}
+
+.alert i {
+    @apply text-[24px] inline-block align-bottom -mt-0.75 
+}
+
+.alert.success {
+    @apply text-emerald-500 bg-emerald-500/5 border-emerald-500/30 border
+}
+
+.alert.error {
+    @apply  text-rose-500 bg-rose-500/5 border-rose-500/30 border
+}
+
+.alert.info {
+    @apply  text-white bg-white/5 border-white/10 border
+}
+
+.alert.disapear {
+    opacity: 0;
+    transform: translateX(calc(100% + 2rem));
+}

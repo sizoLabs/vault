@@ -20,10 +20,8 @@
       "@component/*": ["./src/components/*"],
       "@layout/*": ["./src/layouts/*"],
       "@page/*": ["./src/pages/*"],
-      "@service/*": ["./src/services/*"],
       "@utils/*": ["./src/utils/*"],
-      "@helpers/*": ["./src/helpers/*"],
-      "@hooks/*": ["./src/hooks/*"]
+      "@logic/*": ["./src/logic/*"]
     },
 
   }

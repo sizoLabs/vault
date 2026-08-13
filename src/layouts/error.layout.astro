@@ -1,0 +1,46 @@
+---
+
+    import "@style/main.css"
+
+    const SITE_URL = import.meta.env.PUBLIC_SITE_URL
+
+    const meta = {
+        name: "VAULT",
+        title: "VAULT - Password Manager",
+        description: "The world's most secure Password Manager",
+        url: SITE_URL
+    }
+
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width" />
+
+        <title>{ meta.title }</title>
+        <meta name="description" content={ meta.description } />
+
+        <meta property="og:title" content={ meta.title } />
+        <meta property="og:site_name" content={ meta.name } />
+        <meta property="og:description" content={ meta.description } />
+        <meta property="og:image" content={ `${meta.url}/images/social.jpg` } />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={ meta.url } />
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:title" content={ meta.title } />
+        <meta property="twitter:description" content={ meta.description } />
+        <meta property="twitter:image" content={ `${meta.url}/images/social.jpg` } />
+
+        <link rel="canonical" href={ meta.url } />
+
+        <link rel="shortcut icon" type="image/svg+xml" href="/favicon.svg?v=1" />
+        <link rel="stylesheet" type="text/css" href="/libs/tabler-icons.min.css" />
+
+	</head>
+	<body data-theme="dark" class="subpixel-antialiased">
+	    <slot />
+	</body>
+</html>

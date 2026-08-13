@@ -1,0 +1,80 @@
+dialog {
+    @apply bg-white dark:bg-darker text-darker dark:text-white rounded-[6px] border border-darker/10 dark:border-white/10 md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:translate-y-[-51%] md:min-w-[300px] md:max-w-[800px] m-5 h-min md:h-min w-full md:w-fit
+}
+
+dialog > .head {
+    @apply border-b border-darker/5 dark:border-white/10 px-5 py-3 text-xl font-inter-bold relative
+}
+
+dialog > .head > .close {
+    @apply absolute top-[15px] right-[15px] text-darker dark:text-white hover:text-primary hover:dark:text-primary duration-300 border-none
+}
+
+dialog::backdrop {
+    @apply bg-white/5 dark:bg-black/50 backdrop-blur-xl
+}
+
+dialog .body {
+    @apply p-5 font-inter text-[13px] md:text-[15px] bg-white dark:bg-black/10
+}
+
+dialog .body > p {
+    @apply mb-3 last:mb-0 text-darker/80 dark:text-white/80
+}
+
+dialog .body > h2 {
+    @apply text-[16px] font-inter-bold
+}
+
+dialog .body input {
+    @apply w-full focus:border-darker/20 focus:dark:border-white/20 focus:bg-lighter/50 focus:dark:bg-white/5 duration-300 border text-darker dark:text-white placeholder:text-darker/50 placeholder:dark:text-white/50 border-darker/10 dark:border-white/10 bg-lighter/10 dark:bg-black/20 block px-3 py-3 mb-2 last:mb-0 rounded-[4px] text-[14px]
+}
+
+dialog .body .input-buttons {
+    @apply absolute top-[53%] right-[8px]
+}
+
+dialog .body .input-buttons .btn-input {
+    @apply mr-1 last:mr-0 hover:border-darker/20 hover:dark:border-white/20 duration-300 border backdrop-blur-md border-darker/10 dark:border-white/10 bg-white dark:bg-white/5 rounded-[3px] align-middle cursor-pointer px-2 py-1
+}
+
+dialog .body .input-buttons .btn-input.active {
+    @apply border-emerald-500 dark:border-emerald-500 bg-emerald-500/30
+}
+
+dialog .body .input-buttons .btn-input i {
+    @apply align-middle mt-[-2px] inline-block
+}
+
+dialog .body textarea {
+    @apply w-full focus:border-darker/20 focus:dark:border-white/20 focus:bg-lighter/50 focus:dark:bg-white/5 duration-300 border text-darker dark:text-white placeholder:text-darker/50 placeholder:dark:text-white/50 border-darker/10 dark:border-white/10 bg-lighter/10 dark:bg-black/20 block px-3 py-3 mb-2 last:mb-0 rounded-[4px] text-[14px]
+}
+
+dialog .body select {
+    background: url("data:image/svg+xml,<svg height='10px' width='10px' viewBox='0 0 16 16' fill='%23000000' xmlns='http://www.w3.org/2000/svg'><path d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/></svg>") no-repeat;
+    background-position: calc(100% - 0.75rem) center !important;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    @apply w-full focus:border-darker/20 focus:dark:border-white/20 focus:bg-lighter/50 focus:dark:bg-white/5 duration-300 border text-darker dark:text-white placeholder:text-darker/50 placeholder:dark:text-white/50 border-darker/10 dark:border-white/10 bg-lighter/10 dark:bg-black/20 block px-3 py-3 mb-2 last:mb-0 rounded-[4px] text-[14px] pr-10
+}
+
+dialog .body select > option {
+    @apply bg-white dark:bg-darker
+}
+
+dialog .body label {
+    @apply font-inter-bold mb-[4px] block text-[14px]
+}
+
+dialog .footer {
+    @apply p-5 border-t border-darker/5 dark:border-white/10 md:flex gap-5
+}
+
+dialog .footer button.default {
+    @apply w-full mt-[-4px] bg-primary/5 dark:bg-primary/5 mb-2 mr-2 md:mb-0 last:mr-0 border border-primary hover:bg-primary hover:dark:bg-primary duration-300 text-[13px] inline-block py-3 px-5 align-middle rounded-[4px] text-primary hover:text-white dark:text-white font-inter-bold cursor-pointer
+}
+
+dialog .footer button.delete {
+    @apply w-full mt-[-4px] bg-rose-500/5 dark:bg-rose-500/5 mb-2 mr-2 md:mb-0 last:mr-0 border border-rose-500 hover:bg-rose-500 hover:dark:bg-rose-500 duration-300 text-[13px] inline-block py-3 px-5 align-middle rounded-[4px] text-rose-500 hover:text-white dark:text-white font-inter-bold cursor-pointer
+}

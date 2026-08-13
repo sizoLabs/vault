@@ -59,23 +59,23 @@ export const resetAllData = (accountId: string) => {
 
     const defaultSettings = [
         {
-            id: "default-password-length",
-            value: 14
+            id: "account-name",
+            value: account.settings[0].value
         },
         {
-            id: "default-show-passwords",
-            value: false
+            id: "default-password-length",
+            value: 14
         },
         {
             id: "default-alphabet",
             value: defaultAlphabets[0].id
         },
         {
-            id: "enable-folder-sorting",
-            value: true
+            id: "show-passwords",
+            value: false
         },
         {
-            id: "enable-password-sorting",
+            id: "show-animations",
             value: true
         }
     ]
@@ -92,7 +92,9 @@ export const resetAllData = (accountId: string) => {
         ...account,
         alphabets: defaultAlphabets,
         settings: defaultSettings,
-        vaults: defaultVault
+        vaults: defaultVault,
+        services: [],
+        secrets: []
     }
 
     setStorage(accountId, account)

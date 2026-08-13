@@ -24,12 +24,16 @@ export const createDefaultSettings = ({ accountName, accountId }: { accountName:
             value: 14
         },
         {
-            id: "default-show-passwords",
+            id: "default-alphabet",
+            value: defaultAlphabet
+        },
+        {
+            id: "show-passwords",
             value: false
         },
         {
-            id: "default-alphabet",
-            value: defaultAlphabet
+            id: "show-animations",
+            value: true
         }
     ]
 

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react"
 
 import { getVaultCount } from "@logic/vault"
-import { getServiceCount } from "@logic/services"
-import { getSecretCount } from "@logic/secrets"
+import { getServiceCount } from "@logic/service"
+import { getSecretCount } from "@logic/secret"
 import { getAlphabetCount } from "@logic/alphabet"
 
 import Logo from "./logo"

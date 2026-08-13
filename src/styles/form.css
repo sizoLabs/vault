@@ -1,0 +1,59 @@
+/* Inputs */
+
+.form {
+    corner-shape: squircle;
+    border-radius: 30px;
+    @apply w-full bg-white/2 border border-white/10
+}
+
+.form .block {
+    @apply flex flex-col md:flex-row justify-between py-3 px-5 border-b border-white/5
+}
+
+.form .block h3 {
+    @apply text-sm md:text-lg font-inter-bold
+}
+
+.form .block .description {
+    @apply text-sm font-inter-medium text-white/70 mb-2 md:mb-0
+}
+
+.form .block .option {
+    @apply flex md:items-center md:justify-center
+}
+
+.form .block .input input {
+    corner-shape: squircle;
+    border-radius: 20px;
+    @apply font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white
+}
+
+/* Switch Input */
+
+.form .switch {
+    @apply relative inline-block w-13.5 h-7 mb-1
+}
+
+.form .switch input {
+    @apply opacity-0 w-0 h-0
+}
+
+.form .switch .slider {
+    corner-shape: squircle;
+    border-radius: 100px;
+    @apply absolute cursor-pointer top-0 left-0 right-0 bottom-0 dark:bg-white/5 bg-darker/5 duration-300 rounded-full border border-darker/10 dark:border-white/20
+}
+
+.form .switch .slider:before {
+    corner-shape: squircle;
+    border-radius: 100px;
+    @apply absolute content-[""] h-5 w-5 left-0.75 bottom-0.75 bg-white/50 duration-300 rounded-full
+}
+
+.form .switch input:checked + .slider {
+    @apply bg-primary/20 border-primary
+}
+
+.form .switch input:checked + .slider:before {
+    @apply translate-x-6.5 bg-primary
+}

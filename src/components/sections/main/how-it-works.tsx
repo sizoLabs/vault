@@ -7,7 +7,7 @@ export default function HowToUse() {
 
                 <div className="z-50 relative mx-auto flex min-h-full max-w-200 flex-col px-5 py-5 md:p-10">
                     
-                    <h2 className="text-3xl font-inter-black mb-5">
+                    <h2 className="text-xl md:text-3xl font-inter-black mb-5">
                         How it works?
                     </h2>
 

@@ -58,19 +58,15 @@ export const getSettings = () => {
             type: "number"
         },
         {
-            id: "default-show-passwords",
-            type: "toggle"
-        },
-        {
             id: "default-alphabet",
             type: "select"
         },
         {
-            id: "enable-vault-sorting",
+            id: "show-passwords",
             type: "toggle"
         },
         {
-            id: "enable-password-sorting",
+            id: "show-animations",
             type: "toggle"
         }
     ]
@@ -89,14 +85,15 @@ export const getAccountSettings = (accountId: string) => {
 export const getSetting = ({ accountId, settingId }: { accountId: string, settingId: string }) => {
     const settings = getAccountSettings(accountId)
     for (let index = 0; index < settings.length; index++) {
-        if(settings[index].id === settingId) return settings[index]
+        if(settings[index].id === settingId) return settings[index].value
     }
 }
 
-export const updateSettings = ({ accountId, settingId, value }: { accountId: string, settingId: string, value: string } ) => {
-    
+export const updateSettings = ({ accountId, settingId, value }: { accountId: string, settingId: string, value: string | number | boolean }) => {
+
     let account = getStorage(accountId)
-    const settings = getAccountSettings(accountId)
+
+    const settings = Array.isArray(account.settings) ? account.settings : []
 
     for (let index = 0; index < settings.length; index++) {
         if(settings[index].id === settingId) {

@@ -1,7 +1,7 @@
 export interface IService {
     id: string
     name: string
-    info: string
+    description: string
     identifier: string
     alphabet: string
     length: number

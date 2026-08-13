@@ -22,6 +22,7 @@ export default function Home() {
     const panelRef = useRef<HTMLDivElement | null>(null)
 
     const [ activePanel, setActivePanel ] = useState("main-vault")
+    const [ activeVaultId, setActiveVaultId ] = useState<string | null>(null)
     const [ panelWidth, setPanelWidth ] = useState(MIN_PANEL_WIDTH)
     const [ isResizing, setIsResizing ] = useState(false)
 
@@ -31,24 +32,30 @@ export default function Home() {
 
     const [ vaultId, setVaultId ] = useState("")
 
-    const onSubmitForm = (accountId: string, masterPassword: string) => {
+    const syncAccount = (selectedAccountId = accountId) => {
+        const nextAccount = selectedAccountId ? getStorage(selectedAccountId) : null
+        setAccount(nextAccount)
+    }
 
+    const onSubmitForm = (accountId: string, masterPassword: string) => {
         setMasterPassword(masterPassword)
         setAccountId(accountId)
-
-        const account = getStorage(accountId)
-        setAccount(account)
-
+        syncAccount(accountId)
     }
 
     const handlePanelChange = (panel: string) => {
         setActivePanel(panel)
+        if (panel !== "vault") {
+            setActiveVaultId(null)
+        }
     }
 
     const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
         event.preventDefault()
         setIsResizing(true)
     }
+
+    useEffect(() => {  }, [activeVaultId])
 
     useEffect(() => { setStorage(PANEL_WIDTH_STORAGE_KEY, String(panelWidth)) }, [panelWidth])
 
@@ -125,7 +132,7 @@ export default function Home() {
                     <div className="relative flex h-full flex-col">
 
                         <div className="flex-1 min-h-0 overflow-auto">
-                            <div className="flex flex-col items-left justify-left gap-2 p-1">
+                            <div className="flex flex-col items-left justify-left gap-1 p-1">
                                 { !accountId && (
                                     <>
                                         <SidebarButton
@@ -142,12 +149,13 @@ export default function Home() {
                                         {account.vaults.map((vault: any, index: number) => (
                                             <SidebarButton
                                                 key={ index }
-                                                icon={ "ti-" + vault.icon }
+                                                icon={ "ti-" + (vault.icon ? vault.icon : "vault") }
                                                 label={ vault.name }
-                                                active={ activePanel === "vault" }
+                                                active={ activePanel === "vault" && activeVaultId === vault.id }
                                                 onClick={ () => {
-                                                    handlePanelChange("vault");
                                                     setVaultId(vault.id);
+                                                    setActiveVaultId(vault.id);
+                                                    handlePanelChange("vault");
                                                 }}
                                             />
                                         ))}
@@ -216,12 +224,17 @@ export default function Home() {
                             : <VaultAccess onSubmitForm={ onSubmitForm } />
                     )}
 
-                    { activePanel == "vault" && <Vault vaultId={ vaultId } /> }
+                    { activePanel == "vault" && <Vault accountId={ accountId } vaultId={ vaultId } /> }
 
                     { activePanel == "how-it-works" && <HowItWorks /> }
                     { activePanel == "alphabets" && <Alphabets /> }
                     { activePanel == "accounts" && <Accounts /> }
-                    { activePanel == "settings" && <Settings /> }
+                    { activePanel == "settings" && (
+                        <Settings
+                            masterPassword={ masterPassword }
+                            onAccountUpdated={ () => syncAccount(accountId) }
+                        />
+                    ) }
 
                 </div>
 

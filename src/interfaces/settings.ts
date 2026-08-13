@@ -1,4 +1,4 @@
-export interface IUserSettings {
+export interface IAccountSettings {
     id: string
     value: string | number | boolean
 }

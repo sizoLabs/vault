@@ -1,48 +1,53 @@
 # VAULT
 
-VAULT is a Password Manager and generator that works entirely locally in the browser using hashes. It never stores passwords in the browser, only information such as folders, identifiers, and alphabets.
+VAULT is a secure, privacy-focused password manager and generator that operates entirely in your browser. Unlike traditional password managers, VAULT never stores your passwords, instead, it generates them on-demand using a deterministic hash-based system. Only metadata (folders, identifiers, and character sets) is kept locally.
 
 ## Features
 
-- **Password Generation:** You can generate secure passwords using different configurations and alphabets.
-- **Folder Creation:** Organize your passwords into custom folders (vaults) for better management.
-- **Export/Import Data:** Save and load your data to a file to transfer them between devices or make backups.
-- **Custom Alphabets:** Define your own alphabets to generate passwords that fit your specific needs.
+- **Secure Password Generation:** Generate strong, unique passwords using customizable configurations and character sets, with no password ever being stored.
+- **Secret Management:** Securely store and organize sensitive information.
+- **Account Organization:** Manage multiple accounts across different services with associated secrets and character sets.
+- **Folder-Based Organization:** Organize your credentials into custom vaults (folders) for better structure and management.
+- **Import/Export:** Seamlessly backup and transfer your data between devices via encrypted files.
+- **Custom Character Sets:** Define personalized alphabets to generate passwords that meet specific requirements.
 
 ## How It Works
 
-VAULT uses a hash system created from the subtle.digest method of the Web Crypto API using SHA-512. It then converts the hash into an array of hexadecimal values of two characters for added security.
+VAULT uses a deterministic cryptographic hash system based on the Web Crypto API's `subtle.digest()` method with SHA-512. The process works as follows:
 
-This means that every time you enter a master password, along with an identifier and an alphabet, the same text string is always generated, in this case a password.
+1. You provide a master password, an identifier, and a character set.
+2. These inputs are combined and hashed using SHA-512.
+3. The resulting hash is converted into hexadecimal values (2 characters each) for additional entropy.
+4. The hexadecimal values are filtered through your chosen character set to generate the final password.
 
-By having a static password generation system based on a specific hash, you don't need to store passwords anywhere, as you can generate them with only a master password.
+Because the generation is deterministic, the same combination of inputs always produces the same password. This eliminates the need to store passwords anywhere, you only need to remember your master password and keep track of the identifier and character set used for each account.
 
 ## Security and Privacy
 
-This Password Manager operates entirely locally in your browser, meaning your data never leaves your device.
+VAULT operates entirely in your browser, your data never leaves your device and is never transmitted to external servers. All password generation and management happens locally on your machine.
 
-For added security, you can fork this project for local use or create your own version. In any case, I am not responsible for misuse by derivatives of this project.
+**For maximum security**, consider forking this project and hosting it locally, auditing the code, or creating your own implementation. This project is provided as-is, and users are responsible for verifying its security meets their needs before use.
 
-## Instalation
+## Installation
 
-Clone the project and install the dependencies
+Clone the repository and install dependencies:
 
 ```sh
 pnpm i
 ```
 
-Run the development environment
+Start the development server:
 
 ```sh
-pnpm run dev
+pnpm dev
 ```
 
-Create a build of the project
+Build the project for production:
 
 ```sh
-pnpm run build
+pnpm build
 ```
 
-## Contribution
+## Contributing
 
-If you have ideas for new features, improvements, or bug fixes, feel free to submit a PR.
+Contributions are welcome! If you have ideas for new features, improvements, or bug fixes, feel free to submit a pull request. Please ensure your code follows the project's existing conventions and includes appropriate tests.

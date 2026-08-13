@@ -64,7 +64,7 @@ export const getService = ({ accountId, serviceId }: { accountId: string, servic
 export const createService = ({
     accountId,
     name,
-    info,
+    description,
     identifier,
     alphabet,
     length,
@@ -72,7 +72,7 @@ export const createService = ({
 }: {
     accountId: string,
     name: string,
-    info: string,
+    description: string,
     identifier: string,
     alphabet: string,
     length: number,
@@ -87,7 +87,7 @@ export const createService = ({
     const newService: IService = {
         id: generateId(),
         name: name,
-        info: info,
+        description: description,
         identifier: identifier,
         alphabet: alphabet,
         length: length,
@@ -110,7 +110,7 @@ export const updateService = ({
     accountId,
     serviceId,
     name,
-    info,
+    description,
     identifier,
     alphabet,
     length,
@@ -120,7 +120,7 @@ export const updateService = ({
     accountId: string,
     serviceId: string,
     name: string,
-    info: string,
+    description: string,
     identifier: string,
     alphabet: string,
     length: number,
@@ -134,7 +134,7 @@ export const updateService = ({
     for (let index = 0; index < services.length; index++) {
         if(services[index].id === serviceId) {
             services[index].name = name
-            services[index].info = info
+            services[index].description = description
             services[index].identifier = identifier
             services[index].alphabet = alphabet
             services[index].length = length

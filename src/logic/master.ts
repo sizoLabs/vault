@@ -1,7 +1,13 @@
 import { getStorage, setStorage } from "@logic/storage"
 import { bufToBase64, base64ToBuf, randomBytes, deriveHmacKey, equalArrayBuffers } from "@logic/utils"
 
-export const setMasterVerifier = async (accountId: string, masterPassword: string) => {
+export const setMasterVerifier = async ({
+    accountId,
+    masterPassword
+}: {
+    accountId: string,
+    masterPassword: string
+}) => {
 
     const salt = new Uint8Array(randomBytes(16))
     const key = await deriveHmacKey(masterPassword, salt.buffer)
@@ -24,7 +30,13 @@ export const setMasterVerifier = async (accountId: string, masterPassword: strin
 
 }
 
-export const verifyMasterPassword = async (accountId: string, masterPassword: string) => {
+export const verifyMasterPassword = async ({
+    accountId,
+    masterPassword
+}: {
+    accountId: string,
+    masterPassword: string
+}) => {
 
     const account = getStorage(accountId)
     if (!account || !account.master) return false

@@ -1,12 +1,21 @@
 import { useEffect, useState, useRef } from "react"
 
+import type { ISettings } from "@interface/settings"
+
 import { showAlert } from "@logic/alert"
 import { getStorage, setStorage } from "@logic/storage"
-import { createAccount, setAccountMasterPassword, checkAccountMasterPassword } from "@logic/account"
+import { getSetting } from "@logic/settings"
+import {
+    createAccount,
+    getAccountName,
+    setAccountMasterPassword,
+    checkAccountMasterPassword
+} from "@logic/account"
 
 import Logo from "@component/sections/main/logo"
 import OpenVault from "@component/sections/main/open-vault"
 import CraftedBy from "@component/sections/main/crafted"
+
 
 interface VaultAccessProps {
     onSubmitForm: (
@@ -27,15 +36,7 @@ const VaultAccess = (props: VaultAccessProps) => {
     const [ dropdownOpen, setDropdownOpen ] = useState(false)
     const [ isOpeningVault, setIsOpeningVault ] = useState(false)
     const [ vaultOpened, setVaultOpened ] = useState(false)
-
-    const getAccountLabel = (accountId: string) => {
-        const account = getStorage(accountId)
-        if (account && account.settings) {
-            const nameSetting = account.settings.find((setting: any) => setting.id === 'account-name')
-            if (nameSetting) return nameSetting.value
-        }
-        return accountId
-    }
+    const [ showAnimations, setShowAnimations ] = useState(false)
 
     const handleSubmit = (event: any) => {
 
@@ -52,7 +53,7 @@ const VaultAccess = (props: VaultAccessProps) => {
 
         const newAccountName = selectedAccount === 'new'
             ? accountName.trim() || 'Personal Account'
-            : getAccountLabel(selectedAccount)
+            : getAccountName(selectedAccount)
 
         setAccountName(newAccountName)
 
@@ -64,7 +65,10 @@ const VaultAccess = (props: VaultAccessProps) => {
 
                 const accountId = getStorage('current-account')
 
-                if (accountId) await setAccountMasterPassword(accountId, password)
+                if (accountId) await setAccountMasterPassword({
+                    accountId,
+                    masterPassword: password
+                })
 
                 setIsOpeningVault(true)
 
@@ -83,7 +87,10 @@ const VaultAccess = (props: VaultAccessProps) => {
 
             }
 
-            const isValidMasterPassword = await checkAccountMasterPassword(selectedAccount, password)
+            const isValidMasterPassword = await checkAccountMasterPassword({
+                accountId: selectedAccount,
+                masterPassword: password
+            })
 
             if (!isValidMasterPassword) {
 
@@ -97,20 +104,35 @@ const VaultAccess = (props: VaultAccessProps) => {
                 )
 
             }
+            
+            const showAnimations = getSetting({ accountId: selectedAccount, settingId: "show-animations" })
 
-            setIsOpeningVault(true)
+            setShowAnimations(showAnimations)
 
-            setTimeout(() => {
+            if(showAnimations) {
 
-                setVaultOpened(true)
+                setIsOpeningVault(true)
+    
+                return setTimeout(() => {
+    
+                    setVaultOpened(true)
+    
+                    setTimeout(() => {
 
-                setTimeout(() => {
-                    onSubmitForm(selectedAccount, password)
-                    setStorage('current-account', selectedAccount)
-                    setIsOpeningVault(false)
-                }, 800)
+                        onSubmitForm(selectedAccount, password)
+                        setStorage("current-account", selectedAccount)
+                        setIsOpeningVault(false)
 
-            }, 1000)
+                        return 
+
+                    }, 800)
+    
+                }, 1000)
+
+            }
+
+            onSubmitForm(selectedAccount, password)
+            setStorage("current-account", selectedAccount)
 
         }
 
@@ -119,9 +141,13 @@ const VaultAccess = (props: VaultAccessProps) => {
     }
 
     useEffect(() => {
-        const account = getStorage('accounts') || []
-        setAccounts(account)
-        if (account && account.length > 0) setSelectedAccount(account[0])
+
+        const accounts = getStorage("accounts") || []
+        setAccounts(accounts)
+
+        const account = getStorage("current-account") || []
+        if (account && account.length > 0) setSelectedAccount(account)
+
     }, [])
 
     useEffect(() => {
@@ -168,7 +194,7 @@ const VaultAccess = (props: VaultAccessProps) => {
                                         className="text-md md:text-xl font-inter-medium h-fit w-full squircle squircle-md px-5 py-3 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white flex items-center justify-center text-center"
                                     >
                                         <span className="truncate">
-                                            { selectedAccount === 'new' ? 'Create new account' : getAccountLabel(selectedAccount) }
+                                            { selectedAccount === 'new' ? 'Create new account' : getAccountName(selectedAccount) }
                                         </span>
                                         <i className={`ti ${dropdownOpen ? 'ti-chevron-up' : 'ti-chevron-down'} ml-2`} />
                                     </button>
@@ -259,7 +285,7 @@ const VaultAccess = (props: VaultAccessProps) => {
 
             </div>
 
-            { isOpeningVault && (
+            { showAnimations && isOpeningVault && (
                 <OpenVault vaultOpened={vaultOpened} />
             )}
 

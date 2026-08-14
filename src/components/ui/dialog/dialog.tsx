@@ -1,55 +1,73 @@
-import { type ReactNode } from "react"
-
-import { closeModal } from "@logic/modal"
+import { type ReactNode, useEffect, useState } from "react"
 
 interface DialogProps {
-    modalName: string
+    open?: boolean
+    defaultOpen?: boolean
     title?: ReactNode
     children: ReactNode
     footer?: ReactNode
-    onClose: () => void
     className?: string
     contentClassName?: string
     showCloseButton?: boolean
+    onClose?: () => void
+    onOpenChange?: (open: boolean) => void
 }
 
 const Dialog = (props: DialogProps) => {
-    
+
     const {
-        modalName,
+        open,
+        defaultOpen = false,
         title,
         children,
         footer,
         onClose,
+        onOpenChange,
         className = "",
         contentClassName = "",
         showCloseButton = true
     } = props
 
-    const handleClose = () => {
-        onClose()
-        closeModal(modalName)
+    const [ isOpen, setIsOpen ] = useState(Boolean(open ?? defaultOpen))
+
+    useEffect(() => {
+        if (open !== undefined) {
+            setIsOpen(Boolean(open))
+        }
+    }, [ open ])
+
+    const setDialogOpen = (nextOpen: boolean) => {
+        setIsOpen(nextOpen)
+        onOpenChange?.(nextOpen)
+
+        if (!nextOpen) {
+            onClose?.()
+        }
     }
+
+    const handleClose = () => {
+        setDialogOpen(false)
+    }
+
+    if (!isOpen) return null
 
     return (
         <>
             <div className="fixed inset-0 z-50 h-screen w-full bg-darker/50 backdrop-blur-2xl" />
+
             <div
                 className="fixed inset-0 z-50 h-screen flex items-center justify-center"
                 onMouseDown={(event) => {
-                    if (event.target === event.currentTarget) {
-                        handleClose()
-                    }
+                    if (event.target === event.currentTarget) { handleClose() }
                 }}
             >
                 <dialog
-                    open
-                    data-modal={modalName}
-                    onClose={onClose}
-                    className="z-90 relative m-auto h-full md:h-auto w-full max-w-xl bg-transparent p-5 md:p-0"
+                    open={ isOpen }
+                    className="z-90 relative m-auto h-full md:h-auto w-full max-w-160 bg-transparent p-5 md:p-0"
                     onClick={(event) => event.stopPropagation()}
                 >
-                    <div className={`relative m-0 h-full md:m-auto md:max-h-190 overflow-auto w-full max-w-xl rounded-2xl border bg-white/5 border-white/10 text-white no-scrollbar-but-scroll ${className}`}>
+                    <div className={`relative m-0 h-full md:m-auto md:max-h-190 overflow-auto w-full rounded-2xl border bg-white/5 border-white/10 text-white no-scrollbar-but-scroll ${className}`}>
+
                         {(title || showCloseButton) && (
                             <div className="z-90 bg-white/5 px-5 pt-5 pb-4 sticky top-0 backdrop-blur-xl w-full border-b border-white/10">
                                 {showCloseButton && (
@@ -64,7 +82,7 @@ const Dialog = (props: DialogProps) => {
                                 )}
 
                                 {title && (
-                                    <span className="text-2xl font-inter-black">
+                                    <span className="text-xl md:text-2xl font-inter-black">
                                         {title}
                                     </span>
                                 )}

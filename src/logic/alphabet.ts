@@ -94,11 +94,11 @@ export const getAlphabetList = (accountId: string) => {
     return account.alphabets
 }
 
-export const getAlphabet = (accountId: string, id: string) => {
+export const getAlphabet = ({ accountId, alphabetId }: { accountId: string, alphabetId: string }) => {
     const account = getStorage(accountId)
     const alphabets = account.alphabets
     for (let index = 0; index < alphabets.length; index++) {
-        if(alphabets[index].id === id) return alphabets[index]
+        if(alphabets[index].id === alphabetId) return alphabets[index]
     }
 }
 

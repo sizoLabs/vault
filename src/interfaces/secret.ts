@@ -4,4 +4,5 @@ export interface ISecret {
     content: string
     description: string
     vault: string
+    icon: string
 }

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 
 import { getAlphabetList, getAlphabet } from "@logic/alphabet"
-import { closeModal } from "@logic/modal"
 import { updateService } from "@logic/service"
 import { genServicePassword, copyToClipboard } from "@logic/utils"
 import { getStorage } from "@logic/storage"
@@ -17,6 +16,7 @@ import DialogFooter from "@component/ui/dialog/footer"
 import type { IService } from "@interface/index"
 
 type ServiceModalProps = {
+    open: boolean
     vaultId: string
     accountId: string
     serviceId: string
@@ -28,29 +28,29 @@ type ServiceModalProps = {
 
 const ServiceModal = (props: ServiceModalProps) => {
 
-    const { vaultId, accountId, serviceId, masterPassword, onUpdate, onClose } = props
+    const { open, vaultId, accountId, serviceId, masterPassword, onUpdate, onClose } = props
 
     const getEmptyService = (): IService => ({
-        id: '',
-        vault: '',
-        name: '',
-        icon: '',
-        description: '',
-        url: '',
-        identifier: '',
-        alphabet: '',
+        id: "",
+        vault: "",
+        name: "",
+        icon: "",
+        description: "",
+        url: "",
+        identifier: "",
+        alphabet: "",
         length: 14,
         version: 1
     })
 
     const getEmptyForm = () => ({
-        name: '',
-        vault: '',
-        icon: '',
-        description: '',
-        url: '',
-        identifier: '',
-        alphabet: '',
+        name: "",
+        vault: "",
+        icon: "",
+        description: "",
+        url: "",
+        identifier: "",
+        alphabet: "",
         length: 14,
         version: 1
     })
@@ -69,9 +69,7 @@ const ServiceModal = (props: ServiceModalProps) => {
     const [ form, setForm ] = useState(getEmptyForm())
 
     const accountShowPasswords = Boolean(getSetting({ accountId, settingId: "show-passwords" }))
-
     const shouldDisplayPassword = showServicePassword
-
     const maskedPassword = password ? "•".repeat(Math.max(password.length, 12)) : ""
 
     const resetServiceState = () => {
@@ -102,17 +100,16 @@ const ServiceModal = (props: ServiceModalProps) => {
         })
         
         onUpdate()
-        closeModal('service-settings')
+        onClose()
 
     }
 
     const handleClose = () => {
         onClose()
-        closeModal("service-settings")
     }
 
     const generatePassword = async (alphabetId: string, length: number, identifier: string, version?: number) => {
-        const alphabet = getAlphabet(accountId, alphabetId)
+        const alphabet = getAlphabet({ accountId, alphabetId })
         const password = await genServicePassword(masterPassword, identifier, length, {
             identifier: alphabet.identifier,
             characters: alphabet.characters
@@ -171,8 +168,8 @@ const ServiceModal = (props: ServiceModalProps) => {
 
     return (
         <Dialog
-            modalName="service-settings"
-            title={service.name || "Service"}
+            open={open}
+            title={ service.name || "Service" }
             onClose={onClose}
             contentClassName="flex flex-col"
             footer={
@@ -186,11 +183,13 @@ const ServiceModal = (props: ServiceModalProps) => {
                         {
                             label: "Cancel",
                             variant: "cancel",
+                            position: "end",
                             onClick: handleClose
                         },
                         {
                             label: "Save",
                             variant: "success",
+                            position: "end",
                             onClick: () => handleSubmit({ preventDefault: () => {} } as any)
                         }
                     ]}
@@ -226,10 +225,15 @@ const ServiceModal = (props: ServiceModalProps) => {
                     maxLength={ 300 }
                     rows={ 3 }
                     onChange={ (event: any) => setForm({ ...form, description: event.target.value }) }
-                    className="font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle squircle-sm"
+                    className="w-full font-inter-medium h-fit px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle squircle-sm"
                 />
             </DialogOption>
-            <DialogOption title="URL" description="The URL of the service. Used to open the service in a new tab." layout="row" className="md:min-w-70">
+            <DialogOption
+                title="URL" 
+                description="The URL of the service. Used to open the service in a new tab."
+                layout="row"
+                className="md:min-w-70"
+            >
                 <Input
                     id="url"
                     type="url"
@@ -239,7 +243,12 @@ const ServiceModal = (props: ServiceModalProps) => {
                     className="font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle squircle-md"
                 />
             </DialogOption>
-            <DialogOption title="Identifier" description="Unique identifier used to generate the password" layout="row" className="md:min-w-70">
+            <DialogOption
+                title="Identifier"
+                description="Unique identifier used to generate the password"
+                layout="row"
+                className="md:min-w-70"
+            >
                 <Input
                     name="identifier"
                     id="identifier"

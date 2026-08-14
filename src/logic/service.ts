@@ -24,6 +24,13 @@ export const getServiceCount = (accountId: string) => {
     return services.length
 }
 
+export const getServiceCountInVault = (accountId: string, vaultId: string) => {
+    let account = getStorage(accountId)
+    const services = account.services
+    if(!services || services.length === 0) return 0
+    return services.filter((service: IService) => service.vault === vaultId).length
+}
+
 export const getAllServiceList = (accountId: string) => {
     let account = getStorage(accountId)
     const services = account.services
@@ -66,21 +73,23 @@ export const getService = ({ accountId, serviceId }: { accountId: string, servic
 export const createService = ({
     accountId,
     name,
+    vaultId,
     description,
     url,
+    icon,
     identifier,
     alphabet,
-    length,
-    vault
+    length
 }: {
     accountId: string,
+    vaultId: string,
     name: string,
     description: string,
     url: string,
+    icon: string,
     identifier: string,
     alphabet: string,
-    length: number,
-    vault: string
+    length: number
 }) => {
 
     let account = getStorage(accountId)
@@ -91,13 +100,13 @@ export const createService = ({
     const newService: IService = {
         id: generateId(),
         name: name,
-        icon: "user-password",
+        icon: icon,
         description: description,
         url: url,
         identifier: identifier,
         alphabet: alphabet,
         length: length,
-        vault: vault,
+        vault: vaultId,
         version: 1
     }
 

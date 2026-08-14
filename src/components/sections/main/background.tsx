@@ -37,12 +37,15 @@ export default function Background() {
         }
 
         const handleBackgroundSettingChange = (event: Event) => {
+
             const customEvent = event as CustomEvent
             const { isDisabled, color } = customEvent.detail as { isDisabled: boolean; color?: string }
             setShowBackground(!isDisabled)
+
             if (color) {
                 setThemeColor(color)
             }
+            
         }
 
         window.addEventListener('backgroundChange', handleBackgroundChange)
@@ -78,7 +81,7 @@ export default function Background() {
                 viewBox="0 0 500 500" 
                 xmlns="http://www.w3.org/2000/svg" 
                 preserveAspectRatio="xMidYMid meet"
-                className="fixed duration-300 top-0 left-[-50px] lg:left-0 w-[900px] lg:w-[3000px] h-[1300px] lg:h-[1800px] -z-1 blur-[100px]"
+                className="fixed duration-300 top-0 -left-12.5 lg:left-0 w-225 lg:w-[3000px] h-325 lg:h-[1800px] -z-1 blur-[100px]"
                 style={{ 
                     opacity: 0.3,
                     transform: 'translate(-50%, -50%)'
@@ -110,7 +113,7 @@ export default function Background() {
                 viewBox="0 0 500 500" 
                 xmlns="http://www.w3.org/2000/svg" 
                 preserveAspectRatio="xMidYMid meet"
-                className="fixed duration-300 top-0 rotate-180 lg:top-[-1000px] left-[-50px] lg:left-[-1800px] w-[900px] lg:w-[3000px] h-[1300px] lg:h-[1800px] -z-1 blur-[100px]"
+                className="fixed duration-300 top-0 rotate-180 lg:-top-250 -left-12.5 lg:left-[-1800px] w-225 lg:w-[3000px] h-325 lg:h-[1800px] -z-1 blur-[100px]"
                 style={{ 
                     opacity: 0.3,
                     transform: 'translate(-50%, -50%)'

@@ -138,7 +138,7 @@ export default function Home() {
 
                     <div className="relative flex h-full flex-col">
 
-                        <div className="flex-1 min-h-0 overflow-auto">
+                        <div className="flex-1 overflow-auto no-scrollbar-but-scroll">
                             <div className="flex flex-col items-left justify-left gap-1 p-1">
                                 { !accountId && (
                                     <>
@@ -172,7 +172,7 @@ export default function Home() {
                             </div>
                         </div>
 
-                        <div className="w-full sticky bottom-0">
+                        <div className="w-full sticky bottom-0 pt-10">
                             <div className="w-full flex flex-col items-left justify-left gap-1">
 
                                 <SidebarButton

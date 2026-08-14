@@ -36,7 +36,7 @@ export default function Background() {
                 viewBox="0 0 500 500" 
                 xmlns="http://www.w3.org/2000/svg" 
                 preserveAspectRatio="xMidYMid meet"
-                className="fixed duration-300 top-0 left-[-50px] lg:left-0 w-[900px] lg:w-[3000px] h-[1300px] lg:h-[1800px] -z-1 blur-[80px]"
+                className="fixed duration-300 top-0 left-[-50px] lg:left-0 w-[900px] lg:w-[3000px] h-[1300px] lg:h-[1800px] -z-1 blur-[100px]"
                 style={{ 
                     opacity: 0.3,
                     transform: 'translate(-50%, -50%)'
@@ -61,6 +61,38 @@ export default function Background() {
                     d={svgData.pathData} 
                     fill={svgData.color} 
                     opacity="0.3" 
+                    filter={`url(#turbulence-${filterId})`} 
+                />
+            </svg>
+            <svg 
+                viewBox="0 0 500 500" 
+                xmlns="http://www.w3.org/2000/svg" 
+                preserveAspectRatio="xMidYMid meet"
+                className="fixed duration-300 top-0 rotate-180 lg:top-[-1000px] left-[-50px] lg:left-[-1800px] w-[900px] lg:w-[3000px] h-[1300px] lg:h-[1800px] -z-1 blur-[100px]"
+                style={{ 
+                    opacity: 0.3,
+                    transform: 'translate(-50%, -50%)'
+                }}
+            >
+                <defs>
+                    <filter id={filterId}>
+                        <feGaussianBlur in="SourceGraphic" stdDeviation="40" />
+                    </filter>
+                    <filter id={`turbulence-${filterId}`}>
+                        <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="4" result="noise" />
+                        <feDisplacementMap in="SourceGraphic" in2="noise" scale="100" />
+                    </filter>
+                </defs>
+                <path 
+                    d={svgData.pathData} 
+                    fill={svgData.color} 
+                    opacity="0.3" 
+                    filter={`url(#${filterId})`} 
+                />
+                <path 
+                    d={svgData.pathData} 
+                    fill={svgData.color} 
+                    opacity="0.2" 
                     filter={`url(#turbulence-${filterId})`} 
                 />
             </svg>

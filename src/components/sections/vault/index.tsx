@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 
 import { getServiceList } from "@logic/service"
+import ServiceCard from "@component/ui/vault/service"
 
 import { type IService, type IVault } from "@interface/index"
 import { getVault } from "@logic/vault"
@@ -50,28 +51,13 @@ const Vault = (props: VaultProps) => {
 
                     <div className="flex flex-row flex-wrap w-full gap-3">
 
-                        {servicesList.map((service: any, index: number) => (
-                            <div
-                                className="z-40 relative group bg-white/2 px-5 py-5 squircle squircle-md border w-full border-white/10 hover:bg-primary/15 hover:border-primary hover:shadow-xl hover:-translate-y-0.5 duration-300 min-w-40 sm:max-w-50 flex flex-col justify-center items-center cursor-pointer backdrop-blur-2xl"
-                                key={ index }
+                        {servicesList.map((service: IService & { icon?: string }, index: number) => (
+                            <ServiceCard
+                                key={ service.id ?? index }
+                                service={ service }
                                 onClick={ () => { console.log("service") }}
-                            >
-                                <div className="font-inter-bold text-center mb-3">
-                                    { service.name }
-                                </div>
-                                <div className="text-center">
-                                    <i className={ "text-8xl ti ti-" + service.icon } />
-                                </div>
-                                <div
-                                    onClick={ (e) => {
-                                        e.stopPropagation();
-                                        console.log("service-settings")
-                                    }}
-                                    className="z-50 absolute sm:opacity-0 duration-300 sm:group-hover:opacity-100 bottom-2 right-2 px-1.5 pt-1.5 pb-0 bg-white/5 squircle squircle-md cursor-pointer border border-white/20 sm:border-white/50 hover:bg-white/15 hover:border-white"
-                                >
-                                    <i className="ti ti-settings text-xl"/>
-                                </div>
-                            </div>
+                                onSettingsClick={ () => { console.log("service-settings") }}
+                            />
                         ))}
 
                     </div>

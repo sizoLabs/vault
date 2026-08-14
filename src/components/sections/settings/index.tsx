@@ -159,7 +159,7 @@ const Settings = (props: SettingsProps) => {
                                     Displays passwords when opening settings.
                                 </div>
                             </div>
-                            <div className="option">
+                            <div className="option group">
                                 <Toggle
                                     id={ settings[3].id }
                                     isChecked={ accountSettings[3].value as boolean }
@@ -177,7 +177,7 @@ const Settings = (props: SettingsProps) => {
                                     Displays web animations.
                                 </div>
                             </div>
-                            <div className="option">
+                            <div className="option group">
                                 <Toggle
                                     id={ settings[4].id }
                                     isChecked={ accountSettings[4].value as boolean }
@@ -281,7 +281,7 @@ const Settings = (props: SettingsProps) => {
                             <div className="option">
                                 <button
                                     onClick={ handleResetSubmit }
-                                    className="button bg-red-500/80! hover:bg-red-500! border-red-500 hover:border-red-500! text-white"
+                                    className="button bg-rose-500/10! text-rose-500! border-rose-500! hover:bg-rose-500! hover:text-white! font-inter-bold!"
                                 >
                                     Reset All Data
                                 </button>

@@ -41,13 +41,17 @@
 .form .switch .slider {
     corner-shape: squircle;
     border-radius: 100px;
-    @apply absolute cursor-pointer top-0 left-0 right-0 bottom-0 dark:bg-white/5 bg-darker/5 duration-300 rounded-full border border-darker/10 dark:border-white/20
+    @apply absolute cursor-pointer top-0 left-0 right-0 bottom-0 dark:bg-white/5 bg-darker/5 duration-300 rounded-full border border-darker/10 dark:border-white/20 hover:border-white/50
 }
 
 .form .switch .slider:before {
     corner-shape: squircle;
     border-radius: 100px;
-    @apply absolute content-[""] h-5 w-5 left-0.75 bottom-0.75 bg-white/50 duration-300 rounded-full
+    @apply absolute content-[""] h-5 w-5 left-0.75 bottom-0.75 bg-white/20 duration-300 rounded-full
+}
+
+.form .switch:hover .slider:before {
+    @apply bg-white/90
 }
 
 .form .switch input:checked + .slider {

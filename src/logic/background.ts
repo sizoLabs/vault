@@ -42,3 +42,8 @@ export const applyBackgroundSVG = (color: string) => {
     const svgData = generateBackgroundSVGData(color)
     window.dispatchEvent(new CustomEvent('backgroundChange', { detail: svgData }))
 }
+
+export const applyBackgroundSetting = (isDisabled: boolean, color?: string) => {
+    if (typeof window === "undefined") return
+    window.dispatchEvent(new CustomEvent('backgroundSettingChange', { detail: { isDisabled, color } }))
+}

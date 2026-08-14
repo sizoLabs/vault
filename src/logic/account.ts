@@ -173,8 +173,12 @@ export const importAccountData = ({
                         value: true
                     },
                     {
+                        id: "disable-background",
+                        value: false
+                    },
+                    {
                         id: "theme-color",
-                        value: "#8A5FFF"
+                        value: "#a58fff"
                     }
                 ]
 
@@ -284,7 +288,8 @@ const normalizeFields = (data: any): any => {
             normalized.services = normalized.services.map((service: any) => ({
                 ...service,
                 icon: "password-user",
-                description: ""
+                description: "",
+                url: ""
             }))
         }
 

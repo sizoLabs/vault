@@ -1,6 +1,8 @@
 import { getStorage, setStorage } from "@logic/storage"
-import { generateId } from "@logic/utils"
+import { generateId, genServicePassword, copyToClipboard } from "@logic/utils"
+import { showAlert } from "@logic/alert"
 import { type IService } from "@interface/index"
+import { getAlphabetList } from "@logic/alphabet"
 
 export const importServices = ({ accountId, services }: { accountId: string, services: IService[] }) => {
 
@@ -65,6 +67,7 @@ export const createService = ({
     accountId,
     name,
     description,
+    url,
     identifier,
     alphabet,
     length,
@@ -73,6 +76,7 @@ export const createService = ({
     accountId: string,
     name: string,
     description: string,
+    url: string,
     identifier: string,
     alphabet: string,
     length: number,
@@ -87,7 +91,9 @@ export const createService = ({
     const newService: IService = {
         id: generateId(),
         name: name,
+        icon: "user-password",
         description: description,
+        url: url,
         identifier: identifier,
         alphabet: alphabet,
         length: length,
@@ -109,22 +115,24 @@ export const createService = ({
 export const updateService = ({
     accountId,
     serviceId,
+    vaultId,
     name,
     description,
+    url,
     identifier,
     alphabet,
     length,
-    vault,
     version
 }: {
     accountId: string,
     serviceId: string,
+    vaultId: string,
     name: string,
     description: string,
+    url: string,
     identifier: string,
     alphabet: string,
     length: number,
-    vault: string,
     version: number
 }) => {
 
@@ -135,10 +143,11 @@ export const updateService = ({
         if(services[index].id === serviceId) {
             services[index].name = name
             services[index].description = description
+            services[index].url = url
             services[index].identifier = identifier
             services[index].alphabet = alphabet
             services[index].length = length
-            services[index].vault = vault
+            services[index].vault = vaultId
             services[index].version = version
             break
         }
@@ -172,5 +181,37 @@ export const deleteService = ({ accountId, serviceId }: { accountId: string, ser
     }
 
     setStorage(accountId, account)
+
+}
+
+export const copyServicePasswordToClipboard = async ({
+    accountId,
+    masterPassword,
+    serviceId
+}: {
+    accountId: string,
+    masterPassword: string,
+    serviceId: string,
+}) => {
+
+    try {
+
+        const service = getService({ accountId, serviceId })
+        const alphabets = getAlphabetList(accountId)
+        const alphabetData = alphabets.find((a: any) => a.id === service.alphabet)
+        const password = await genServicePassword(masterPassword, service.identifier, service.length, alphabetData, service.version)
+
+        copyToClipboard(password)
+        
+        showAlert(
+            `<b>${ service.name === "" ? "Service" : service.name }</b> password copied to clipboard!`,
+            'success',
+            'check', 
+            3000
+        )
+
+    } catch (error) {
+        showAlert('Error copying password', 'error', 'alert-circle', 3000)
+    }
 
 }

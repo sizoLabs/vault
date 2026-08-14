@@ -18,7 +18,7 @@ export const generateAccountId = (): string => {
 	
 }
 
-export const genPassword = async (
+export const genServicePassword = async (
 	master: string,
 	identifier: string,
 	length: number,
@@ -27,7 +27,7 @@ export const genPassword = async (
 		characters: string
 	},
 	version?: number
-	): Promise<string> => {
+): Promise<string> => {
 
     if(master == '' || identifier == '') return ''
 

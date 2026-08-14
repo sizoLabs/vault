@@ -52,6 +52,10 @@ export const createDefaultSettings = ({ accountName, accountId }: { accountName:
             value: true
         },
         {
+            id: "disable-background",
+            value: false
+        },
+        {
             id: "theme-color",
             value: DEFAULT_THEME_COLOR
         }
@@ -87,6 +91,10 @@ export const getSettings = () => {
         },
         {
             id: "show-animations",
+            type: "toggle"
+        },
+        {
+            id: "disable-background",
             type: "toggle"
         },
         {

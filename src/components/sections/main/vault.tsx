@@ -9,14 +9,16 @@ import { applyThemeColor } from "@logic/settings"
 import Logo from "./logo"
 import Block from "@component/ui/main/block"
 import CraftedBy from "@component/sections/main/crafted"
+import Legal from "@component/sections/main/links"
 
 interface VaultProps {
     accountId: string
+    onPanelChange: (panel: string) => void
 }
 
 const Vault = (props: VaultProps) => {
 
-    const { accountId } = props
+    const { accountId, onPanelChange } = props
     const [ totalVaults, setTotalVaults ] = useState(0)
     const [ totalServices, setTotalServices ] = useState(0)
     const [ totalSecrets, setTotalSecrets ] = useState(0)
@@ -81,8 +83,12 @@ const Vault = (props: VaultProps) => {
 
                     </div>
 
-                    <CraftedBy />
+                    <Legal
+                        onPanelChange={ onPanelChange }
+                    /> 
 
+                    <CraftedBy />
+                    
                 </div>
 
             </div>

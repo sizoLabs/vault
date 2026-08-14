@@ -9,6 +9,7 @@ import ColorPalette from "@component/ui/form/colorPalette"
 
 import { importAccountData, exportAccountData } from "@logic/account"
 import { getSettings, getAccountSettings, updateSettings, applyThemeColor } from "@logic/settings"
+import { applyBackgroundSetting } from "@logic/background"
 import { getAlphabetList } from "@logic/alphabet"
 import { getStorage } from "@logic/storage"
 import { resetAllData } from "@logic/data"
@@ -30,7 +31,9 @@ const Settings = (props: SettingsProps) => {
     const [ accountSettings, setAccountSettings ] = useState<IAccountSettings[]>([])
 
     const onSettingChange = ({ settingId, value }: { settingId: string, value: string | number | boolean }) => {
+
         updateSettings({ accountId, settingId, value })
+
         setAccountSettings(
             (current) => current.map(
                 (setting) => setting.id === settingId ? { ...setting, value } : setting
@@ -40,6 +43,18 @@ const Settings = (props: SettingsProps) => {
         if (settingId === "theme-color") {
             applyThemeColor(accountId)
         }
+
+        if (settingId === "disable-background") {
+            const themeColor = accountSettings.find(s => s.id === "theme-color")?.value as string | undefined
+            applyBackgroundSetting(value as boolean, themeColor)
+        }
+
+    }
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const settingId = e.currentTarget.id
+        const value = e.currentTarget.type === "number" ? parseInt(e.target.value, 10) : e.target.value
+        onSettingChange({ settingId, value })
     }
 
     const handleResetSubmit = () => {
@@ -107,7 +122,7 @@ const Settings = (props: SettingsProps) => {
                                     id={ settings[0].id }
                                     defaultValue={ accountSettings[0].value as string }
                                     type={ settings[0].type }
-                                    onChange={ onSettingChange }
+                                    onChange={ handleInputChange }
                                 />
                             </div>
                         </div>
@@ -126,7 +141,7 @@ const Settings = (props: SettingsProps) => {
                                     id={ settings[1].id }
                                     defaultValue={ accountSettings[1].value as string }
                                     type={ settings[1].type }
-                                    onChange={ onSettingChange }
+                                    onChange={ handleInputChange }
                                 />
                             </div>
                         </div>
@@ -174,13 +189,31 @@ const Settings = (props: SettingsProps) => {
                                     Show Page Animations
                                 </h3>
                                 <div className="description">
-                                    Displays web animations.
+                                    Toggle the web animations.
                                 </div>
                             </div>
                             <div className="option group">
                                 <Toggle
                                     id={ settings[4].id }
                                     isChecked={ accountSettings[4].value as boolean }
+                                    onToggle={ onSettingChange }
+                                />
+                            </div>
+                        </div>
+
+                        <div className="block">
+                            <div>
+                                <h3>
+                                    Disable Background
+                                </h3>
+                                <div className="description">
+                                    Toggle the background to gradient or solid color.
+                                </div>
+                            </div>
+                            <div className="option group">
+                                <Toggle
+                                    id={ settings[5].id }
+                                    isChecked={ accountSettings[5].value as boolean }
                                     onToggle={ onSettingChange }
                                 />
                             </div>
@@ -197,13 +230,13 @@ const Settings = (props: SettingsProps) => {
                             </div>
                             <div className="option">
                                 <ColorPalette
-                                    id={ settings[5].id }
-                                    value={ typeof accountSettings[5]?.value === "string" ? accountSettings[5].value : "#a58fff" }
+                                    id={ settings[6].id }
+                                    value={ typeof accountSettings[6]?.value === "string" ? accountSettings[6].value : "#a58fff" }
                                     onChange={ onSettingChange }
                                 />
                                 <Color
-                                    id={ settings[5].id }
-                                    value={ typeof accountSettings[5]?.value === "string" ? accountSettings[5].value : "#a58fff" }
+                                    id={ settings[6].id }
+                                    value={ typeof accountSettings[6]?.value === "string" ? accountSettings[6].value : "#a58fff" }
                                     onChange={ onSettingChange }
                                 />
                             </div>

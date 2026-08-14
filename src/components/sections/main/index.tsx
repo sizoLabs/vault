@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react"
 import MainVault from "@component/sections/main/vault"
 import VaultAccess from "@component/sections/main/access"
 import HowItWorks from "@component/sections/main/how-it-works"
+import Legal from "@component/sections/main/legal"
 import Settings from "@component/sections/settings"
 import Vault from "@component/sections/vault"
 import Accounts from "@component/sections/accounts"
@@ -139,7 +140,7 @@ export default function Home() {
                     <div className="relative flex h-full flex-col">
 
                         <div className="flex-1 overflow-auto no-scrollbar-but-scroll">
-                            <div className="flex flex-col items-left justify-left gap-1 p-1">
+                            <div className="flex flex-col items-left justify-left gap-1 pt-1">
                                 { !accountId && (
                                     <>
                                         <SidebarButton
@@ -227,12 +228,19 @@ export default function Home() {
 
                     { activePanel == "main-vault" && (
                         accountId
-                            ? <MainVault accountId={ accountId } />
-                            : <VaultAccess onSubmitForm={ onSubmitForm } />
+                            ? <MainVault
+                                accountId={ accountId }
+                                onPanelChange={ handlePanelChange }
+                            />
+                            : <VaultAccess
+                                onSubmitForm={ onSubmitForm }
+                                onPanelChange={ handlePanelChange }
+                            />
                     )}
 
-                    { activePanel == "vault" && <Vault accountId={ accountId } vaultId={ vaultId } /> }
+                    { activePanel == "vault" && <Vault accountId={ accountId } vaultId={ vaultId } masterPassword={ masterPassword } /> }
 
+                    { activePanel == "legal" && <Legal /> }
                     { activePanel == "how-it-works" && <HowItWorks /> }
                     { activePanel == "alphabets" && <Alphabets /> }
                     { activePanel == "accounts" && <Accounts /> }

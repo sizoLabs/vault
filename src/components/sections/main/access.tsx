@@ -16,17 +16,19 @@ import {
 import Logo from "@component/sections/main/logo"
 import OpenVault from "@component/sections/main/open-vault"
 import CraftedBy from "@component/sections/main/crafted"
+import Legal from "@component/sections/main/links"
 
 interface VaultAccessProps {
     onSubmitForm: (
         accountId: string,
         masterPassword: string
     ) => void
+    onPanelChange: (panel: string) => void
 }
 
 const VaultAccess = (props: VaultAccessProps) => {
 
-    const { onSubmitForm } = props
+    const { onSubmitForm, onPanelChange } = props
 
     const dropdownRef = useRef<HTMLDivElement | null>(null)
 
@@ -282,6 +284,10 @@ const VaultAccess = (props: VaultAccessProps) => {
 
                         </form>
                     </div>
+
+                    <Legal
+                        onPanelChange={ onPanelChange }
+                    />
 
                     <CraftedBy />
 

@@ -3,7 +3,7 @@ import { getAlphabetList } from "@logic/alphabet"
 import { normalizeHex, mixWithWhite } from "@logic/utils"
 import { applyBackgroundSVG } from "@logic/background"
 
-const DEFAULT_THEME_COLOR = "#8A5FFF"
+const DEFAULT_THEME_COLOR = "#a58fff"
 
 export const importSettings = (data: any) => {
     setStorage("settings", data)
@@ -16,7 +16,6 @@ export const applyThemeColor = (accountId: string) => {
     const color = normalizeHex(DEFAULT_THEME_COLOR, String(getSetting({ accountId, settingId: "theme-color" }) || DEFAULT_THEME_COLOR))
 
     document.documentElement.style.setProperty("--color-primary", color)
-    document.documentElement.style.setProperty("--color-primary-light", mixWithWhite(DEFAULT_THEME_COLOR, color, 0.15))
     
     applyBackgroundSVG(color)
 

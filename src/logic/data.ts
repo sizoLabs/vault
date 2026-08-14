@@ -60,7 +60,7 @@ export const resetAllData = (accountId: string) => {
     const defaultSettings = [
         {
             id: "account-name",
-            value: account.settings[0].value
+            value: "Personal Account"
         },
         {
             id: "default-password-length",
@@ -77,12 +77,16 @@ export const resetAllData = (accountId: string) => {
         {
             id: "show-animations",
             value: true
+        },
+        {
+            id: "theme-color",
+            value: "#a58fff"
         }
     ]
 
     const defaultVault = [
         {
-            fid: generateId(),
+            id: generateId(),
             name: "My Vault",
             icon: "vault"
         }

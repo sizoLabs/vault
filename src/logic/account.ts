@@ -95,6 +95,119 @@ export const deleteAccount = (id: string) => {
     
 }
 
+export const exportAccountData = async ({
+    accountId,
+    masterPassword
+}: {
+    accountId: string,
+    masterPassword: string
+}) => {
+    const account = getStorage(accountId)
+    const encodedData = await encodeData(masterPassword, JSON.stringify(account))
+    downloadFile(encodedData, getExportFileName(accountId), 'application/octet-stream')
+    showAlert("Data exported successfully!", 'success', 'database-export', 5000)
+}
+
+export const importAccountData = ({
+    accountId,
+    masterPassword,
+    event,
+    onImportComplete
+}: {
+    accountId: string,
+    masterPassword: string,
+    event: any,
+    onImportComplete: () => void
+}) => {
+
+    const file = event?.target?.files?.[0]
+
+    if (!file) {
+        showAlert("No file was selected", 'error', 'exclamation-circle', 5000)
+        return
+    }
+
+    const fileFormat = detectImportFileFormat(file)
+
+    if (!fileFormat) {
+        showAlert("Unsupported file format. Use .vault", 'error', 'exclamation-circle', 5000)
+        return
+    }
+
+    const reader = new FileReader()
+
+    reader.readAsText(file)
+    reader.onload = async () => {
+
+        try {
+
+            const data = reader.result as string
+            const decodedData = await decodeData(masterPassword, data)
+            const parsedData = JSON.parse(decodedData)
+
+            let account = getStorage(accountId)
+
+            if(fileFormat === "ovni") {
+
+                const normalData = normalizeFields(parsedData)
+
+                const defaultSettings = [
+                    {
+                        id: "account-name",
+                        value: account.settings[0].value
+                    },
+                    {
+                        id: "default-password-length",
+                        value: 14
+                    },
+                    {
+                        id: "default-alphabet",
+                        value: normalData.alphabet[0].id
+                    },
+                    {
+                        id: "show-passwords",
+                        value: false
+                    },
+                    {
+                        id: "show-animations",
+                        value: true
+                    },
+                    {
+                        id: "theme-color",
+                        value: "#8A5FFF"
+                    }
+                ]
+
+                account = {
+                    settings: defaultSettings,
+                    alphabets: normalData.alphabet,
+                    vaults: normalData.vaults,
+                    services: normalData.services
+                }
+
+                setStorage(accountId, account)
+
+                setAccountMasterPassword({
+                    accountId,
+                    masterPassword
+                })
+
+            } else {
+                setStorage(accountId, parsedData)
+            }
+
+            onImportComplete()
+
+            showAlert("Data imported to your account!", 'success', 'database-import', 5000)
+
+        } catch(e) {
+            showAlert("Master Password does not match", 'error', 'exclamation-circle', 5000)
+        }
+
+    }
+    
+}
+
 export const setAccountMasterPassword = async ({
     accountId,
     masterPassword
@@ -115,22 +228,25 @@ export const checkAccountMasterPassword = async ({
         return await verifyMasterPassword({ accountId, masterPassword })
 }
 
-export const exportAccountData = async ({
-    accountId,
-    masterPassword
-}: {
-    accountId: string,
-    masterPassword: string
-}) => {
+const getExportFileName = (accountId: string) => {
+    const rawAccountName = getAccountName(accountId)
+    const safeAccountName = rawAccountName
+        .trim()
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '') || 'account'
 
-    const account = getStorage(accountId)
-    const encodedData = await encodeData(masterPassword, JSON.stringify(account))
-    const timestamp = Date.now()
+    const now = new Date()
+    const day = String(now.getDate()).padStart(2, '0')
+    const month = String(now.getMonth() + 1).padStart(2, '0')
+    const year = now.getFullYear()
+    const hours = String(now.getHours()).padStart(2, '0')
+    const minutes = String(now.getMinutes()).padStart(2, '0')
+    const seconds = String(now.getSeconds()).padStart(2, '0')
 
-    downloadFile(encodedData, 'data_' + timestamp + '.vault', 'application/octet-stream')
-
-    showAlert("aaaa", 'success', 'database-export', 5000)
-    
+    return `${safeAccountName}_${day}-${month}-${year}_${hours}${minutes}${seconds}.vault`
 }
 
 const normalizeFields = (data: any): any => {
@@ -183,122 +299,6 @@ const normalizeFields = (data: any): any => {
 const detectImportFileFormat = (file: File): 'vault' | 'ovni' | null => {
     const fileName = file?.name?.toLowerCase() || ''
     if (fileName.endsWith('.vault')) return 'vault'
-    if (fileName.endsWith('.ovni')) return 'ovni'
+    if (fileName.endsWith('.ovni')) return 'ovni' // For old .ovni files compatibility
     return null
-}
-
-export const importAccountData = ({
-    accountId,
-    masterPassword,
-    event,
-    onImportComplete
-}: {
-    accountId: string,
-    masterPassword: string,
-    event: any,
-    onImportComplete: () => void
-}) => {
-
-    const file = event?.target?.files?.[0]
-
-    if (!file) {
-        showAlert("No file was selected", 'error', 'exclamation-circle', 6000)
-        return
-    }
-
-    const fileFormat = detectImportFileFormat(file)
-
-    if (!fileFormat) {
-        showAlert("Unsupported file format. Use .vault or .ovni.", 'error', 'exclamation-circle', 8000)
-        return
-    }
-
-    const reader = new FileReader()
-
-    reader.readAsText(file)
-    reader.onload = async () => {
-
-        try {
-
-            const data = reader.result as string
-            const decodedData = await decodeData(masterPassword, data)
-            const parsedData = JSON.parse(decodedData)
-
-            console.log('Imported file format:', fileFormat)
-            console.log(parsedData)
-
-            let account = getStorage(accountId)
-
-            if(fileFormat === "ovni") {
-
-                const normalData = normalizeFields(parsedData)
-
-                console.log(normalData)
-
-                const defaultSettings = [
-                    {
-                        id: "account-name",
-                        value: account.settings[0].value
-                    },
-                    {
-                        id: "default-password-length",
-                        value: 14
-                    },
-                    {
-                        id: "default-alphabet",
-                        value: normalData.alphabet[0].id
-                    },
-                    {
-                        id: "show-passwords",
-                        value: false
-                    },
-                    {
-                        id: "show-animations",
-                        value: true
-                    },
-                    {
-                        id: "theme-color",
-                        value: "#8A5FFF"
-                    }
-                ]
-
-                account = {
-                    settings: defaultSettings,
-                    alphabets: normalData.alphabet,
-                    vaults: normalData.vaults,
-                    services: normalData.services
-                }
-
-                setStorage(accountId, account)
-
-                setAccountMasterPassword({
-                    accountId,
-                    masterPassword
-                })
-
-            }
-
-            /*let account = getStorage(accountId)
-
-            account = {
-                settings: settings,
-                alphabet: alphabet,
-                vaults: folders,
-                services: passwords
-            }
-
-            setStorage(accountId, account)*/
-
-            onImportComplete()
-
-            showAlert("Data imported to your account!", 'success', 'database-import', 6000)
-
-        } catch(e) {
-
-            showAlert("Master Password does not match", 'error', 'exclamation-circle', 8000)
-
-        }
-
-    }
-    
 }

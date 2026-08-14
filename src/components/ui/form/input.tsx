@@ -15,7 +15,7 @@ const Input = (props: InputProps) => {
 
     useEffect(() => {
         setValue(defaultValue)
-    }, [])
+    }, [defaultValue])
 
     return (
         <div className="input">
@@ -23,8 +23,9 @@ const Input = (props: InputProps) => {
                 value={ value }
                 type={ type }
                 onChange={ (event) => {
-                    onChange({ settingId: id, value: event.target.value});
-                    setValue(event.target.value)
+                    const nextValue = type === "number" ? Number(event.target.value) : event.target.value
+                    onChange({ settingId: id, value: nextValue })
+                    setValue(nextValue)
                 }}
             />
         </div>

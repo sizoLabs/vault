@@ -238,6 +238,7 @@ export default function Home() {
                     { activePanel == "accounts" && <Accounts /> }
                     { activePanel == "settings" && (
                         <Settings
+                            account={ account }
                             masterPassword={ masterPassword }
                             onAccountUpdated={ () => syncAccount(accountId) }
                         />

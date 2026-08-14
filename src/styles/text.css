@@ -120,7 +120,7 @@
 }
 
 .text a {
-    @apply text-primary-light underline underline-offset-4 decoration-primary/60 transition-colors duration-200 hover:text-primary;
+    @apply text-primary underline underline-offset-4 decoration-primary/60 transition-colors duration-200 hover:text-primary;
 }
 
 .text code,
@@ -146,7 +146,7 @@
 }
 
 .text mark {
-    @apply rounded-md bg-primary/20 px-1 text-primary-light;
+    @apply rounded-md bg-primary/20 px-1 text-primary;
 }
 
 .text sup,

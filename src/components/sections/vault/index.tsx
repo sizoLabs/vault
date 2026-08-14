@@ -39,7 +39,7 @@ const Vault = (props: VaultProps) => {
 
                 <div className="z-50 relative flex min-h-full flex-col px-5 py-5 md:p-10 overflow-hidden">
 
-                    <div className="absolute -top-37.5 -left-37.5 opacity-4 z-0 mask-to-bottom">
+                    <div className="absolute -top-37.5 -left-37.5 opacity-5 -z-1 mask-to-bottom">
                         <i className={ "ti ti-" + vaultData.icon + " text-[900px]" } />
                     </div>
                     

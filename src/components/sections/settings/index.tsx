@@ -5,22 +5,25 @@ import Select from "@component/ui/form/select"
 import Input from "@component/ui/form/input"
 import Color from "@component/ui/form/color"
 import FileInput from "@component/ui/form/file"
+import ColorPalette from "@component/ui/form/colorPalette"
 
 import { importAccountData, exportAccountData } from "@logic/account"
 import { getSettings, getAccountSettings, updateSettings, applyThemeColor } from "@logic/settings"
 import { getAlphabetList } from "@logic/alphabet"
 import { getStorage } from "@logic/storage"
+import { resetAllData } from "@logic/data"
 
 import { type ISettings, type IAccountSettings } from "@interface/index"
 
 interface SettingsProps {
+    account?: any
     masterPassword: string
     onAccountUpdated: () => void
 }
 
 const Settings = (props: SettingsProps) => {
 
-    const { masterPassword, onAccountUpdated } = props
+    const { account, masterPassword, onAccountUpdated } = props
 
     const [ accountId, setAccountId ] = useState<string>("")
     const [ settings, setSettings ] = useState<ISettings[]>([])
@@ -36,6 +39,14 @@ const Settings = (props: SettingsProps) => {
 
         if (settingId === "theme-color") {
             applyThemeColor(accountId)
+        }
+    }
+
+    const handleResetSubmit = () => {
+        const confirmation = confirm("Are you sure you want to reset all data for this account? This action cannot be undone.")
+        if(confirmation) {
+            resetAllData(accountId)
+            onAccountUpdated()
         }
     }
 
@@ -60,16 +71,14 @@ const Settings = (props: SettingsProps) => {
         const currentAccountId = getStorage("current-account")
         const currentAccountSettings = getAccountSettings(currentAccountId)
 
-        setAccountId(currentAccountId)
-        setAccountSettings(currentAccountSettings)
-
-        setSettings(getSettings())
-
         if (currentAccountId) {
+            setAccountId(currentAccountId)
+            setAccountSettings(currentAccountSettings)
+            setSettings(getSettings())
             applyThemeColor(currentAccountId)
         }
 
-    }, [])
+    }, [account])
 
     if(settings && settings.length > 0) return (
         <div className="relative bg-white/2 border-white/10 w-full h-full squircle squircle-md border overflow-hidden">
@@ -187,9 +196,14 @@ const Settings = (props: SettingsProps) => {
                                 </div>
                             </div>
                             <div className="option">
+                                <ColorPalette
+                                    id={ settings[5].id }
+                                    value={ typeof accountSettings[5]?.value === "string" ? accountSettings[5].value : "#a58fff" }
+                                    onChange={ onSettingChange }
+                                />
                                 <Color
                                     id={ settings[5].id }
-                                    value={ typeof accountSettings[5]?.value === "string" ? accountSettings[5].value : "#8A5FFF" }
+                                    value={ typeof accountSettings[5]?.value === "string" ? accountSettings[5].value : "#a58fff" }
                                     onChange={ onSettingChange }
                                 />
                             </div>
@@ -199,7 +213,7 @@ const Settings = (props: SettingsProps) => {
                     
                 </div>
 
-                <div className="relative mx-auto flex max-w-200 flex-col px-5 py-5 md:p-10">
+                <div className="relative mx-auto flex max-w-200 flex-col px-5 py-5 md:p-10 pb-0 md:pb-0">
 
                     <h2 className="text-xl md:text-3xl font-inter-black mb-5">
                         Export / Import Data
@@ -241,6 +255,36 @@ const Settings = (props: SettingsProps) => {
                                     onChange={ handleImportSubmit }
                                     accept=".ovni,.vault"
                                 />
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div className="relative mx-auto flex max-w-200 flex-col px-5 py-5 md:p-10 pb-10">
+
+                    <h2 className="text-xl md:text-3xl font-inter-black mb-5">
+                        Reset Account Data
+                    </h2>
+
+                    <div className="flex flex-col w-full form">
+                        
+                        <div className="block">
+                            <div>
+                                <h3>
+                                    Reset Account Data
+                                </h3>
+                                <div className="description">
+                                    This will delete all the data in this account. This action cannot be undone.
+                                </div>
+                            </div>
+                            <div className="option">
+                                <button
+                                    onClick={ handleResetSubmit }
+                                    className="button bg-red-500/80! hover:bg-red-500! border-red-500 hover:border-red-500! text-white"
+                                >
+                                    Reset All Data
+                                </button>
                             </div>
                         </div>
 

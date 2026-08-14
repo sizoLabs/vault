@@ -1,8 +1,25 @@
 import { getStorage, setStorage } from "@logic/storage"
 import { getAlphabetList } from "@logic/alphabet"
+import { normalizeHex, mixWithWhite } from "@logic/utils"
+import { applyBackgroundSVG } from "@logic/background"
+
+const DEFAULT_THEME_COLOR = "#8A5FFF"
 
 export const importSettings = (data: any) => {
     setStorage("settings", data)
+}
+
+export const applyThemeColor = (accountId: string) => {
+
+    if (typeof document === "undefined") return
+
+    const color = normalizeHex(DEFAULT_THEME_COLOR, String(getSetting({ accountId, settingId: "theme-color" }) || DEFAULT_THEME_COLOR))
+
+    document.documentElement.style.setProperty("--color-primary", color)
+    document.documentElement.style.setProperty("--color-primary-light", mixWithWhite(DEFAULT_THEME_COLOR, color, 0.15))
+    
+    applyBackgroundSVG(color)
+
 }
 
 export const createDefaultSettings = ({ accountName, accountId }: { accountName: string, accountId: string }) => {
@@ -34,6 +51,10 @@ export const createDefaultSettings = ({ accountName, accountId }: { accountName:
         {
             id: "show-animations",
             value: true
+        },
+        {
+            id: "theme-color",
+            value: DEFAULT_THEME_COLOR
         }
     ]
 
@@ -68,6 +89,10 @@ export const getSettings = () => {
         {
             id: "show-animations",
             type: "toggle"
+        },
+        {
+            id: "theme-color",
+            type: "color"
         }
     ]
 
@@ -76,8 +101,8 @@ export const getSettings = () => {
 }
 
 export const getAccountSettings = (accountId: string) => {
-    let account = getStorage(accountId)
-    const settings = account.settings
+    const account = getStorage(accountId)
+    const settings = account?.settings
     if(!settings || settings.length === 0) return []
     return settings
 }

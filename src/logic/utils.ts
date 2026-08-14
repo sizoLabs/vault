@@ -170,3 +170,38 @@ export const equalArrayBuffers = (a: ArrayBuffer, b: ArrayBuffer) => {
 	for (let i = 0; i < aa.length; i++) diff |= aa[i] ^ bb[i]
 	return diff === 0
 }
+
+export const normalizeHex = (defaultColor: string, color: string) => {
+    if (!color || typeof color !== "string") return defaultColor
+    const trimmed = color.trim()
+    if (/^#[0-9a-fA-F]{3}$/.test(trimmed)) {
+        return `#${trimmed.slice(1).split("").map((value) => value + value).join("")}`.toUpperCase()
+    }
+    if (/^#[0-9a-fA-F]{6}$/.test(trimmed)) return trimmed.toUpperCase()
+    return defaultColor
+}
+
+export const hexToRgb = (defaultColor: string, hex: string) => {
+    const normalized = normalizeHex(defaultColor, hex)
+    const raw = normalized.replace("#", "")
+    return {
+        r: Number.parseInt(raw.slice(0, 2), 16),
+        g: Number.parseInt(raw.slice(2, 4), 16),
+        b: Number.parseInt(raw.slice(4, 6), 16)
+    }
+}
+
+export const rgbToHex = ({ r, g, b }: { r: number, g: number, b: number }) => {
+    const toHex = (value: number) => Math.min(255, Math.max(0, value)).toString(16).padStart(2, "0")
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}`.toUpperCase()
+}
+
+export const mixWithWhite = (defaultColor: string, hex: string, percentage = 0.2) => {
+    const { r, g, b } = hexToRgb(defaultColor, hex)
+    const ratio = 1 - percentage
+    return rgbToHex({
+        r: Math.round(r * ratio + 255 * percentage),
+        g: Math.round(g * ratio + 255 * percentage),
+        b: Math.round(b * ratio + 255 * percentage)
+    })
+}

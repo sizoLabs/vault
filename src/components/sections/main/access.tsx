@@ -5,6 +5,7 @@ import type { ISettings } from "@interface/settings"
 import { showAlert } from "@logic/alert"
 import { getStorage, setStorage } from "@logic/storage"
 import { getSetting } from "@logic/settings"
+import { applyThemeColor } from "@logic/settings"
 import {
     createAccount,
     getAccountName,
@@ -15,7 +16,6 @@ import {
 import Logo from "@component/sections/main/logo"
 import OpenVault from "@component/sections/main/open-vault"
 import CraftedBy from "@component/sections/main/crafted"
-
 
 interface VaultAccessProps {
     onSubmitForm: (
@@ -72,7 +72,7 @@ const VaultAccess = (props: VaultAccessProps) => {
 
                 setIsOpeningVault(true)
 
-                setTimeout(() => {
+                return setTimeout(() => {
 
                     setVaultOpened(true)
 
@@ -82,8 +82,6 @@ const VaultAccess = (props: VaultAccessProps) => {
                     }, 500)
 
                 }, 500)
-
-                return
 
             }
 
@@ -97,7 +95,7 @@ const VaultAccess = (props: VaultAccessProps) => {
                 setIsOpeningVault(false)
 
                 return showAlert(
-                    'Master Password is incorrect',
+                    'Master Password is incorrect for this account',
                     'error',
                     'exclamation-circle',
                     5000
@@ -160,6 +158,12 @@ const VaultAccess = (props: VaultAccessProps) => {
         return () => document.removeEventListener('mousedown', handler)
     }, [])
 
+    useEffect(() => {
+        if (selectedAccount) {
+            applyThemeColor(selectedAccount)
+        }
+    }, [selectedAccount])
+
     return (
         <div className="relative bg-white/2 border-white/10 w-full h-full squircle squircle-md border overflow-hidden">
 
@@ -174,7 +178,7 @@ const VaultAccess = (props: VaultAccessProps) => {
                     </div>
 
                     <div className="text-xl md:text-3xl text-center text-white/60 mb-15">
-                        Serverless, open source and <b className="text-secondary-light/60">free forever</b>.
+                        Serverless, open source and <b className="text-primary">free forever</b>.
                     </div>
 
                     <div className="flex flex-col gap-10 max-w-200 mb-25">
@@ -271,7 +275,7 @@ const VaultAccess = (props: VaultAccessProps) => {
                             <button
                                 type="submit"
                                 disabled={isOpeningVault}
-                                className={`text-md md:text-xl h-fit w-full squircle squircle-md px-5 py-4 border cursor-pointer duration-300 transition bg-linear-to-b from-secondary/20 to-primary/20 border-primary/60 hover:from-secondary/30 hover:to-primary/30 hover:border-primary hover:text-white text-white/60 text-center font-inter-black ${isOpeningVault ? 'pointer-events-none opacity-60' : ''}`}
+                                className={`text-md md:text-xl h-fit w-full squircle squircle-md px-5 py-4 border cursor-pointer duration-300 transition bg-primary/10 border-primary/60 hover:bg-primary/30 hover:to-primary/30 hover:border-primary hover:text-white text-white/60 text-center font-inter-black ${isOpeningVault ? 'pointer-events-none opacity-60' : ''}`}
                             >
                                 {isOpeningVault ? 'Opening...' : (accounts && accounts.length > 0 && selectedAccount !== 'new' ? 'Unlock Account' : 'Create Account')}
                             </button>

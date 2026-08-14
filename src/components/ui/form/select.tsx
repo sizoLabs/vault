@@ -37,7 +37,7 @@ const Select = (props: SelectProps) => {
             <button
                 type="button"
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="font-inter-medium h-fit w-full squircle squircle-md px-3 py-2.5 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white flex justify-between items-center"
+                className="font-inter-medium h-fit w-full squircle squircle-md px-3 py-2.5 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white flex justify-between items-center cursor-pointer"
             >
                 <span className="truncate">
                     { selectedOption ? selectedOption.name : "Select an option" }

@@ -12,6 +12,7 @@ import SidebarLogo from "@component/ui/sidebar/logo"
 import SidebarButton from "@component/ui/sidebar/button"
 
 import { getStorage, setStorage } from "@logic/storage"
+import { applyThemeColor } from "@logic/settings"
 
 const PANEL_WIDTH_STORAGE_KEY = "panel-width"
 const MIN_PANEL_WIDTH = 250
@@ -100,6 +101,12 @@ export default function Home() {
         }
 
     }, [])
+
+    useEffect(() => {
+        if (accountId) {
+            applyThemeColor(accountId)
+        }
+    }, [accountId])
 
     return (
         <div className="z-0 h-screen">

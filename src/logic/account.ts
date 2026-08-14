@@ -255,6 +255,10 @@ export const importAccountData = ({
                     {
                         id: "show-animations",
                         value: true
+                    },
+                    {
+                        id: "theme-color",
+                        value: "#8A5FFF"
                     }
                 ]
 

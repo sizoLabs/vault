@@ -56,7 +56,9 @@ export default function HowToUse() {
                         <p><b>In short:</b> it is a website that acts as a private password manager, where security is based on the fact that passwords are never stored anywhere and nothing leaves your browser.</p>
 
                     </div>
+                    
                 </div>
+
             </div>
 
         </div>

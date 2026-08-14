@@ -4,6 +4,7 @@ import { getVaultCount } from "@logic/vault"
 import { getServiceCount } from "@logic/service"
 import { getSecretCount } from "@logic/secret"
 import { getAlphabetCount } from "@logic/alphabet"
+import { applyThemeColor } from "@logic/settings"
 
 import Logo from "./logo"
 import Block from "@component/ui/main/block"
@@ -48,6 +49,12 @@ const Vault = (props: VaultProps) => {
         getTotalAlphabets()
     })
 
+    useEffect(() => {
+        if (accountId) {
+            applyThemeColor(accountId)
+        }
+    }, [accountId])
+
     return (
         <div className="relative bg-white/2 border-white/10 w-full h-full squircle squircle-md border overflow-hidden">
 
@@ -62,7 +69,7 @@ const Vault = (props: VaultProps) => {
                     </div>
 
                     <div className="text-xl md:text-3xl text-center text-white/60 mb-15">
-                        Serverless, open source and <b className="text-secondary-light/60">free forever</b>.
+                        Serverless, open source and <b className="text-primary">free forever</b>.
                     </div>
 
                     <div className="flex flex-row flex-wrap justify-center intems-center gap-2 md:gap-5 w-full mb-15">

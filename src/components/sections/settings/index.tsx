@@ -3,9 +3,11 @@ import { useEffect, useState } from "react"
 import Toggle from "@component/ui/form/toggle"
 import Select from "@component/ui/form/select"
 import Input from "@component/ui/form/input"
+import Color from "@component/ui/form/color"
+import FileInput from "@component/ui/form/file"
 
 import { importAccountData, exportAccountData } from "@logic/account"
-import { getSettings, getAccountSettings, updateSettings } from "@logic/settings"
+import { getSettings, getAccountSettings, updateSettings, applyThemeColor } from "@logic/settings"
 import { getAlphabetList } from "@logic/alphabet"
 import { getStorage } from "@logic/storage"
 
@@ -23,7 +25,6 @@ const Settings = (props: SettingsProps) => {
     const [ accountId, setAccountId ] = useState<string>("")
     const [ settings, setSettings ] = useState<ISettings[]>([])
     const [ accountSettings, setAccountSettings ] = useState<IAccountSettings[]>([])
-    const [ fileData, setFileData ] = useState("")
 
     const onSettingChange = ({ settingId, value }: { settingId: string, value: string | number | boolean }) => {
         updateSettings({ accountId, settingId, value })
@@ -32,6 +33,10 @@ const Settings = (props: SettingsProps) => {
                 (setting) => setting.id === settingId ? { ...setting, value } : setting
             )
         )
+
+        if (settingId === "theme-color") {
+            applyThemeColor(accountId)
+        }
     }
 
     const handleExportSubmit = () => {
@@ -52,13 +57,17 @@ const Settings = (props: SettingsProps) => {
 
     useEffect(() => {
 
-        const accountId = getStorage("current-account")
-        const accountSettings = getAccountSettings(accountId)
+        const currentAccountId = getStorage("current-account")
+        const currentAccountSettings = getAccountSettings(currentAccountId)
 
-        setAccountId(accountId)
-        setAccountSettings(accountSettings)
+        setAccountId(currentAccountId)
+        setAccountSettings(currentAccountSettings)
 
         setSettings(getSettings())
+
+        if (currentAccountId) {
+            applyThemeColor(currentAccountId)
+        }
 
     }, [])
 
@@ -168,6 +177,24 @@ const Settings = (props: SettingsProps) => {
                             </div>
                         </div>
 
+                        <div className="block">
+                            <div>
+                                <h3>
+                                    Theme Color
+                                </h3>
+                                <div className="description">
+                                    Choose your accent color for the app.
+                                </div>
+                            </div>
+                            <div className="option">
+                                <Color
+                                    id={ settings[5].id }
+                                    value={ typeof accountSettings[5]?.value === "string" ? accountSettings[5].value : "#8A5FFF" }
+                                    onChange={ onSettingChange }
+                                />
+                            </div>
+                        </div>
+
                     </div>
                     
                 </div>
@@ -192,7 +219,7 @@ const Settings = (props: SettingsProps) => {
                             <div className="option">
                                 <button
                                     onClick={ handleExportSubmit }
-                                    className="btn"
+                                    className="file-input-button"
                                 >
                                     Export Account Data
                                 </button>
@@ -209,12 +236,10 @@ const Settings = (props: SettingsProps) => {
                                 </div>
                             </div>
                             <div className="option">
-                                <input
-                                    type="file"
-                                    accept=".ovni,.vault"
-                                    className=""
-                                    value={ fileData }
+                                <FileInput
+                                    id="import-account-data"
                                     onChange={ handleImportSubmit }
+                                    accept=".ovni,.vault"
                                 />
                             </div>
                         </div>

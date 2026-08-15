@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react"
 import SidebarLogo from "@component/ui/sidebar/logo"
 import SidebarUfo from "@component/ui/sidebar/ufo"
 import SidebarButton from "@component/ui/sidebar/button"
+import MobileMenu from "@component/ui/sidebar/mobile-menu"
 import Search from "@component/sections/search"
 
 interface MainSidebarProps {
@@ -37,6 +38,7 @@ export default function MainSidebar({
 
     const panelRef = useRef<HTMLDivElement | null>(null)
     const [isSearchOpen, setIsSearchOpen] = useState(false)
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
     useEffect(() => {
         if (!isResizing) return
@@ -88,17 +90,53 @@ export default function MainSidebar({
 
             {/* Mobile Top Bar */}
 
-            <div className="block md:hidden bg-white/2 border-white/10 border squircle-md p-2 w-full mb-2">
-                <div className="relative flex flex-row items-start justify-left px-1">
+            <div className="md:hidden bg-white/2 border-white/10 border squircle-md p-2 w-full mb-2 flex flex-row justify-between items-center gap-2">
+
+                <div className="relative flex items-start justify-left px-1">
                     <SidebarLogo
                         label="VAULT"
                         icon="ti-vault"
                         onClick={() => onPanelChange("main-vault")}
                     />
                 </div>
+
+                {accountId && (
+                    <div className="ml-auto flex items-center gap-1">
+                        <button
+                            type="button"
+                            className="flex items-center gap-2 squircle-md border border-white/10 bg-white/5 px-3 py-2.5 text-xs font-inter-bold text-white/70 duration-300 hover:border-white/30 hover:bg-white/10 hover:text-white cursor-pointer"
+                            onClick={() => setIsSearchOpen(true)}
+                        >
+                            <i className="ti ti-search text-base" />
+                            <span>
+                                Search
+                            </span>
+                        </button>
+                    </div>
+                )}
+
+                <button
+                    type="button"
+                    onClick={() => setIsMobileMenuOpen(true)}
+                    className="flex items-center justify-center p-2 border border-white/10 bg-white/2 hover:bg-white/10 squircle-md transition-colors duration-200 cursor-pointer"
+                >
+                    <i className="ti ti-menu-2 text-xl text-white" />
+                </button>
+
             </div>
 
-            {/* Desktop Sidebar */}
+            {/* Mobile Menu */}
+
+            <MobileMenu
+                isOpen={isMobileMenuOpen}
+                onClose={() => setIsMobileMenuOpen(false)}
+                activePanel={activePanel}
+                accountId={accountId}
+                account={account}
+                activeVaultId={activeVaultId}
+                onPanelChange={onPanelChange}
+                onOpenCreateVaultModal={onOpenCreateVaultModal}
+            />
 
             <div
                 ref={panelRef}

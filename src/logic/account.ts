@@ -165,11 +165,7 @@ export const importAccountData = ({
             if(fileFormat === "ovni") {
 
                 const normalData = normalizeFields(parsedData)
-                const importedAlphabets = Array.isArray(normalData.alphabets)
-                    ? normalData.alphabets
-                    : Array.isArray(normalData.alphabet)
-                        ? normalData.alphabet
-                        : []
+                const importedAlphabets = Array.isArray(normalData.alphabets) ? normalData.alphabets : []
 
                 const defaultSettings = [
                     {
@@ -186,7 +182,7 @@ export const importAccountData = ({
                     },
                     {
                         id: "default-alphabet",
-                        value: importedAlphabets[0]?.id ?? ""
+                        value: importedAlphabets[0].id
                     },
                     {
                         id: "show-passwords",
@@ -234,6 +230,7 @@ export const importAccountData = ({
 
         } catch(e) {
             showAlert("Master Password does not match", 'error', 'exclamation-circle', 5000)
+            console.error("Error importing account data:", e)
         }
 
     }
@@ -282,6 +279,7 @@ export const changeMasterPassword = async ({
 }
 
 const getExportFileName = (accountId: string) => {
+
     const rawAccountName = getAccountName(accountId)
     const safeAccountName = rawAccountName
         .trim()
@@ -300,6 +298,7 @@ const getExportFileName = (accountId: string) => {
     const seconds = String(now.getSeconds()).padStart(2, '0')
 
     return `${safeAccountName}_${day}-${month}-${year}_${hours}${minutes}${seconds}.vault`
+    
 }
 
 const normalizeFields = (data: any): any => {
@@ -321,6 +320,8 @@ const normalizeFields = (data: any): any => {
                 
                 if (key === "folder") {
                     newKey = "vault"
+                } else if (key === "alphabet" && Array.isArray(value)) {
+                    newKey = "alphabets"
                 } else if (key === "passwords") {
                     newKey = "services"
                 } else if (key === "folders") {

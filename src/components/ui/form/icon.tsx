@@ -225,7 +225,7 @@ const IconSelector = ({ value, onChange, className = "" }: IconSelectorProps) =>
                     }}
                 >
                     <div className="w-full max-w-150 max-h-[60vh] border border-white/10 overflow-hidden rounded-2xl backdrop-blur-xl">
-                        <div className="px-5 py-5 mb-4 flex items-center justify-between gap-3 border-b border-white/10 pb-3">
+                        <div className="px-5 py-5 mb-4 flex items-center justify-between gap-3 border-b border-white/10 bg-white/5 pb-3">
                             <span className="text-sm md:text-lg font-inter-bold text-white">Select an Icon</span>
                             <button
                                 type="button"

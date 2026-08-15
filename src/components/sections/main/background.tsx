@@ -72,11 +72,7 @@ export default function Background() {
 
     }, [])
 
-    if(!showColoredBackground) return (
-        <div 
-            className="w-full h-full absolute z-0 bg-darker"
-        />
-    )
+    if(!showColoredBackground) return (<></>)
     
     if(!showGradientBackground) return (
         <div 

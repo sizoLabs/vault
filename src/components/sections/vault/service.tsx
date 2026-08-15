@@ -32,6 +32,11 @@ const ServiceModal = (props: ServiceModalProps) => {
 
     const { open, vaultId, accountId, serviceId, masterPassword, onUpdate, onClose } = props
 
+    const getDefaultServiceLength = () => {
+        const configuredLength = Number(getSetting({ accountId, settingId: "default-password-length" }))
+        return Number.isFinite(configuredLength) && configuredLength > 0 ? configuredLength : 14
+    }
+
     const getEmptyService = (): IService => ({
         id: "",
         vault: "",
@@ -41,7 +46,7 @@ const ServiceModal = (props: ServiceModalProps) => {
         url: "",
         identifier: "",
         alphabet: "",
-        length: 14,
+        length: getDefaultServiceLength(),
         version: 1
     })
 
@@ -53,7 +58,7 @@ const ServiceModal = (props: ServiceModalProps) => {
         url: "",
         identifier: "",
         alphabet: "",
-        length: 14,
+        length: getDefaultServiceLength(),
         version: 1
     })
 

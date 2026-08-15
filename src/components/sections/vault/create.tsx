@@ -30,6 +30,11 @@ const CreateModal = (props: CreateModalProps) => {
 
     const { open, vaultId, accountId, masterPassword, onCreate, onClose } = props
 
+    const getDefaultServiceLength = () => {
+        const configuredLength = Number(getSetting({ accountId, settingId: "default-password-length" }))
+        return Number.isFinite(configuredLength) && configuredLength > 0 ? configuredLength : 14
+    }
+
     const getEmptyServiceForm = () => {
 
         const totalServices = getServiceCountInVault(accountId, vaultId)
@@ -46,7 +51,7 @@ const CreateModal = (props: CreateModalProps) => {
             url: '',
             identifier: generatedIdentifier,
             alphabet: alphabet?.id ?? '',
-            length: 14,
+            length: getDefaultServiceLength(),
             version: 1
         }
     }
@@ -361,27 +366,6 @@ const CreateModal = (props: CreateModalProps) => {
                                 const newForm = { ...serviceForm, length: newLength };
                                 setServiceForm(newForm);
                                 generatePassword(newForm.alphabet, newLength, newForm.identifier, newForm.version);
-                            }}
-                            className="max-w-25 font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle-md"
-                        />
-                    </DialogOption>
-                    <DialogOption
-                        title="Password Version"
-                        description="Increment this to generate a new password for the same service"
-                        layout="row"
-                    >
-                        <Input
-                            id="version"
-                            name="version"
-                            value={ serviceForm.version }
-                            type="number"
-                            min={ 1 }
-                            max={ 999 }
-                            onChange={ (event: any) => {
-                                const newVersion = parseInt(event.target.value, 10);
-                                const newForm = { ...serviceForm, version: newVersion };
-                                setServiceForm(newForm);
-                                generatePassword(newForm.alphabet, newForm.length, newForm.identifier, newVersion);
                             }}
                             className="max-w-25 font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle-md"
                         />

@@ -80,7 +80,6 @@ export const updateAccount = (id: string) => {
 
     for (let index = 0; index < accounts.length; index++) {
         if(accounts[index] === id) {
-            console.log("updateAccount")
             break
         }
     }

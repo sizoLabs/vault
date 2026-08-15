@@ -10,22 +10,22 @@ import { encodeData, decodeData, downloadFile } from "@logic/utils"
 import { showAlert } from "@logic/alert"
 
 export const importAccount = (data: any) => {
-    setStorage('account', data)
+    setStorage("account", data)
 }
 
 export const createAccount = (accountName: string, accountIcon = "user") => {
 
-    const accounts = getStorage('accounts')
+    const accounts = getStorage("accounts")
     const accountId = generateAccountId()
 
     if(!accounts) {
-        setStorage('accounts', [ accountId ])
+        setStorage("accounts", [ accountId ])
     } else {
         accounts.push(accountId)
-        setStorage('accounts', accounts)
+        setStorage("accounts", accounts)
     }
     
-    setStorage('current-account', accountId)
+    setStorage("current-account", accountId)
 
     createAccountData(accountId, accountName, accountIcon)
 
@@ -38,13 +38,13 @@ const createAccountData = (accountId: string, accountName = "Personal Account", 
 }
 
 export const getAccountsLength = () => {
-    const accounts = getStorage('accounts')
+    const accounts = getStorage("accounts")
     if(!accounts || accounts.length === 0) return 0
     return accounts.length
 }
 
 export const getAccounts = () => {
-    const accounts = getStorage('accounts')
+    const accounts = getStorage("accounts")
     if(!accounts || accounts.length === 0) return []
     return accounts
 }
@@ -59,7 +59,7 @@ export const getAccount = (id: string) => {
 export const getAccountName = (accountId: string) => {
     const account = getStorage(accountId)
     if (account && account.settings) {
-        const nameSetting = account.settings.find((setting: any) => setting.id === 'account-name')
+        const nameSetting = account.settings.find((setting: any) => setting.id === "account-name")
         if (nameSetting) return nameSetting.value
     }
     return accountId
@@ -68,7 +68,7 @@ export const getAccountName = (accountId: string) => {
 export const getAccountIcon = (accountId: string) => {
     const account = getStorage(accountId)
     if (account && account.settings) {
-        const iconSetting = account.settings.find((setting: any) => setting.id === 'account-icon')
+        const iconSetting = account.settings.find((setting: any) => setting.id === "account-icon")
         if (iconSetting) return iconSetting.value
     }
     return "user"
@@ -85,7 +85,7 @@ export const updateAccount = (id: string) => {
         }
     }
 
-    setStorage('accounts', accounts)
+    setStorage("accounts", accounts)
     
 }
 
@@ -100,13 +100,13 @@ export const deleteAccount = (id: string) => {
         }
     }
 
-    if (getStorage('current-account') === id) {
-        setStorage('current-account', '')
+    if (getStorage("current-account") === id) {
+        setStorage("current-account", "")
     }
 
     removeStorage(id)
     
-    setStorage('accounts', accounts)
+    setStorage("accounts", accounts)
     
 }
 
@@ -119,8 +119,8 @@ export const exportAccountData = async ({
 }) => {
     const account = getStorage(accountId)
     const encodedData = await encodeData(masterPassword, JSON.stringify(account))
-    downloadFile(encodedData, getExportFileName(accountId), 'application/octet-stream')
-    showAlert("Data exported successfully!", 'success', 'database-export', 5000)
+    downloadFile(encodedData, getExportFileName(accountId), "application/octet-stream")
+    showAlert("Data exported successfully!", "success", "database-export", 5000)
 }
 
 export const importAccountData = ({
@@ -138,14 +138,14 @@ export const importAccountData = ({
     const file = event?.target?.files?.[0]
 
     if (!file) {
-        showAlert("No file was selected", 'error', 'exclamation-circle', 5000)
+        showAlert("No file was selected", "error", "exclamation-circle", 5000)
         return
     }
 
     const fileFormat = detectImportFileFormat(file)
 
     if (!fileFormat) {
-        showAlert("Unsupported file format. Use .vault", 'error', 'exclamation-circle', 5000)
+        showAlert("Unsupported file format. Use .vault", "error", "exclamation-circle", 5000)
         return
     }
 
@@ -226,10 +226,10 @@ export const importAccountData = ({
 
             onImportComplete()
 
-            showAlert("Data imported to your account!", 'success', 'database-import', 5000)
+            showAlert("Data imported to your account!", "success", "database-import", 5000)
 
         } catch(e) {
-            showAlert("Master Password does not match", 'error', 'exclamation-circle', 5000)
+            showAlert("Master Password does not match", "error", "exclamation-circle", 5000)
             console.error("Error importing account data:", e)
         }
 
@@ -264,16 +264,16 @@ export const changeMasterPassword = async ({
     accountId: string,
     newMasterPassword: string
 }) => {
-    if (!newMasterPassword || newMasterPassword.trim() === '') {
-        showAlert("Master password cannot be empty", 'error', 'exclamation-circle', 5000)
+    if (!newMasterPassword || newMasterPassword.trim() === "") {
+        showAlert("Master password cannot be empty", "error", "exclamation-circle", 5000)
         return false
     }
     try {
         await setMasterVerifier({ accountId, masterPassword: newMasterPassword })
-        showAlert("Master password changed successfully!", 'success', 'key', 5000)
+        showAlert("Master password changed successfully!", "success", "key", 5000)
         return true
     } catch (error) {
-        showAlert("Failed to change master password", 'error', 'exclamation-circle', 5000)
+        showAlert("Failed to change master password", "error", "exclamation-circle", 5000)
         return false
     }
 }
@@ -284,21 +284,21 @@ const getExportFileName = (accountId: string) => {
     const safeAccountName = rawAccountName
         .trim()
         .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '') || 'account'
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "") || "account"
 
     const now = new Date()
-    const day = String(now.getDate()).padStart(2, '0')
-    const month = String(now.getMonth() + 1).padStart(2, '0')
+    const day = String(now.getDate()).padStart(2, "0")
+    const month = String(now.getMonth() + 1).padStart(2, "0")
     const year = now.getFullYear()
-    const hours = String(now.getHours()).padStart(2, '0')
-    const minutes = String(now.getMinutes()).padStart(2, '0')
-    const seconds = String(now.getSeconds()).padStart(2, '0')
+    const hours = String(now.getHours()).padStart(2, "0")
+    const minutes = String(now.getMinutes()).padStart(2, "0")
+    const seconds = String(now.getSeconds()).padStart(2, "0")
 
     return `${safeAccountName}_${day}-${month}-${year}_${hours}${minutes}${seconds}.vault`
-    
+
 }
 
 const normalizeFields = (data: any): any => {
@@ -307,7 +307,7 @@ const normalizeFields = (data: any): any => {
         return data.map(item => normalizeFields(item))
     }
 
-    if (data !== null && typeof data === 'object') {
+    if (data !== null && typeof data === "object") {
 
         const normalized: any = {}
 
@@ -358,9 +358,9 @@ const normalizeFields = (data: any): any => {
 
 }
 
-const detectImportFileFormat = (file: File): 'vault' | 'ovni' | null => {
-    const fileName = file?.name?.toLowerCase() || ''
-    if (fileName.endsWith('.vault')) return 'vault'
-    if (fileName.endsWith('.ovni')) return 'ovni' // For old .ovni files compatibility
+const detectImportFileFormat = (file: File): "vault" | "ovni" | null => {
+    const fileName = file?.name?.toLowerCase() || ""
+    if (fileName.endsWith(".vault")) return "vault"
+    if (fileName.endsWith(".ovni")) return "ovni" // For old .ovni files compatibility
     return null
 }

@@ -217,14 +217,14 @@ const IconSelector = ({ value, onChange, className = "" }: IconSelectorProps) =>
 
             {open && (
                 <div
-                    className="fixed inset-0 z-60 overflow-hidden flex items-center justify-center px-7"
+                    className="fixed inset-0 z-999 overflow-hidden flex items-center justify-center p-5"
                     onMouseDown={(event) => {
                         if (event.target === event.currentTarget) {
                             setOpen(false)
                         }
                     }}
                 >
-                    <div className="w-full max-w-150 max-h-[60vh] border border-white/10 overflow-hidden rounded-2xl backdrop-blur-xl">
+                    <div className="relative z-999 w-full h-full max-w-200 border border-white/10 overflow-hidden rounded-2xl backdrop-blur-3xl">
                         <div className="px-5 py-5 mb-4 flex items-center justify-between gap-3 border-b border-white/10 bg-white/5 pb-3">
                             <span className="text-sm md:text-lg font-inter-bold text-white">Select an Icon</span>
                             <button
@@ -280,7 +280,7 @@ const IconSelector = ({ value, onChange, className = "" }: IconSelectorProps) =>
                         ) : filteredIcons.length === 0 ? (
                             <div className="py-10 text-center text-white/50">No icons found for this category or search.</div>
                         ) : (
-                            <div className="flex max-h-[calc(55vh-8.5rem)] min-h-0 flex-col pb-15 px-5">
+                            <div className="flex max-h-[calc(85vh-5rem)] min-h-0 flex-col pb-15 px-5">
                                 <div className="icon-grid-scroll grid min-h-0 max-h-full grid-cols-3 gap-3 overflow-y-auto pr-1 sm:grid-cols-5">
                                     {visibleIcons.map((icon) => (
                                         <button

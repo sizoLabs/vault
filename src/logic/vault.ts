@@ -109,18 +109,21 @@ export const updateVault = ({
 export const deleteVault = ({ accountId, vaultId }: { accountId: string, vaultId: string }) => {
 
     let account = getStorage(accountId)
-    const vaults = getVaultList(accountId)
+    if (!account) return
 
-    for (let i = 0; i < vaults.length; i++) {
-        if(vaults[i].id === vaultId) {
-            vaults.splice(i, 1)
-            break
-        }
-    }
+    const vaults = Array.isArray(account.vaults) ? account.vaults : []
+    const services = Array.isArray(account.services) ? account.services : []
+    const secrets = Array.isArray(account.secrets) ? account.secrets : []
+
+    const remainingVaults = vaults.filter((vault: any) => vault.id !== vaultId)
+    const remainingServices = services.filter((service: any) => service.vault !== vaultId)
+    const remainingSecrets = secrets.filter((secret: any) => secret.vault !== vaultId)
 
     account = {
         ...account,
-        vaults: vaults
+        vaults: remainingVaults,
+        services: remainingServices,
+        secrets: remainingSecrets
     }
 
     setStorage(accountId, account)

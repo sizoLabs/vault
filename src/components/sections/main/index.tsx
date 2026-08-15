@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 
 import MainSidebar from "@component/sections/main/sidebar"
 import MainContent from "@component/sections/main/content"
+import CreateVaultModal from "@component/sections/main/create-vault"
 
 import { getStorage, setStorage } from "@logic/storage"
 import { applyThemeColor } from "@logic/settings"
@@ -22,6 +23,7 @@ export default function Home() {
     const [ masterPassword, setMasterPassword ] = useState("")
 
     const [ vaultId, setVaultId ] = useState("")
+    const [ createVaultModalOpen, setCreateVaultModalOpen ] = useState(false)
 
     const syncAccount = (selectedAccountId = accountId) => {
         const nextAccount = selectedAccountId ? getStorage(selectedAccountId) : null
@@ -41,6 +43,7 @@ export default function Home() {
             setVaultId(vaultId)
         } else if (panel !== "vault") {
             setActiveVaultId(null)
+            setVaultId("")
         }
     }
 
@@ -53,7 +56,18 @@ export default function Home() {
         setIsResizing(false)
     }
 
-    useEffect(() => {  }, [activeVaultId])
+    useEffect(() => {
+        if (activePanel !== "vault") return
+
+        const vaults = Array.isArray(account?.vaults) ? account.vaults : []
+        const selectedVaultId = activeVaultId ?? vaultId
+
+        if (!selectedVaultId || !vaults.some((vault: any) => vault.id === selectedVaultId)) {
+            setActivePanel("main-vault")
+            setActiveVaultId(null)
+            setVaultId("")
+        }
+    }, [account, activePanel, activeVaultId, vaultId])
 
     useEffect(() => { setStorage(PANEL_WIDTH_STORAGE_KEY, String(panelWidth)) }, [panelWidth])
 
@@ -75,8 +89,31 @@ export default function Home() {
         }
     }, [accountId])
 
+    useEffect(() => {
+        if (!accountId || typeof window === "undefined") return
+
+        const handleStorageUpdate = () => {
+            syncAccount(accountId)
+        }
+
+        window.addEventListener("vault-storage-updated", handleStorageUpdate)
+
+        return () => {
+            window.removeEventListener("vault-storage-updated", handleStorageUpdate)
+        }
+    }, [accountId])
+
     return (
         <div className="z-0 h-screen">
+            <CreateVaultModal
+                open={createVaultModalOpen}
+                accountId={accountId}
+                onCreate={() => {
+                    syncAccount(accountId)
+                }}
+                onClose={() => setCreateVaultModalOpen(false)}
+            />
+
             <div className="p-2 h-full flex flex-col md:flex-row items-center justify-left">
 
                 <MainSidebar
@@ -84,12 +121,14 @@ export default function Home() {
                     isResizing={isResizing}
                     activePanel={activePanel}
                     accountId={accountId}
+                    masterPassword={masterPassword}
                     account={account}
                     activeVaultId={activeVaultId}
                     onPanelChange={handlePanelChange}
                     onPointerDown={handlePointerDown}
                     onPanelWidthChange={setPanelWidth}
                     onResizeEnd={handleResizeEnd}
+                    onOpenCreateVaultModal={() => setCreateVaultModalOpen(true)}
                 />
 
                 <MainContent

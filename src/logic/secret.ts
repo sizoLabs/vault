@@ -95,8 +95,8 @@ export const createSecret = async ({
 
     if(!secrets) secrets = [] as ISecret[]
 
-    const encryptedContent = await encodeData(masterPassword, content)
-    const encryptedDescription = await encodeData(masterPassword, description)
+    const encryptedContent = content ? await encodeData(masterPassword, content) : ""
+    const encryptedDescription = description ? await encodeData(masterPassword, description) : ""
 
     const newSecret: ISecret = {
         id: generateId(),
@@ -141,8 +141,8 @@ export const updateSecret = async ({
     let account = getStorage(accountId)
     let secrets = account.secrets
 
-    const encryptedContent = await encodeData(masterPassword, content)
-    const encryptedDescription = await encodeData(masterPassword, description)
+    const encryptedContent = content ? await encodeData(masterPassword, content) : ""
+    const encryptedDescription = description ? await encodeData(masterPassword, description) : ""
 
     for (let index = 0; index < secrets.length; index++) {
         if(secrets[index].id === secretId) {
@@ -223,5 +223,11 @@ export const copySecretToClipboard = async ({
 }
 
 export const getSecretContent = async (data: string, masterPassword: string) => {
-    return await decodeData(masterPassword, data)
+    if (!data || typeof data !== 'string' || data.trim() === '') return ""
+    try {
+        return await decodeData(masterPassword, data)
+    } catch (error) {
+        console.error('Error decoding secret content:', error)
+        return ""
+    }
 }

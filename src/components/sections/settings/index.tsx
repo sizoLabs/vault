@@ -5,7 +5,7 @@ import FileInput from "@component/ui/form/file"
 import Setting from "@component/sections/settings/setting"
 import Input from "@component/ui/form/input"
 
-import { importAccountData, exportAccountData, changeMasterPassword, checkAccountMasterPassword } from "@logic/account"
+import { importAccountData, exportAccountData, checkAccountMasterPassword } from "@logic/account"
 import { getSettings, getAccountSettings, updateSettings, applyThemeColor } from "@logic/settings"
 import { applyGradientBackgroundSetting, applyColoredBackgroundSetting } from "@logic/background"
 import { getStorage } from "@logic/storage"
@@ -27,8 +27,6 @@ const Settings = (props: SettingsProps) => {
     const [ accountId, setAccountId ] = useState<string>("")
     const [ settings, setSettings ] = useState<ISettings[]>([])
     const [ accountSettings, setAccountSettings ] = useState<IAccountSettings[]>([])
-    const [ currentMasterPassword, setCurrentMasterPassword ] = useState<string>("")
-    const [ newMasterPassword, setNewMasterPassword ] = useState<string>("")
     const [ resetMasterPassword, setResetMasterPassword ] = useState<string>("")
 
     const onSettingChange = ({ settingId, value }: { settingId: string, value: string | number | boolean }) => {
@@ -94,47 +92,6 @@ const Settings = (props: SettingsProps) => {
             event,
             onImportComplete: onAccountUpdated
         })
-    }
-
-    const handleChangeMasterPasswordSubmit = async () => {
-
-        if (!currentMasterPassword) {
-            return showAlert("Please enter your current Master Password", 'error', 'exclamation-circle', 5000)
-        }
-
-        const isValidPassword = await checkAccountMasterPassword({
-            accountId,
-            masterPassword: currentMasterPassword
-        })
-
-        if (!isValidPassword) {
-            return showAlert("Current Master Password is incorrect", 'error', 'exclamation-circle', 5000)
-        }
-
-        if(!newMasterPassword) {
-            return showAlert("Please enter a new Master Password", 'error', 'exclamation-circle', 5000)
-        }
-
-        if(newMasterPassword === currentMasterPassword) {
-            return showAlert("New Master Password cannot be the same as the current", 'error', 'exclamation-circle', 5000)
-        }
-
-        const confirmation = confirm("Are you sure you want to change the master password? All your passwords will be re-encrypted with the new master password. This action cannot be undone.")
-        if (!confirmation) return
-        
-        const success = await changeMasterPassword({
-            accountId,
-            newMasterPassword
-        })
-        
-        if (success) {
-            setCurrentMasterPassword("")
-            setNewMasterPassword("")
-            setTimeout(() => {
-                window.location.reload()
-            }, 2000)
-        }
-
     }
 
     useEffect(() => {
@@ -218,55 +175,6 @@ const Settings = (props: SettingsProps) => {
                                     onChange={ handleImportSubmit }
                                     accept=".ovni,.vault"
                                 />
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-                <div className="relative mx-auto flex max-w-200 flex-col px-5 py-5 md:p-10 pb-0 md:pb-0">
-
-                    <h2 className="text-xl md:text-3xl font-inter-black mb-5">
-                        <i className="ti ti-key mr-2 align-middle inline-block -mt-1.25" /> Change Master Password
-                    </h2>
-
-                    <div className="flex flex-col w-full form squircle-md">
-                        
-                        <div className="flex flex-col w-full p-5">
-                            <div className="mb-5">
-                                <h3 className="text-sm md:text-lg font-inter-bold">
-                                    Change Master Password
-                                </h3>
-                                <div className="text-sm font-inter-medium text-white/70 mb-2 md:mb-0">
-                                    This will change the master password for this account.
-                                    <span className="text-rose-500 ml-1">
-                                        This will change all passwords in this account to be encrypted with the new master password. Backup your data, this action cannot be undone.
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="w-full md:max-w-70">
-                                <Input
-                                    id="current-master-password"
-                                    type="password"
-                                    placeholder="Current Master Password"
-                                    value={ currentMasterPassword }
-                                    onChange={ (event: React.ChangeEvent<HTMLInputElement>) => setCurrentMasterPassword(event.target.value) }
-                                    className="font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle-md mb-3"
-                                />
-                                <Input
-                                    id="change-master-password"
-                                    type="password"
-                                    placeholder="New Master Password"
-                                    value={ newMasterPassword }
-                                    onChange={ (event: React.ChangeEvent<HTMLInputElement>) => setNewMasterPassword(event.target.value) }
-                                    className="font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle-md mb-3"
-                                />
-                                <button
-                                    onClick={ handleChangeMasterPasswordSubmit }
-                                    className="font-inter-bold h-fit w-full px-3 py-3 border duration-300 bg-rose-500/10 border-rose-500/50 hover:bg-rose-500/20 hover:border-rose-500 hover:text-white focus:bg-rose-500/20 focus:border-rose-500 squircle-md cursor-pointer"
-                                >
-                                    Change Master Password
-                                </button>
                             </div>
                         </div>
 

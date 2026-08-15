@@ -1,4 +1,4 @@
-import { getStorage, setStorage } from "@logic/storage"
+import { getStorage, setStorage, removeStorage } from "@logic/storage"
 
 import { generateAccountId } from "@logic/utils"
 import { setMasterVerifier, verifyMasterPassword } from "@logic/master"
@@ -13,7 +13,7 @@ export const importAccount = (data: any) => {
     setStorage('account', data)
 }
 
-export const createAccount = (accountName: string) => {
+export const createAccount = (accountName: string, accountIcon = "user") => {
 
     const accounts = getStorage('accounts')
     const accountId = generateAccountId()
@@ -27,14 +27,14 @@ export const createAccount = (accountName: string) => {
     
     setStorage('current-account', accountId)
 
-    createAccountData(accountId)
+    createAccountData(accountId, accountName, accountIcon)
 
 }
 
-const createAccountData = (accountId: string)  => {
+const createAccountData = (accountId: string, accountName = "Personal Account", accountIcon = "user")  => {
     createDefaultAlphabet(accountId)
     createDefaultVault(accountId)
-    createDefaultSettings(accountId)
+    createDefaultSettings(accountId, accountName, accountIcon)
 }
 
 export const getAccountsLength = () => {
@@ -65,6 +65,15 @@ export const getAccountName = (accountId: string) => {
     return accountId
 }
 
+export const getAccountIcon = (accountId: string) => {
+    const account = getStorage(accountId)
+    if (account && account.settings) {
+        const iconSetting = account.settings.find((setting: any) => setting.id === 'account-icon')
+        if (iconSetting) return iconSetting.value
+    }
+    return "user"
+}
+
 export const updateAccount = (id: string) => {
 
     const accounts = getAccounts()
@@ -91,6 +100,12 @@ export const deleteAccount = (id: string) => {
         }
     }
 
+    if (getStorage('current-account') === id) {
+        setStorage('current-account', '')
+    }
+
+    removeStorage(id)
+    
     setStorage('accounts', accounts)
     
 }
@@ -160,6 +175,10 @@ export const importAccountData = ({
                     {
                         id: "account-name",
                         value: account.settings[0].value
+                    },
+                    {
+                        id: "account-icon",
+                        value: "user"
                     },
                     {
                         id: "default-password-length",

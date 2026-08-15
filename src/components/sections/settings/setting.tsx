@@ -3,6 +3,7 @@ import Select from "@component/ui/form/select"
 import Input from "@component/ui/form/input"
 import Color from "@component/ui/form/color"
 import ColorPalette from "@component/ui/form/colorPalette"
+import IconSelector from "@component/ui/form/icon"
 
 import { getAlphabetList } from "@logic/alphabet"
 
@@ -98,6 +99,17 @@ const Setting = ({ setting, value, accountId, onChange }: SettingProps) => {
                         />
                     </>
                 ) : null }
+
+                { setting.type === "icon" ? (
+                    <>
+                        <IconSelector
+                            id={ setting.id }
+                            value={ typeof settingValue === "string" ? settingValue : "user" }
+                            onChange={ ({ settingId, value }: { settingId: string, value: string }) => onChange({ settingId, value }) }
+                        />
+                    </>
+                ) : null }
+
             </div>
         </div>
     )

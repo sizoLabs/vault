@@ -56,7 +56,9 @@ export default function MainContent({
             {activePanel === "legal" && <Legal />}
             {activePanel === "how-it-works" && <HowItWorks />}
             {activePanel === "alphabets" && <Alphabets accountId={accountId} />}
-            {activePanel === "accounts" && <Accounts />}
+            {activePanel === "accounts" && (
+                <Accounts onSelectAccount={onSubmitForm} />
+            )}
             {activePanel === "settings" && (
                 <Settings
                     account={account}

@@ -37,6 +37,12 @@ const ServiceModal = (props: ServiceModalProps) => {
         return Number.isFinite(configuredLength) && configuredLength > 0 ? configuredLength : 14
     }
 
+    const getDefaultAlphabetId = () => {
+        const alphabets = getAlphabetList(accountId)
+        const configuredAlphabetId = getSetting({ accountId, settingId: "default-alphabet" })
+        return alphabets.find((item: any) => item.id === configuredAlphabetId)?.id || alphabets[0]?.id || ""
+    }
+
     const getEmptyService = (): IService => ({
         id: "",
         vault: "",
@@ -137,7 +143,18 @@ const ServiceModal = (props: ServiceModalProps) => {
     }
 
     const generatePassword = async (alphabetId: string, length: number, identifier: string, version?: number) => {
+        if (!alphabetId || !identifier) {
+            setPassword('')
+            return
+        }
+
         const alphabet = getAlphabet({ accountId, alphabetId })
+
+        if (!alphabet) {
+            setPassword('')
+            return
+        }
+
         const password = await genServicePassword(masterPassword, identifier, length, {
             identifier: alphabet.identifier,
             characters: alphabet.characters
@@ -165,13 +182,14 @@ const ServiceModal = (props: ServiceModalProps) => {
 
         if (service) {
             const description = await getServiceDescription(service.description, masterPassword)
+            const resolvedAlphabetId = service.alphabet || getDefaultAlphabetId()
             const nextForm = {
                 name: service.name,
                 icon: service.icon,
                 vault: service.vault,
                 description,
                 identifier: service.identifier,
-                alphabet: service.alphabet,
+                alphabet: resolvedAlphabetId,
                 length: service.length,
                 version: service.version,
                 url: service.url
@@ -181,7 +199,7 @@ const ServiceModal = (props: ServiceModalProps) => {
             setForm(nextForm)
             setPassword('')
             setShowServicePassword(accountShowPasswords)
-            generatePassword(service.alphabet, service.length, service.identifier, service.version)
+            generatePassword(resolvedAlphabetId, service.length, service.identifier, service.version)
             return
         }
 

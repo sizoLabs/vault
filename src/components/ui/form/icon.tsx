@@ -69,12 +69,13 @@ const getIconCategory = (iconName: string) => {
 }
 
 type IconSelectorProps = {
+    id?: string
     value: string
-    onChange: (value: string) => void
+    onChange: (payload: any) => void
     className?: string
 }
 
-const IconSelector = ({ value, onChange, className = "" }: IconSelectorProps) => {
+const IconSelector = ({ id, value, onChange, className = "" }: IconSelectorProps) => {
 
     const [ open, setOpen ] = useState(false)
     const [ allIcons, setAllIcons ] = useState<string[]>([])
@@ -85,7 +86,7 @@ const IconSelector = ({ value, onChange, className = "" }: IconSelectorProps) =>
     const sentinelRef = useRef<HTMLDivElement | null>(null)
 
     const normalizedValue = useMemo(() => {
-        if (!value) return "password-user"
+        if (!value || typeof value !== "string") return "password-user"
         return value.startsWith("ti-") ? value.replace(/^ti-/, "") : value
     }, [value])
 
@@ -191,7 +192,13 @@ const IconSelector = ({ value, onChange, className = "" }: IconSelectorProps) =>
     }, [open, visibleCount, filteredIcons.length])
 
     const handleSelect = (nextIcon: string) => {
-        onChange(nextIcon)
+        if (id) {
+            // Settings mode: send object with settingId
+            onChange({ settingId: id, value: nextIcon })
+        } else {
+            // Form mode: send just the value
+            onChange(nextIcon)
+        }
         setShowAllIcons(false)
         setOpen(false)
         setSearch("")
@@ -217,14 +224,15 @@ const IconSelector = ({ value, onChange, className = "" }: IconSelectorProps) =>
 
             {open && (
                 <div
-                    className="fixed inset-0 z-999 overflow-hidden flex items-center justify-center p-5"
+                    className="fixed inset-0 z-999 flex items-center justify-center bg-black/20 p-5 backdrop-blur-[80px]"
                     onMouseDown={(event) => {
                         if (event.target === event.currentTarget) {
                             setOpen(false)
                         }
                     }}
                 >
-                    <div className="relative z-999 w-full h-full max-w-200 border border-white/10 overflow-hidden rounded-2xl backdrop-blur-3xl">
+                    <div className="relative z-999 w-full h-full max-w-200 overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-2xl shadow-black/30 backdrop-blur-3xl">
+
                         <div className="px-5 py-5 mb-4 flex items-center justify-between gap-3 border-b border-white/10 bg-white/5 pb-3">
                             <span className="text-sm md:text-lg font-inter-bold text-white">Select an Icon</span>
                             <button

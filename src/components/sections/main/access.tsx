@@ -72,18 +72,29 @@ const VaultAccess = (props: VaultAccessProps) => {
                     masterPassword: password
                 })
 
-                setIsOpeningVault(true)
+                const showAnimations = getSetting({ accountId, settingId: "show-animations" })
 
-                return setTimeout(() => {
+                setShowAnimations(showAnimations)
 
-                    setVaultOpened(true)
+                if (showAnimations) {
+                    
+                    setIsOpeningVault(true)
 
-                    setTimeout(() => {
-                        onSubmitForm(accountId, password)
-                        setIsOpeningVault(false)
+                    return setTimeout(() => {
+
+                        setVaultOpened(true)
+
+                        setTimeout(() => {
+                            onSubmitForm(accountId, password)
+                            setIsOpeningVault(false)
+                        }, 500)
+
                     }, 500)
+                }
 
-                }, 500)
+                onSubmitForm(accountId, password)
+
+                return
 
             }
 

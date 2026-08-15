@@ -60,15 +60,14 @@ const Alphabets = (props: AlphabetsProps) => {
 
                     <div className="z-50 relative flex min-h-full flex-col px-5 py-5 md:p-10 overflow-hidden">
 
-                        <div className="absolute -top-37.5 -left-37.5 opacity-5 -z-1 mask-to-bottom">
-                            <i className="ti ti-letters text-[900px]" />
+                        <div className="absolute -top-60 -left-35 opacity-5 -z-1 mask-to-bottom">
+                            <i className="ti ti-abc text-[900px]" />
                         </div>
                         
                         <div className="text-3xl font-inter-black mb-5 flex flex-col md:flex-row">
 
                             <h2>
-                                <i className="ti ti-letters mr-3 align-middle inline-block -mt-1.25" />
-                                Alphabets
+                                <i className="ti ti-abc mr-2 align-middle inline-block -mt-1.25" /> Alphabets
                             </h2>
                             
                             <div className="mt-3 md:mt-0 md:ml-5 flex flex-row justify-between gap-2">

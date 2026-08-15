@@ -5,11 +5,12 @@ import { type IService } from "@interface/index"
 import { getAlphabetList } from "@logic/alphabet"
 
 export const getServiceDescription = async (data: string, masterPassword: string) => {
-    if (!data) return ""
+    if (!data || typeof data !== 'string' || data.trim() === '') return ""
     try {
         return await decodeData(masterPassword, data)
-    } catch {
-        return data
+    } catch (error) {
+        console.error('Error decoding service description:', error)
+        return ""
     }
 }
 
@@ -108,7 +109,7 @@ export const createService = async ({
 
     if(!services) services = [] as IService[]
 
-    const encryptedDescription = await encodeData(masterPassword, description)
+    const encryptedDescription = description ? await encodeData(masterPassword, description) : ""
 
     const newService: IService = {
         id: generateId(),
@@ -165,7 +166,7 @@ export const updateService = async ({
     let account = getStorage(accountId)
     let services = account.services
 
-    const encryptedDescription = await encodeData(masterPassword, description)
+    const encryptedDescription = description ? await encodeData(masterPassword, description) : ""
 
     for (let index = 0; index < services.length; index++) {
         if(services[index].id === serviceId) {

@@ -47,7 +47,7 @@ const Select = (props: SelectProps) => {
             </button>
 
             { dropdownOpen && (
-                <ul className="absolute left-0 right-0 mt-0.5 max-h-50 overflow-y-auto squircle squircle-sm bg-white/5 backdrop-blur-xl border border-white/30 z-10">
+                <ul className="absolute left-0 right-0 mt-0.5 max-h-50 overflow-y-auto squircle squircle-sm bg-white/5 backdrop-blur-xl border border-white/30 z-50">
                     { optionList && optionList.map((option: any) => (
                         <li
                             key={ option.id }

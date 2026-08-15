@@ -21,7 +21,7 @@ export const applyThemeColor = (accountId: string) => {
 
 }
 
-export const createDefaultSettings = (accountId: string) => {
+export const createDefaultSettings = (accountId: string, customAccountName = "Personal Account", customAccountIcon = "user") => {
 
     let account = getStorage(accountId)
     const alphabets = getAlphabetList(accountId)
@@ -33,7 +33,11 @@ export const createDefaultSettings = (accountId: string) => {
     const defaultSettings = [
         {
             id: "account-name",
-            value: "Personal Account"
+            value: customAccountName
+        },
+        {
+            id: "account-icon",
+            value: customAccountIcon
         },
         {
             id: "default-password-length",
@@ -82,6 +86,12 @@ export const getSettings = () => {
             name: "Account Name",
             description: "The name of your account.",
             type: "text"
+        },
+        {
+            id: "account-icon",
+            name: "Account Icon",
+            description: "The icon for your account.",
+            type: "icon"
         },
         {
             id: "default-password-length",

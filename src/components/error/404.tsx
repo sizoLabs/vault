@@ -6,7 +6,7 @@ const Error = () => {
 
                 <div className="p-2 h-full flex flex-col md:flex-row items-center justify-left">
 
-                    <div className="relative bg-white/2 border-white/10 w-full h-full squircle squircle-md backdrop-blur-2xl border overflow-hidden">
+                    <div className="relative bg-white/2 border-white/10 w-full h-full squircle-md backdrop-blur-2xl border overflow-hidden">
 
                         <div className="absolute inset-0 overflow-y-scroll no-scrollbar-but-scroll">
 
@@ -32,7 +32,7 @@ const Error = () => {
 
                                     <a
                                         href="/"
-                                        className="h-fit text-md md:text-lg font-inter-bold squircle squircle-md px-3 md:px-8 py-3 md:py-5 border text-left cursor-pointer duration-300 hover:bg-primary/10 hover:border-primary/50 hover:text-white bg-white/5 border-white/10"
+                                        className="h-fit text-md md:text-lg font-inter-bold squircle-md px-3 md:px-8 py-3 md:py-5 border text-left cursor-pointer duration-300 hover:bg-primary/10 hover:border-primary/50 hover:text-white bg-white/5 border-white/10"
                                     >
                                         Back to VAULT
                                     </a>

@@ -33,7 +33,7 @@ const FileInput = (props: FileInputProps) => {
                 onClick={handleButtonClick}
                 className="file-input-button"
             >
-                Select File to Import
+                <i className="ti ti-database-import text-xl mr-1 align-middle inline-block -mt-1" /> Select File to Import
             </button>
         </div>
     )

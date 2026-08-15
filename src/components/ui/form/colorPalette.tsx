@@ -24,7 +24,7 @@ const ColorPalette = (props: ColorPaletteProps) => {
     ]
 
     return (
-        <div className="max-w-30 mr-2 h-full p-1.5 flex gap-1 flex-wrap">
+        <div className="max-w-27 mr-1 h-full p-1.5 flex gap-1 flex-wrap">
             {colors.map((color) => (
                 <span
                     key={color.hex}

@@ -173,12 +173,16 @@ export const importAccountData = ({
                         value: true
                     },
                     {
-                        id: "disable-background",
+                        id: "theme-color",
+                        value: "#a58fff"
+                    },
+                    {
+                        id: "disable-gradient-background",
                         value: false
                     },
                     {
-                        id: "theme-color",
-                        value: "#a58fff"
+                        id: "disable-colored-background",
+                        value: false
                     }
                 ]
 

@@ -1,16 +1,13 @@
 import { useEffect, useState } from "react"
 
-import Toggle from "@component/ui/form/toggle"
-import Select from "@component/ui/form/select"
-import Input from "@component/ui/form/input"
-import Color from "@component/ui/form/color"
 import FileInput from "@component/ui/form/file"
-import ColorPalette from "@component/ui/form/colorPalette"
+
+import Setting from "@component/sections/settings/setting"
+import Input from "@component/ui/form/input"
 
 import { importAccountData, exportAccountData } from "@logic/account"
 import { getSettings, getAccountSettings, updateSettings, applyThemeColor } from "@logic/settings"
-import { applyBackgroundSetting } from "@logic/background"
-import { getAlphabetList } from "@logic/alphabet"
+import { applyGradientBackgroundSetting, applyColoredBackgroundSetting } from "@logic/background"
 import { getStorage } from "@logic/storage"
 import { resetAllData } from "@logic/data"
 
@@ -44,17 +41,15 @@ const Settings = (props: SettingsProps) => {
             applyThemeColor(accountId)
         }
 
-        if (settingId === "disable-background") {
+        if (settingId === "disable-gradient-background") {
             const themeColor = accountSettings.find(s => s.id === "theme-color")?.value as string | undefined
-            applyBackgroundSetting(value as boolean, themeColor)
+            applyGradientBackgroundSetting(value as boolean, themeColor)
         }
 
-    }
+        if (settingId === "disable-colored-background") {
+            applyColoredBackgroundSetting(value as boolean)
+        }
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const settingId = e.currentTarget.id
-        const value = e.currentTarget.type === "number" ? parseInt(e.target.value, 10) : e.target.value
-        onSettingChange({ settingId, value })
     }
 
     const handleResetSubmit = () => {
@@ -96,152 +91,26 @@ const Settings = (props: SettingsProps) => {
     }, [account])
 
     if(settings && settings.length > 0) return (
-        <div className="relative bg-white/2 border-white/10 w-full h-full squircle squircle-md border overflow-hidden">
+        <div className="relative bg-white/2 border-white/10 w-full h-full squircle-md border overflow-hidden">
 
             <div className="absolute inset-0 overflow-y-scroll no-scrollbar-but-scroll min-h-full">
 
                 <div className="relative mx-auto flex max-w-200 flex-col px-5 py-5 md:p-10 pb-0 md:pb-0">
 
                     <h2 className="text-xl md:text-3xl font-inter-black mb-5">
-                        Settings
+                        <i className="ti ti-settings mr-2 align-middle inline-block -mt-1.25" /> Settings
                     </h2>
 
-                    <div className="flex flex-col w-full form">
-                        
-                        <div className="block">
-                            <div>
-                                <h3>
-                                    Account Name
-                                </h3>
-                                <div className="description">
-                                    Enter a name for your account.
-                                </div>
-                            </div>
-                            <div className="option">
-                                <Input
-                                    id={ settings[0].id }
-                                    defaultValue={ accountSettings[0].value as string }
-                                    type={ settings[0].type }
-                                    onChange={ handleInputChange }
-                                />
-                            </div>
-                        </div>
-
-                        <div className="block">
-                            <div>
-                                <h3>
-                                    Default Password Length
-                                </h3>
-                                <div className="description">
-                                    Select the length that the passwords will have when they are created.
-                                </div>
-                            </div>
-                            <div className="option max-w-20">
-                                <Input
-                                    id={ settings[1].id }
-                                    defaultValue={ accountSettings[1].value as string }
-                                    type={ settings[1].type }
-                                    onChange={ handleInputChange }
-                                />
-                            </div>
-                        </div>
-
-                        <div className="block">
-                            <div>
-                                <h3>
-                                    Default Alphabet
-                                </h3>
-                                <div className="description">
-                                    Default alphabet for creating your passwords.
-                                </div>
-                            </div>
-                            <div className="option max-w-60 min-w-50">
-                                <Select
-                                    id={ settings[2].id }
-                                    options={ getAlphabetList(accountId) }
-                                    selected={ accountSettings[2].value as string }
-                                    onSelect={ onSettingChange }
-                                />
-                            </div>
-                        </div>
-
-                        <div className="block">
-                            <div>
-                                <h3>
-                                    Show Passwords
-                                </h3>
-                                <div className="description">
-                                    Displays passwords when opening settings.
-                                </div>
-                            </div>
-                            <div className="option group">
-                                <Toggle
-                                    id={ settings[3].id }
-                                    isChecked={ accountSettings[3].value as boolean }
-                                    onToggle={ onSettingChange }
-                                />
-                            </div>
-                        </div>
-
-                        <div className="block">
-                            <div>
-                                <h3>
-                                    Show Page Animations
-                                </h3>
-                                <div className="description">
-                                    Toggle the web animations.
-                                </div>
-                            </div>
-                            <div className="option group">
-                                <Toggle
-                                    id={ settings[4].id }
-                                    isChecked={ accountSettings[4].value as boolean }
-                                    onToggle={ onSettingChange }
-                                />
-                            </div>
-                        </div>
-
-                        <div className="block">
-                            <div>
-                                <h3>
-                                    Disable Background
-                                </h3>
-                                <div className="description">
-                                    Toggle the background to gradient or solid color.
-                                </div>
-                            </div>
-                            <div className="option group">
-                                <Toggle
-                                    id={ settings[5].id }
-                                    isChecked={ accountSettings[5].value as boolean }
-                                    onToggle={ onSettingChange }
-                                />
-                            </div>
-                        </div>
-
-                        <div className="block">
-                            <div>
-                                <h3>
-                                    Theme Color
-                                </h3>
-                                <div className="description">
-                                    Choose your accent color for the app.
-                                </div>
-                            </div>
-                            <div className="option">
-                                <ColorPalette
-                                    id={ settings[6].id }
-                                    value={ typeof accountSettings[6]?.value === "string" ? accountSettings[6].value : "#a58fff" }
-                                    onChange={ onSettingChange }
-                                />
-                                <Color
-                                    id={ settings[6].id }
-                                    value={ typeof accountSettings[6]?.value === "string" ? accountSettings[6].value : "#a58fff" }
-                                    onChange={ onSettingChange }
-                                />
-                            </div>
-                        </div>
-
+                    <div className="flex flex-col w-full form squircle-md">
+                        { settings.map((setting) => (
+                            <Setting
+                                key={ setting.id }
+                                setting={ setting }
+                                accountId={ accountId }
+                                value={ accountSettings.find((accountSetting) => accountSetting.id === setting.id)?.value }
+                                onChange={ onSettingChange }
+                            />
+                        )) }
                     </div>
                     
                 </div>
@@ -249,12 +118,12 @@ const Settings = (props: SettingsProps) => {
                 <div className="relative mx-auto flex max-w-200 flex-col px-5 py-5 md:p-10 pb-0 md:pb-0">
 
                     <h2 className="text-xl md:text-3xl font-inter-black mb-5">
-                        Export / Import Data
+                        <i className="ti ti-database-export mr-2 align-middle inline-block -mt-1.25" /> Export / Import Data
                     </h2>
 
-                    <div className="flex flex-col w-full form">
+                    <div className="flex flex-col w-full form squircle-md">
                         
-                        <div className="block">
+                        <div className="container">
                             <div>
                                 <h3>
                                     Export Account Data
@@ -268,12 +137,12 @@ const Settings = (props: SettingsProps) => {
                                     onClick={ handleExportSubmit }
                                     className="file-input-button"
                                 >
-                                    Export Account Data
+                                    <i className="ti ti-database-export text-xl mr-1 align-middle inline-block -mt-1" /> Export Account Data
                                 </button>
                             </div>
                         </div>
 
-                        <div className="block">
+                        <div className="container">
                             <div>
                                 <h3>
                                     Import Account Data
@@ -294,29 +163,71 @@ const Settings = (props: SettingsProps) => {
                     </div>
                 </div>
 
+                <div className="relative mx-auto flex max-w-200 flex-col px-5 py-5 md:p-10 pb-0 md:pb-0">
+
+                    <h2 className="text-xl md:text-3xl font-inter-black mb-5">
+                        <i className="ti ti-key mr-2 align-middle inline-block -mt-1.25" /> Change Master Password
+                    </h2>
+
+                    <div className="flex flex-col w-full form squircle-md">
+                        
+                        <div className="flex flex-col w-full p-5">
+                            <div className="mb-5">
+                                <h3 className="text-sm md:text-lg font-inter-bold">
+                                    Change Master Password
+                                </h3>
+                                <div className="text-sm font-inter-medium text-white/70 mb-2 md:mb-0">
+                                    This will change the master password for this account.
+                                    <span className="text-rose-500 ml-1">
+                                        This will change all passwords in this account to be encrypted with the new master password. Backup your data, this action cannot be undone.
+                                    </span>
+                                </div>
+                            </div>
+                            <div className="w-full md:max-w-70">
+                                <Input
+                                    id="change-master-password"
+                                    type="password"
+                                    placeholder="New Master Password"
+                                    onChange={() => {}}
+                                    className="font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle-md mb-3"
+                                />
+                                <button
+                                    className="font-inter-bold h-fit w-full px-3 py-3 border duration-300 bg-rose-500/10 border-rose-500/50 hover:bg-rose-500/20 hover:border-rose-500 hover:text-white focus:bg-rose-500/20 focus:border-rose-500 squircle-md cursor-pointer"
+                                >
+                                    Change Master Password
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
                 <div className="relative mx-auto flex max-w-200 flex-col px-5 py-5 md:p-10 pb-10">
 
                     <h2 className="text-xl md:text-3xl font-inter-black mb-5">
-                        Reset Account Data
+                        <i className="ti ti-trash mr-2 align-middle inline-block -mt-1.25" /> Reset Account Data
                     </h2>
 
-                    <div className="flex flex-col w-full form">
+                    <div className="flex flex-col w-full form squircle-md">
                         
-                        <div className="block">
+                        <div className="container">
                             <div>
                                 <h3>
                                     Reset Account Data
                                 </h3>
                                 <div className="description">
-                                    This will delete all the data in this account. This action cannot be undone.
+                                    This will delete all the data in this account.
+                                    <span className="block text-rose-500">
+                                        Backup your data, this action cannot be undone.
+                                    </span>
                                 </div>
                             </div>
                             <div className="option">
                                 <button
                                     onClick={ handleResetSubmit }
-                                    className="button bg-rose-500/10! text-rose-500! border-rose-500! hover:bg-rose-500! hover:text-white! font-inter-bold!"
+                                    className="font-inter-bold h-fit w-full px-6 py-3 border duration-300 bg-rose-500/10 border-rose-500/50 hover:bg-rose-500/20 hover:border-rose-500 hover:text-white focus:bg-rose-500/20 focus:border-rose-500 squircle-md cursor-pointer"
                                 >
-                                    Reset All Data
+                                    <i className="ti ti-trash text-xl mr-1 align-middle inline-block -mt-1" /> Reset All Data
                                 </button>
                             </div>
                         </div>

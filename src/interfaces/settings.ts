@@ -5,5 +5,7 @@ export interface IAccountSettings {
 
 export interface ISettings {
     id: string
+    name: string
+    description: string
     type: string
 }

@@ -73,7 +73,7 @@ const Dialog = (props: DialogProps) => {
                                 {showCloseButton && (
                                     <button
                                         type="button"
-                                        className="bg-white/5 border border-white/10 hover:border-white/50 hover:bg-white/10 duration-300 squircle squircle-md px-2 pt-1 pb-0.5 cursor-pointer group absolute right-3.5 top-3.5 text-2xl"
+                                        className="bg-white/5 border border-white/10 hover:border-white/50 hover:bg-white/10 duration-300 squircle-md px-2 pt-1 pb-0.5 cursor-pointer group absolute right-3.5 top-3.5 text-2xl"
                                         aria-label="Close"
                                         onClick={handleClose}
                                     >

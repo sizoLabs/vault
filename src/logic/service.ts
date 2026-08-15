@@ -127,6 +127,7 @@ export const updateService = ({
     vaultId,
     name,
     description,
+    icon,
     url,
     identifier,
     alphabet,
@@ -138,6 +139,7 @@ export const updateService = ({
     vaultId: string,
     name: string,
     description: string,
+    icon: string,
     url: string,
     identifier: string,
     alphabet: string,
@@ -152,6 +154,7 @@ export const updateService = ({
         if(services[index].id === serviceId) {
             services[index].name = name
             services[index].description = description
+            services[index].icon = icon
             services[index].url = url
             services[index].identifier = identifier
             services[index].alphabet = alphabet

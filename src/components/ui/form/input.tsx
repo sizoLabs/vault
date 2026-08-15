@@ -17,9 +17,6 @@ const Input = (props: InputProps) => {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!onChange) return
-        
-        // Pass the full event to onChange - let the consumer decide what to do with it
-        // The event contains both the value (e.target.value) and the id (e.currentTarget.id)
         onChange(e)
     }
 

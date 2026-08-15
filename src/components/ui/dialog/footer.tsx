@@ -16,7 +16,7 @@ interface DialogFooterProps {
 
 const getButtonClasses = (variant: ButtonVariant): string => {
 
-    const baseClasses = "cursor-pointer block h-fit w-full md:w-fit px-5 py-2 border duration-300 squircle squircle-md font-inter-bold text-[15px] md:text-lg"
+    const baseClasses = "cursor-pointer block h-fit w-full md:w-fit px-5 py-2 border duration-300 squircle-md font-inter-bold text-[15px] md:text-lg"
     
     const variantClasses: Record<ButtonVariant, string> = {
         delete: "bg-rose-500/10 border-rose-500/50 focus:bg-rose-500/20 focus:border-rose-500 hover:bg-rose-500/20 hover:border-rose-500 hover:text-white",

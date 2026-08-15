@@ -4,12 +4,13 @@ interface SelectProps {
     id: string
     options: any[]
     selected: string
+    descriptions?: boolean
     onSelect: Function
 }
 
 const Select = (props: SelectProps) => {
 
-    const { id, options, selected, onSelect } = props
+    const { id, options, selected, descriptions, onSelect } = props
 
     const dropdownRef = useRef<HTMLDivElement | null>(null)
     const [ optionList, setOptionList ] = useState<any[]>(options)
@@ -37,7 +38,7 @@ const Select = (props: SelectProps) => {
             <button
                 type="button"
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="font-inter-medium h-fit w-full squircle squircle-md px-3 py-2.5 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white flex justify-between items-center cursor-pointer"
+                className="font-inter-medium h-fit w-full squircle-md px-3 py-2.5 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white flex justify-between items-center cursor-pointer"
             >
                 <span className="truncate">
                     { selectedOption ? selectedOption.name : "Select an option" }
@@ -57,6 +58,11 @@ const Select = (props: SelectProps) => {
                             className="px-3 py-2 cursor-pointer hover:bg-white/10 border-b border-white/10 last:border-transparent"
                         >
                             { option.name }
+                            { descriptions && option.description && (
+                                <p className="text-xs text-white/70 mt-1">
+                                    { option.description }
+                                </p>
+                            ) }
                         </li>
                     )) }
                 </ul>

@@ -17,10 +17,10 @@ const Color = (props: ColorProps) => {
     }, [ value ])
 
     return (
-        <div className="flex items-center gap-3">
-            <label className="relative block h-11 w-14 cursor-pointer overflow-hidden border border-white/20 bg-white/5 shadow-inner squircle squircle-md">
+        <div className="flex items-center">
+            <label className="relative block h-12 w-13 cursor-pointer overflow-hidden border border-white/20 bg-white/5 shadow-inner squircle-md">
                 <span
-                    className="absolute inset-0 block squircle squircle-md"
+                    className="absolute inset-0 block squircle-md"
                     style={{ backgroundColor: color }}
                 />
                 <input

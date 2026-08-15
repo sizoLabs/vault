@@ -52,12 +52,16 @@ export const createDefaultSettings = ({ accountName, accountId }: { accountName:
             value: true
         },
         {
-            id: "disable-background",
+            id: "theme-color",
+            value: DEFAULT_THEME_COLOR
+        },
+        {
+            id: "disable-gradient-background",
             value: false
         },
         {
-            id: "theme-color",
-            value: DEFAULT_THEME_COLOR
+            id: "disable-colored-background",
+            value: false
         }
     ]
 
@@ -75,31 +79,51 @@ export const getSettings = () => {
     const settings = [
         {
             id: "account-name",
+            name: "Account Name",
+            description: "The name of your account.",
             type: "text"
         },
         {
             id: "default-password-length",
+            name: "Default Password Length",
+            description: "The default length for generated passwords.",
             type: "number"
         },
         {
             id: "default-alphabet",
+            name: "Default Alphabet",
+            description: "The default alphabet for generating passwords.",
             type: "select"
         },
         {
             id: "show-passwords",
+            name: "Show Passwords",
+            description: "Toggle the visibility of passwords.",
             type: "toggle"
         },
         {
             id: "show-animations",
-            type: "toggle"
-        },
-        {
-            id: "disable-background",
+            name: "Show Page Animations",
+            description: "Toggle the web animations.",
             type: "toggle"
         },
         {
             id: "theme-color",
+            name: "Theme Color",
+            description: "The primary color for the application's theme.",
             type: "color"
+        },
+        {
+            id: "disable-gradient-background",
+            name: "Disable Gradient Background",
+            description: "Toggle the background to gradient or solid color.",
+            type: "toggle"
+        },
+        {
+            id: "disable-colored-background",
+            name: "Disable Colored Background",
+            description: "Toggle the background to colored or monotone.",
+            type: "toggle"
         }
     ]
 

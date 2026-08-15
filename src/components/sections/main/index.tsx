@@ -113,7 +113,7 @@ export default function Home() {
         <div className="z-0 h-screen">
             <div className="p-2 h-full flex flex-col md:flex-row items-center justify-left">
 
-                <div className="block md:hidden bg-white/2 border-white/10 border squircle squircle-md p-2 w-full mb-2">
+                <div className="block md:hidden bg-white/2 border-white/10 border squircle-md p-2 w-full mb-2">
                     <div className="relative flex flex-row items-start justify-left px-1">
                         <SidebarLogo
                             label="VAULT"
@@ -125,7 +125,7 @@ export default function Home() {
 
                 <div
                     ref={ panelRef }
-                    className="bg-white/2 border-white/10 border squircle squircle-md p-2 w-full h-full md:shrink-0 hidden md:block overflow-hidden"
+                    className="bg-white/2 border-white/10 border squircle-md p-2 w-full h-full md:shrink-0 hidden md:block overflow-hidden"
                     style={{ width: panelWidth, maxWidth: "100%" }}
                 >
 

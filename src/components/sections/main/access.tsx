@@ -167,7 +167,7 @@ const VaultAccess = (props: VaultAccessProps) => {
     }, [selectedAccount])
 
     return (
-        <div className="relative bg-white/2 border-white/10 w-full h-full squircle squircle-md border overflow-hidden">
+        <div className="relative bg-white/2 border-white/10 w-full h-full squircle-md border overflow-hidden">
 
             <div className="absolute inset-0 overflow-y-scroll no-scrollbar-but-scroll">
 
@@ -197,7 +197,7 @@ const VaultAccess = (props: VaultAccessProps) => {
                                     <button
                                         type="button"
                                         onClick={() => setDropdownOpen(!dropdownOpen)}
-                                        className="text-md md:text-xl font-inter-medium h-fit w-full squircle squircle-md px-5 py-3 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white flex items-center justify-center text-center"
+                                        className="text-md md:text-xl font-inter-medium h-fit w-full squircle-md px-5 py-3 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white flex items-center justify-center text-center cursor-pointer"
                                     >
                                         <span className="truncate">
                                             { selectedAccount === 'new' ? 'Create new account' : getAccountName(selectedAccount) }
@@ -206,7 +206,7 @@ const VaultAccess = (props: VaultAccessProps) => {
                                     </button>
 
                                     { dropdownOpen && (
-                                        <ul className="absolute left-0 right-0 mt-0.5 max-h-60 overflow-y-auto squircle squircle-md bg-white/5 backdrop-blur-xl border border-white/30">
+                                        <ul className="absolute left-0 right-0 mt-0.5 max-h-60 overflow-y-auto squircle-md bg-white/5 backdrop-blur-xl border border-white/30">
                                             <li
                                                 key="new"
                                                 onClick={() => {
@@ -263,7 +263,7 @@ const VaultAccess = (props: VaultAccessProps) => {
                                     name="account-name"
                                     value={accountName}
                                     onChange={(event) => setAccountName(event.target.value)}
-                                    className="text-md md:text-xl font-inter-medium h-fit w-full squircle squircle-md px-5 py-3 border text-center duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white"
+                                    className="text-md md:text-xl font-inter-medium h-fit w-full squircle-md px-5 py-3 border text-center duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white"
                                 />
                             )}
 
@@ -271,15 +271,15 @@ const VaultAccess = (props: VaultAccessProps) => {
                                 placeholder="Enter your Master Password"
                                 type="password"
                                 name="password"
-                                className="text-md md:text-xl font-inter-medium h-fit w-full squircle squircle-md px-5 py-3 border text-center duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white"
+                                className="text-md md:text-xl font-inter-medium h-fit w-full squircle-md px-5 py-3 border text-center duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white"
                             />
 
                             <button
                                 type="submit"
                                 disabled={isOpeningVault}
-                                className={`text-md md:text-xl h-fit w-full squircle squircle-md px-5 py-4 border cursor-pointer duration-300 transition bg-primary/10 border-primary/60 hover:bg-primary/30 hover:to-primary/30 hover:border-primary hover:text-white text-white/60 text-center font-inter-black ${isOpeningVault ? 'pointer-events-none opacity-60' : ''}`}
+                                className={`text-md md:text-xl h-fit w-full squircle-md px-5 py-4 border cursor-pointer duration-300 transition bg-primary/10 border-primary/60 hover:bg-primary/30 hover:to-primary/30 hover:border-primary hover:text-white text-white/60 text-center font-inter-black ${isOpeningVault ? 'pointer-events-none opacity-60' : ''}`}
                             >
-                                {isOpeningVault ? 'Opening...' : (accounts && accounts.length > 0 && selectedAccount !== 'new' ? 'Unlock Account' : 'Create Account')}
+                                {isOpeningVault ? selectedAccount === 'new' ? 'Creating...' : 'Unlocking...' : (accounts && accounts.length > 0 && selectedAccount !== 'new' ? 'Unlock Account' : 'Create Account')}
                             </button>
 
                         </form>

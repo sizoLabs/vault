@@ -25,4 +25,8 @@
     --color-secondary: #fd8fff;
     --color-darker: #191A1B;
 
+    /* Shadows */
+
+    --inset-shadow-bottom: inset 0 -20px 20px -15px rgba(0, 0, 0, 0.3); 
+
 }

@@ -3,27 +3,45 @@
 /* Squircle */
 
 .squircle {
-    corner-shape: squircle;
+    --squircle-radius: 10px;
+    border-radius: 10px;
 }
 
 .squircle-sm {
+    --squircle-radius: 10px;
     border-radius: 10px;
 }
 
 .squircle-md {
-    border-radius: 30px;
+    --squircle-radius: 30px;
+    border-radius: 10px;
 }
 
 .squircle-lg {
-    border-radius: 50px;
+    --squircle-radius: 50px;
+    border-radius: 10px;
 }
 
 .squircle-xl {
-    border-radius: 80px;
+    --squircle-radius: 80px;
+    border-radius: 10px;
 }
 
 .squircle-full {
-    border-radius: 100px;
+    --squircle-radius: 100px;
+    border-radius: 10px;
+}
+
+@supports (corner-shape: squircle) {
+    .squircle,
+    .squircle-sm,
+    .squircle-md,
+    .squircle-lg,
+    .squircle-xl,
+    .squircle-full {
+        corner-shape: squircle;
+        border-radius: var(--squircle-radius);
+    }
 }
 
 .pixelated {

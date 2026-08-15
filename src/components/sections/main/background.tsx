@@ -15,16 +15,23 @@ export default function Background() {
 
     const [ svgData, setSvgData ] = useState<BackgroundSVGData | null>(null)
     const [ themeColor, setThemeColor ] = useState<string>("#a58fff")
-    const [ showBackground, setShowBackground ] = useState(false)
+    const [ showColoredBackground, setShowColoredBackground ] = useState(false)
+    const [ showGradientBackground, setShowGradientBackground ] = useState(false)
 
     useEffect(() => {
 
         const accountId = getStorage("current-account")
-        const disableBackground = getSetting({ accountId, settingId: "disable-background" })
         const color = getSetting({ accountId, settingId: "theme-color" }) as string || "#a58fff"
-        const shouldShowBackground = !disableBackground
 
-        setShowBackground(shouldShowBackground)
+        const disableGradientBackground = getSetting({ accountId, settingId: "disable-gradient-background" })
+        const shouldShowGradientBackground = !disableGradientBackground
+
+        const disableColoredBackground = getSetting({ accountId, settingId: "disable-colored-background" })
+        const shouldShowColoredBackground = !disableColoredBackground
+
+        setShowGradientBackground(shouldShowGradientBackground)
+        setShowColoredBackground(shouldShowColoredBackground)
+
         setThemeColor(color)
 
         const handleBackgroundChange = (event: Event) => {
@@ -36,33 +43,42 @@ export default function Background() {
             }
         }
 
-        const handleBackgroundSettingChange = (event: Event) => {
-
+        const handleGradientBackgroundSettingChange = (event: Event) => {
             const customEvent = event as CustomEvent
             const { isDisabled, color } = customEvent.detail as { isDisabled: boolean; color?: string }
-            setShowBackground(!isDisabled)
+            setShowGradientBackground(!isDisabled)
+            if (color) { setThemeColor(color) }
+        }
 
-            if (color) {
-                setThemeColor(color)
-            }
-            
+        const handleColoredBackgroundSettingChange = (event: Event) => {
+            const customEvent = event as CustomEvent
+            const { isDisabled } = customEvent.detail as { isDisabled: boolean }
+            setShowColoredBackground(!isDisabled)
         }
 
         window.addEventListener('backgroundChange', handleBackgroundChange)
-        window.addEventListener('backgroundSettingChange', handleBackgroundSettingChange)
+        window.addEventListener('backgroundGradientSettingChange', handleGradientBackgroundSettingChange)
+        window.addEventListener('backgroundColoredSettingChange', handleColoredBackgroundSettingChange)
         
-        if(shouldShowBackground) {
+        if(shouldShowGradientBackground) {
             setSvgData(generateBackgroundSVGData(color))
         }
 
         return () => {
             window.removeEventListener('backgroundChange', handleBackgroundChange)
-            window.removeEventListener('backgroundSettingChange', handleBackgroundSettingChange)
+            window.removeEventListener('backgroundGradientSettingChange', handleGradientBackgroundSettingChange)
+            window.removeEventListener('backgroundColoredSettingChange', handleColoredBackgroundSettingChange)
         }
 
     }, [])
+
+    if(!showColoredBackground) return (
+        <div 
+            className="w-full h-full absolute z-0 bg-darker"
+        />
+    )
     
-    if(!showBackground) return (
+    if(!showGradientBackground) return (
         <div 
             className="w-full h-full absolute z-0" 
             style={{

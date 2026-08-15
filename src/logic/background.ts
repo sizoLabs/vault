@@ -43,7 +43,12 @@ export const applyBackgroundSVG = (color: string) => {
     window.dispatchEvent(new CustomEvent('backgroundChange', { detail: svgData }))
 }
 
-export const applyBackgroundSetting = (isDisabled: boolean, color?: string) => {
+export const applyGradientBackgroundSetting = (isDisabled: boolean, color?: string) => {
     if (typeof window === "undefined") return
-    window.dispatchEvent(new CustomEvent('backgroundSettingChange', { detail: { isDisabled, color } }))
+    window.dispatchEvent(new CustomEvent('backgroundGradientSettingChange', { detail: { isDisabled, color } }))
+}
+
+export const applyColoredBackgroundSetting = (isDisabled: boolean) => {
+    if (typeof window === "undefined") return
+    window.dispatchEvent(new CustomEvent('backgroundColoredSettingChange', { detail: { isDisabled } }))
 }

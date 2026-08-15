@@ -7,6 +7,7 @@ import { getStorage } from "@logic/storage"
 import { getVaultList } from "@logic/vault"
 import { getSetting } from "@logic/settings"
 
+import IconSelector from "@component/ui/form/icon"
 import Select from "@component/ui/form/select"
 import Input from "@component/ui/form/input"
 import Dialog from "@component/ui/dialog/dialog"
@@ -92,6 +93,7 @@ const ServiceModal = (props: ServiceModalProps) => {
             vaultId: form.vault || vaultId,
             name: form.name,
             description: form.description,
+            icon: form.icon,
             url: form.url,
             identifier: form.identifier,
             alphabet: form.alphabet,
@@ -210,7 +212,7 @@ const ServiceModal = (props: ServiceModalProps) => {
                     onChange={ (event: any) => {
                         setForm({ ...form, name: event.target.value });
                     }}
-                    className="font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle squircle-md"
+                    className="font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle-md"
                 />
             </DialogOption>
             <DialogOption
@@ -240,7 +242,7 @@ const ServiceModal = (props: ServiceModalProps) => {
                     value={ form.url }
                     placeholder="e.g. https://example.com"
                     onChange={ (event: any) => setForm({ ...form, url: event.target.value }) }
-                    className="font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle squircle-md"
+                    className="font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle-md"
                 />
             </DialogOption>
             <DialogOption
@@ -261,7 +263,7 @@ const ServiceModal = (props: ServiceModalProps) => {
                         setForm(newForm);
                         generatePassword(newForm.alphabet, newForm.length, newIdentifier, newForm.version);
                     }}
-                    className="font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle squircle-md"
+                    className="font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle-md"
                 />
             </DialogOption>
             <DialogOption
@@ -277,6 +279,20 @@ const ServiceModal = (props: ServiceModalProps) => {
                     onSelect={(event: any) => {
                         const newVault = event?.value ?? form.vault ?? vaultId;
                         setForm({ ...form, vault: newVault });
+                    }}
+                />
+            </DialogOption>
+            <DialogOption
+                title="Icon"
+                description="Icon for the service."
+                layout="row"
+                className="w-full md:min-w-70"
+            >
+                <IconSelector
+                    value={ form.icon }
+                    onChange={ (newIcon: string) => {
+                        const newForm = { ...form, icon: newIcon }
+                        setForm(newForm)
                     }}
                 />
             </DialogOption>
@@ -314,7 +330,7 @@ const ServiceModal = (props: ServiceModalProps) => {
                         setForm(newForm);
                         generatePassword(newForm.alphabet, newLength, newForm.identifier, newForm.version);
                     }}
-                    className="max-w-25 font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle squircle-md"
+                    className="max-w-25 font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle-md"
                 />
             </DialogOption>
             <DialogOption
@@ -335,7 +351,7 @@ const ServiceModal = (props: ServiceModalProps) => {
                         setForm(newForm);
                         generatePassword(newForm.alphabet, newForm.length, newForm.identifier, newVersion);
                     }}
-                    className="max-w-25 font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle squircle-md"
+                    className="max-w-25 font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle-md"
                 />
             </DialogOption>
             <DialogOption
@@ -348,7 +364,7 @@ const ServiceModal = (props: ServiceModalProps) => {
                     <div className="relative flex items-center gap-3">
                         <div
                             onClick={ copyServicePassword }
-                            className={ `relative z-10 min-w-25 block font-inter-medium max-h-13 overflow-hidden w-full px-4 py-3 pr-15 border duration-300 bg-white/5 border-white/20 cursor-pointer focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle squircle-md text-xl ${passwordCopied ? 'hover:text-emerald-500! text-emerald-500 border-emerald-500! bg-emerald-500/10!' : ''}` }
+                            className={ `relative z-10 min-w-25 block font-inter-medium max-h-13 overflow-hidden w-full px-4 py-3 pr-15 border duration-300 bg-white/5 border-white/20 cursor-pointer focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle-md text-xl ${passwordCopied ? 'hover:text-emerald-500! text-emerald-500 border-emerald-500! bg-emerald-500/10!' : ''}` }
                             aria-label="Copy Password"
                         >
                             { shouldDisplayPassword ? password : maskedPassword }
@@ -356,7 +372,7 @@ const ServiceModal = (props: ServiceModalProps) => {
                         <button
                             type="button"
                             onClick={ () => setShowServicePassword((currentValue) => !currentValue) }
-                            className="absolute right-3 z-20 cursor-pointer h-fit px-2 pt-1.5 pb-0.5 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white text-white/50 squircle squircle-md font-inter-medium text-sm backdrop-blur-xl"
+                            className="absolute right-3 z-20 cursor-pointer h-fit px-2 pt-1.5 pb-0.5 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white text-white/50 squircle-md font-inter-medium text-sm backdrop-blur-xl"
                             aria-label={ shouldDisplayPassword ? "Hide password" : "Show password" }
                         >
                             <i className={ `ti ${shouldDisplayPassword ? "ti-eye-off" : "ti-eye"} text-2xl` } />

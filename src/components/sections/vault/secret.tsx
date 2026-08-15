@@ -4,6 +4,7 @@ import { updateSecret, getSecretContent } from "@logic/secret"
 import { getStorage } from "@logic/storage"
 import { getVaultList } from "@logic/vault"
 
+import IconSelector from "@component/ui/form/icon"
 import Select from "@component/ui/form/select"
 import Input from "@component/ui/form/input"
 import Dialog from "@component/ui/dialog/dialog"
@@ -162,7 +163,7 @@ const SecretModal = (props: SecretModalProps) => {
                     value={ form.name }
                     placeholder="e.g. API key"
                     onChange={ (event: any) => setForm({ ...form, name: event.target.value }) }
-                    className="font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle squircle-md"
+                    className="font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle-md"
                 />
             </DialogOption>
             <DialogOption
@@ -197,7 +198,21 @@ const SecretModal = (props: SecretModalProps) => {
                 />
             </DialogOption>
             <DialogOption
-                title="Secret Value"
+                title="Icon"
+                description="Icon for the secret."
+                layout="row"
+                className="w-full md:min-w-70"
+            >
+                <IconSelector
+                    value={ form.icon }
+                    onChange={ (newIcon: string) => {
+                        const newForm = { ...form, icon: newIcon }
+                        setForm(newForm)
+                    }}
+                />
+            </DialogOption>
+            <DialogOption
+                title="Secret Content"
                 description="The content to store in this secret"
                 layout="col"
             >

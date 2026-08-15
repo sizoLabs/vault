@@ -6,9 +6,11 @@ import { createSecret, getSecretCountInVault } from "@logic/secret"
 import { genServicePassword, copyToClipboard, generateId } from "@logic/utils"
 import { getVaultList } from "@logic/vault"
 import { getSetting } from "@logic/settings"
+import { showAlert } from "@logic/alert"
 
 import Select from "@component/ui/form/select"
 import Input from "@component/ui/form/input"
+import IconSelector from "@component/ui/form/icon"
 import Dialog from "@component/ui/dialog/dialog"
 import DialogOption from "@component/ui/dialog/option"
 import DialogFooter from "@component/ui/dialog/footer"
@@ -107,7 +109,7 @@ const CreateModal = (props: CreateModalProps) => {
 
         if (mode === "service") {
 
-            if (!serviceForm.identifier) return
+            if (!serviceForm.name || !serviceForm.identifier) return showAlert("Please fill in the required fields: Name and Identifier.", "error", "alert-circle", 3000)
 
             createService({
                 accountId,
@@ -125,7 +127,7 @@ const CreateModal = (props: CreateModalProps) => {
 
         if (mode === "secret") {
 
-            if (!secretForm.name) return
+            if (!secretForm.name || !secretForm.content) return showAlert("Please fill in the required fields: Name and Content.", "error", "alert-circle", 3000)
 
             await createSecret({
                 accountId,
@@ -201,7 +203,7 @@ const CreateModal = (props: CreateModalProps) => {
                 />
             }
         >
-            <div className="sticky top-16.25 md:top-17.25 z-20 border-b border-white/10 bg-white/5 px-2 py-2 backdrop-blur-xl">
+            <div className="sticky h-13 md:h-17 top-16.25 overflow-hidden md:top-17.25 z-20 border-b border-white/10 bg-white/2 px-2 pt-2 backdrop-blur-xl inset-shadow-bottom">
                 <div className="flex gap-2 w-full">
                     {([
                         { id: "service", label: "Service", icon: "ti ti-password-user" },
@@ -211,9 +213,9 @@ const CreateModal = (props: CreateModalProps) => {
                             key={tab.id}
                             type="button"
                             onClick={() => setMode(tab.id)}
-                            className={ `flex-1 text-lg font-inter-bold cursor-pointer border squircle squircle-md px-3 py-3 duration-300 text-white/50 ${mode === tab.id ? "text-white! bg-primary/20 border-primary" : "bg-white/2 border-white/5"}` }
+                            className={ `flex-1 text-sm md:text-lg font-inter-bold cursor-pointer border squircle-md px-3 pt-3.5 md:pt-5 pb-10 duration-300 text-white/50 ${mode === tab.id ? "text-white! bg-primary/20 border-primary" : "bg-white/2 border-white/5 hover:bg-white/10 hover:border-white/20"}` }
                         >
-                            <i className={ `${tab.icon} text-[20px] align-middle inline-block -mt-0.75 mr-2` } />
+                            <i className={ `${tab.icon} text-sm md:text-[20px] align-middle inline-block -mt-1.25 md:-mt-0.75 mr-2` } />
                             {tab.label}
                         </button>
                     ))}
@@ -236,12 +238,12 @@ const CreateModal = (props: CreateModalProps) => {
                             onChange={ (event: any) => {
                                 setServiceForm({ ...serviceForm, name: event.target.value });
                             }}
-                            className="font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle squircle-md"
+                            className="font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle-md"
                         />
                     </DialogOption>
                     <DialogOption
-                        title="Description"
-                        description="Additional details about this service. Account, Email..."
+                        title="Details"
+                        description="Additional details about this service. E.g. username, email..."
                         layout="col"
                     >
                         <textarea
@@ -254,17 +256,27 @@ const CreateModal = (props: CreateModalProps) => {
                             className="font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle squircle-sm"
                         />
                     </DialogOption>
-                    <DialogOption title="URL" description="The URL of the service. Used to open the service in a new tab." layout="row" className="md:min-w-70">
+                    <DialogOption
+                        title="URL"
+                        description="The URL of the service. Used to open the service in a new tab"
+                        layout="row"
+                        className="md:min-w-70"
+                    >
                         <Input
                             id="url"
                             type="url"
                             value={ serviceForm.url }
                             placeholder="e.g. https://example.com"
                             onChange={ (event: any) => setServiceForm({ ...serviceForm, url: event.target.value }) }
-                            className="font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle squircle-md"
+                            className="font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle-md"
                         />
                     </DialogOption>
-                    <DialogOption title="Identifier" description="Unique identifier used to generate the password" layout="row" className="md:min-w-70">
+                    <DialogOption
+                        title="Identifier"
+                        description="Unique identifier used to generate the password"
+                        layout="row"
+                        className="md:min-w-70"
+                    >
                         <Input
                             name="identifier"
                             id="identifier"
@@ -277,12 +289,12 @@ const CreateModal = (props: CreateModalProps) => {
                                 setServiceForm(newForm);
                                 generatePassword(newForm.alphabet, newForm.length, newIdentifier, newForm.version);
                             }}
-                            className="font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle squircle-md"
+                            className="font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle-md"
                         />
                     </DialogOption>
                     <DialogOption
                         title="Vault"
-                        description="Move this service to another vault"
+                        description="Vault where this service will be stored"
                         layout="row"
                         className="md:min-w-70 md:w-fit"
                     >
@@ -297,6 +309,20 @@ const CreateModal = (props: CreateModalProps) => {
                         />
                     </DialogOption>
                     <DialogOption
+                        title="Icon"
+                        description="Icon for the service."
+                        layout="row"
+                        className="w-full md:min-w-70"
+                    >
+                        <IconSelector
+                            value={ serviceForm.icon }
+                            onChange={ (newIcon: string) => {
+                                const newForm = { ...serviceForm, icon: newIcon }
+                                setServiceForm(newForm)
+                            }}
+                        />
+                    </DialogOption>
+                    <DialogOption
                         title="Alphabet"
                         description="Character set used to generate the password"
                         layout="row"
@@ -306,6 +332,7 @@ const CreateModal = (props: CreateModalProps) => {
                             id="alphabet"
                             options={ getAlphabetList(accountId) }
                             selected={ serviceForm.alphabet }
+                            descriptions={ true }
                             onSelect={(event: any) => {
                                 const newAlphabet = event?.value ?? serviceForm.alphabet;
                                 const newForm = { ...serviceForm, alphabet: newAlphabet };
@@ -330,12 +357,12 @@ const CreateModal = (props: CreateModalProps) => {
                                 setServiceForm(newForm);
                                 generatePassword(newForm.alphabet, newLength, newForm.identifier, newForm.version);
                             }}
-                            className="max-w-25 font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle squircle-md"
+                            className="max-w-25 font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle-md"
                         />
                     </DialogOption>
                     <DialogOption
                         title="Password Version"
-                        description="Increment this to generate a new password for the same service."
+                        description="Increment this to generate a new password for the same service"
                         layout="row"
                     >
                         <Input
@@ -351,7 +378,7 @@ const CreateModal = (props: CreateModalProps) => {
                                 setServiceForm(newForm);
                                 generatePassword(newForm.alphabet, newForm.length, newForm.identifier, newVersion);
                             }}
-                            className="max-w-25 font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle squircle-md"
+                            className="max-w-25 font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle-md"
                         />
                     </DialogOption>
                     <DialogOption
@@ -364,7 +391,7 @@ const CreateModal = (props: CreateModalProps) => {
                             <div className="relative flex items-center gap-3">
                                 <div
                                     onClick={ copyServicePassword }
-                                    className={ `relative z-10 min-w-25 block font-inter-medium max-h-13 overflow-hidden w-full px-4 py-3 pr-15 border duration-300 bg-white/5 border-white/20 cursor-pointer focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle squircle-md text-xl ${passwordCopied ? 'hover:text-emerald-500! text-emerald-500 border-emerald-500! bg-emerald-500/10!' : ''}` }
+                                    className={ `relative z-10 min-w-25 block font-inter-medium max-h-13 overflow-hidden w-full px-4 py-3 pr-15 border duration-300 bg-white/5 border-white/20 cursor-pointer focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle-md text-xl ${passwordCopied ? 'hover:text-emerald-500! text-emerald-500 border-emerald-500! bg-emerald-500/10!' : ''}` }
                                     aria-label="Copy Password"
                                 >
                                     { shouldDisplayPassword ? password : maskedPassword }
@@ -372,7 +399,7 @@ const CreateModal = (props: CreateModalProps) => {
                                 <button
                                     type="button"
                                     onClick={ () => setShowServicePassword((currentValue) => !currentValue) }
-                                    className="absolute right-3 z-20 cursor-pointer h-fit px-2 pt-1.5 pb-0.5 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white text-white/50 squircle squircle-md font-inter-medium text-sm backdrop-blur-xl"
+                                    className="absolute right-3 z-20 cursor-pointer h-fit px-2 pt-1.5 pb-0.5 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white text-white/50 squircle-md font-inter-medium text-sm backdrop-blur-xl"
                                     aria-label={ shouldDisplayPassword ? "Hide password" : "Show password" }
                                 >
                                     <i className={ `ti ${shouldDisplayPassword ? "ti-eye-off" : "ti-eye"} text-2xl` } />
@@ -398,7 +425,7 @@ const CreateModal = (props: CreateModalProps) => {
                             value={ secretForm.name }
                             placeholder="e.g. API key"
                             onChange={ (event: any) => setSecretForm({ ...secretForm, name: event.target.value }) }
-                            className="font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle squircle-md"
+                            className="font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle-md"
                         />
                     </DialogOption>
                     <DialogOption
@@ -418,7 +445,7 @@ const CreateModal = (props: CreateModalProps) => {
                     </DialogOption>
                     <DialogOption
                         title="Vault"
-                        description="Choose the vault for this secret"
+                        description="Vault where this secret will be stored"
                         layout="row"
                         className="md:min-w-70 md:w-fit"
                     >
@@ -429,6 +456,20 @@ const CreateModal = (props: CreateModalProps) => {
                             onSelect={(event: any) => {
                                 const newVault = event?.value ?? secretForm.vault ?? vaultId;
                                 setSecretForm({ ...secretForm, vault: newVault });
+                            }}
+                        />
+                    </DialogOption>
+                    <DialogOption
+                        title="Icon"
+                        description="Icon for the secret"
+                        layout="row"
+                        className="w-full md:min-w-70"
+                    >
+                        <IconSelector
+                            value={ secretForm.icon }
+                            onChange={ (newIcon: string) => {
+                                const newForm = { ...secretForm, icon: newIcon }
+                                setSecretForm(newForm)
                             }}
                         />
                     </DialogOption>

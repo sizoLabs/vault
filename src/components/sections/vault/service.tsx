@@ -333,6 +333,7 @@ const ServiceModal = (props: ServiceModalProps) => {
                     id="alphabet"
                     options={ getAlphabetList(accountId) }
                     selected={ form.alphabet }
+                    descriptions={ true }
                     onSelect={(event: any) => {
                         const newAlphabet = event?.value ?? form.alphabet;
                         const newForm = { ...form, alphabet: newAlphabet };

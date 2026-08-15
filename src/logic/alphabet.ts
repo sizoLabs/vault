@@ -27,49 +27,56 @@ export const createDefaultAlphabet = (accountId: string) => {
             name: "Default",
             identifier: "default",
             characters: `ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!@#$%*()_+=-?[]{}",./<>|`,
-            description: "Characters, digits and special characters"
+            description: "Characters, digits and special characters",
+            icon: "abc"
         },
         {
             id: generateId(),
             name: "Spanish",
             identifier: "spanish",
             characters: `ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz1234567890¡!ç@#€$%*()_+=-¿?[]{}",./<>|`,
-            description: "Same as default plus ñÑ€¡¿ç"
+            description: "Same as default plus ñÑ€¡¿ç",
+            icon: "text-regex-plus"
         },
         {
             id: generateId(),
             name: "Characters and digits",
             identifier: "chars-digits",
             characters: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890",
-            description: "Characters and digits"
+            description: "Characters and digits",
+            icon: "sort-a-z"
         },
         {
             id: generateId(),
             name: "Legacy v2",
             identifier: "legacy-v2",
             characters: `ABCDEFGHIJKLMNÃ‘OPQRSTUVWXYZabcdefghijklmnÃ±opqrstuvwxyz1234567890!@#$%*()_+=-â‚¬Â¡?Â¿[]{}",./Ã§<>| `,
-            description: "Default plus ñÑ€¡¿ç and broken utf-8 to windows-1252 conversion"
+            description: "Default plus ñÑ€¡¿ç and broken utf-8 to windows-1252 conversion",
+            icon: "abc"
         },
         {
             id: generateId(),
             name: "Legacy v1",
             identifier: "legacy-v1",
             characters: "ABCDFGHIJKLMNOPQRSTUVWXYZabdfghijklmnopqrstuvwxyz1234567890",
-            description: "A-Z a-z 0-9 without Ee"
+            description: "A-Z a-z 0-9 without Ee",
+            icon: "abc"
         },
         {
             id: generateId(),
             name: "Unicode madness",
             identifier: "crazy",
             characters: "ꓯꓭꓛꓷꓱꓞꓨꓩꓘꓶꟽИꟼꓤƧꓕꓵꓥ༽᚛᚜‹›⁅⁆⁽⁾₍₎⅀∁∂∃∄∈∉∊∋∌∍∑∕∖√∛∜∝∟∠∡∢∤∦∫∬∭∮∯∰∱∲∳∹∻∼∽∾∿≀≁≂≃≄≅≆≇≈≉≊≋≌≒≓≔≕≟≠≢≤≥≦≧≨≩≪≫≮≯≰≱≲≳≴≵≶≷≸≹≺≻≼≽≾≿⊀⊁⊂⊃",
-            description: "Uncommon unicode characters"
+            description: "Uncommon unicode characters",
+            icon: "tallymark-4"
         },
         {
             id: generateId(),
             name: "Only digits",
             identifier: "digits",
             characters: "1234567890",
-            description: "Only digits (0-9)"
+            description: "Only digits (0-9)",
+            icon: "sort-0-9"
         }
     ]
 
@@ -102,7 +109,7 @@ export const getAlphabet = ({ accountId, alphabetId }: { accountId: string, alph
     }
 }
 
-export const createAlphabet = ({ accountId, name, identifier, characters, description }: { accountId: string, name: string, identifier: string, characters: string, description: string }) => {
+export const createAlphabet = ({ accountId, name, identifier, characters, description, icon }: { accountId: string, name: string, identifier: string, characters: string, description: string, icon: string }) => {
 
     let account = getStorage(accountId)
     const alphabets = getAlphabetList(accountId)
@@ -112,7 +119,8 @@ export const createAlphabet = ({ accountId, name, identifier, characters, descri
         name: name,
         identifier: identifier,
         characters: characters,
-        description: description
+        description: description,
+        icon: icon
     }
 
     alphabets.push(newAlphabet)
@@ -141,7 +149,7 @@ export const createAlphabet = ({ accountId, name, identifier, characters, descri
     
 }
 
-export const updateAlphabet = ({ accountId, alphabetId, name, identifier, characters, description }: { accountId: string, alphabetId: string, name: string, identifier: string, characters: string, description: string }) => {
+export const updateAlphabet = ({ accountId, alphabetId, name, identifier, characters, description, icon }: { accountId: string, alphabetId: string, name: string, identifier: string, characters: string, description: string, icon: string }) => {
 
     let account = getStorage(accountId)
     let alphabets = getAlphabetList(accountId)
@@ -152,6 +160,7 @@ export const updateAlphabet = ({ accountId, alphabetId, name, identifier, charac
             alphabets[index].identifier = identifier
             alphabets[index].characters = characters
             alphabets[index].description = description
+            alphabets[index].icon = icon
             break
         }
     }

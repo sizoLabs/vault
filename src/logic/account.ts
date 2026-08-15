@@ -150,6 +150,11 @@ export const importAccountData = ({
             if(fileFormat === "ovni") {
 
                 const normalData = normalizeFields(parsedData)
+                const importedAlphabets = Array.isArray(normalData.alphabets)
+                    ? normalData.alphabets
+                    : Array.isArray(normalData.alphabet)
+                        ? normalData.alphabet
+                        : []
 
                 const defaultSettings = [
                     {
@@ -162,7 +167,7 @@ export const importAccountData = ({
                     },
                     {
                         id: "default-alphabet",
-                        value: normalData.alphabet[0].id
+                        value: importedAlphabets[0]?.id ?? ""
                     },
                     {
                         id: "show-passwords",
@@ -188,7 +193,7 @@ export const importAccountData = ({
 
                 account = {
                     settings: defaultSettings,
-                    alphabets: normalData.alphabet,
+                    alphabets: importedAlphabets,
                     vaults: normalData.vaults,
                     services: normalData.services
                 }
@@ -299,6 +304,8 @@ const normalizeFields = (data: any): any => {
                     newKey = "vault"
                 } else if (key === "passwords") {
                     newKey = "services"
+                } else if (key === "alphabet") {
+                    newKey = "alphabets"
                 } else if (key === "folders") {
                     newKey = "vaults"
                 } else if (key.endsWith("id") && key !== "id") {
@@ -315,6 +322,13 @@ const normalizeFields = (data: any): any => {
                 icon: "password-user",
                 description: "",
                 url: ""
+            }))
+        }
+
+        if (Array.isArray(normalized.alphabets)) {
+            normalized.alphabets = normalized.alphabets.map((alphabet: any) => ({
+                ...alphabet,
+                icon: "abc"
             }))
         }
 

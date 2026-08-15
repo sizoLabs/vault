@@ -114,16 +114,16 @@ const CreateModal = (props: CreateModalProps) => {
 
         if (mode === "service") {
 
-            if (!serviceForm.identifier) return showAlert("Please fill in the required fields: Name and Identifier.", "error", "alert-circle", 3000)
+            if (!serviceForm.identifier.trim()) return showAlert("Please fill in the required fields: Name and Identifier.", "error", "alert-circle", 3000)
 
             await createService({
                 accountId,
                 vaultId: serviceForm.vault || vaultId,
-                name: serviceForm.name,
-                description: serviceForm.description,
-                url: serviceForm.url,
+                name: serviceForm.name.trim(),
+                description: serviceForm.description.trim(),
+                url: serviceForm.url.trim(),
                 icon: serviceForm.icon,
-                identifier: serviceForm.identifier,
+                identifier: serviceForm.identifier.trim(),
                 alphabet: serviceForm.alphabet,
                 length: serviceForm.length,
                 masterPassword: masterPassword
@@ -135,14 +135,14 @@ const CreateModal = (props: CreateModalProps) => {
 
         if (mode === "secret") {
 
-            if (!secretForm.content) return showAlert("Please fill in the required fields: Name and Content.", "error", "alert-circle", 3000)
+            if (!secretForm.content.trim()) return showAlert("Please fill in the required fields: Name and Content.", "error", "alert-circle", 3000)
 
             await createSecret({
                 accountId,
-                name: secretForm.name,
-                description: secretForm.description,
+                name: secretForm.name.trim(),
+                description: secretForm.description.trim(),
                 icon: secretForm.icon,
-                content: secretForm.content,
+                content: secretForm.content.trim(),
                 vault: secretForm.vault || vaultId,
                 masterPassword: masterPassword
             })
@@ -161,6 +161,7 @@ const CreateModal = (props: CreateModalProps) => {
     }
 
     const generatePassword = async (alphabetId: string, length: number, identifier: string, version?: number) => {
+        
         if (!alphabetId || !identifier) {
             setPassword('')
             return
@@ -177,7 +178,9 @@ const CreateModal = (props: CreateModalProps) => {
             identifier: alphabet.identifier,
             characters: alphabet.characters
         }, version)
+
         setPassword(password)
+
     }
 
     const copyServicePassword = async () => {

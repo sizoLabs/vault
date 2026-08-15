@@ -57,7 +57,7 @@
 }
 
 .alert-close i {
-    @apply text-[16px] -mt-0
+    @apply text-[16px] mt-0
 }
 
 .alert.success {

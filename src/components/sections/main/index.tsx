@@ -11,12 +11,22 @@ const PANEL_WIDTH_STORAGE_KEY = "panel-width"
 const MIN_PANEL_WIDTH = 250
 const MAX_PANEL_WIDTH = 420
 
+const getStoredPanelWidth = () => {
+    if (typeof window === "undefined") return MIN_PANEL_WIDTH
+    const storedWidth = getStorage(PANEL_WIDTH_STORAGE_KEY)
+    if (storedWidth === null || storedWidth === undefined || storedWidth === "") return MIN_PANEL_WIDTH
+    const width = Number(storedWidth)
+    if (Number.isNaN(width)) return MIN_PANEL_WIDTH
+    return Math.min(MAX_PANEL_WIDTH, Math.max(MIN_PANEL_WIDTH, width))
+}
+
 export default function Home() {
 
     const [ activePanel, setActivePanel ] = useState("main-vault")
     const [ activeVaultId, setActiveVaultId ] = useState<string | null>(null)
-    const [ panelWidth, setPanelWidth ] = useState(MIN_PANEL_WIDTH)
+    const [ panelWidth, setPanelWidth ] = useState<number>(MIN_PANEL_WIDTH)
     const [ isResizing, setIsResizing ] = useState(false)
+    const [ hasLoadedStoredPanelWidth, setHasLoadedStoredPanelWidth ] = useState(false)
 
     const [ account, setAccount ] = useState<any>()
     const [ accountId, setAccountId ] = useState("")
@@ -69,19 +79,16 @@ export default function Home() {
         }
     }, [account, activePanel, activeVaultId, vaultId])
 
-    useEffect(() => { setStorage(PANEL_WIDTH_STORAGE_KEY, String(panelWidth)) }, [panelWidth])
+    useEffect(() => {
+        const storedPanelWidth = getStoredPanelWidth()
+        setPanelWidth(storedPanelWidth)
+        setHasLoadedStoredPanelWidth(true)
+    }, [])
 
     useEffect(() => {
-        const storedWidth = getStorage(PANEL_WIDTH_STORAGE_KEY)
-
-        if (storedWidth) {
-            const width = Number(storedWidth)
-            if (!Number.isNaN(width)) {
-                setPanelWidth(Math.min(MAX_PANEL_WIDTH, Math.max(MIN_PANEL_WIDTH, width)))
-            }
-        }
-
-    }, [])
+        if (!hasLoadedStoredPanelWidth) return
+        setStorage(PANEL_WIDTH_STORAGE_KEY, String(panelWidth))
+    }, [hasLoadedStoredPanelWidth, panelWidth])
 
     useEffect(() => {
         if (accountId) {

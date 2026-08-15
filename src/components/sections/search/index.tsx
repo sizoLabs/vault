@@ -118,7 +118,7 @@ export default function Search({ account, accountId, masterPassword, isOpen, onO
                             onClick={(event) => event.stopPropagation()}
                         >
                             <div className="mb-4 flex items-center justify-between gap-3 px-5 pt-5 border-b border-white/10 pb-4">
-                                <div className="flex items-center gap-2 text-lg font-inter-black">
+                                <div className="flex items-center gap-2 text-lg md:text-2xl font-inter-black">
                                     <i className="ti ti-search" />
                                     <span>Search</span>
                                 </div>

@@ -4,4 +4,5 @@ export interface IAlphabet {
     description: string
     identifier: string
     characters: string
+    icon: string
 }

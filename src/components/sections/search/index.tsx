@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 
 import { copySecretToClipboard } from "@logic/secret"
 import { copyServicePasswordToClipboard } from "@logic/service"
@@ -68,6 +68,23 @@ export default function Search({ account, accountId, masterPassword, isOpen, onO
         setSearchQuery("")
     }
 
+    useEffect(() => {
+        if (!isOpen) return
+
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "Escape") {
+                event.preventDefault()
+                closeSearch()
+            }
+        }
+
+        window.addEventListener("keydown", handleKeyDown)
+
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown)
+        }
+    }, [isOpen])
+
     const handleSelect = (result: SearchResult) => {
         if (!result.vaultId) return
         closeSearch()
@@ -104,6 +121,11 @@ export default function Search({ account, accountId, masterPassword, isOpen, onO
         <>
             {isOpen && (
                 <div className="z-60 fixed inset-0 bg-white/2 backdrop-blur-[80px]">
+
+                    <div className="absolute -top-60 -left-35 opacity-5 -z-1 mask-to-bottom">
+                        <i className="ti ti-search text-[900px]" />
+                    </div>
+                    
                     <div
                         className="flex min-h-screen items-center justify-center p-4"
                         onMouseDown={(event) => {

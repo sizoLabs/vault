@@ -31,12 +31,12 @@ const AccountCard = ({
     return (
         <div
             onClick={isSelectable ? onClick : undefined}
-            className={`z-40 relative group bg-white/2 px-5 py-5 squircle-md border w-full duration-300 min-w-40 sm:max-w-50 flex flex-col justify-center items-center backdrop-blur-2xl ${cardClassName}`}
+            className={`z-40 relative group bg-white/2 px-5 py-5 pb-7 squircle-md border w-full duration-300 min-w-40 sm:max-w-50 flex flex-col justify-center items-center backdrop-blur-2xl cursor-pointer ${cardClassName}`}
         >
-            <div className="font-inter-bold text-center mb-3 truncate w-full">
+            <div className="font-inter-bold text-center mb-1 truncate w-full">
                 {accountName}
             </div>
-            <div className="text-center text-white/60 text-xs mb-3 truncate w-full">
+            <div className="text-center text-white/30 text-[10px] mb-3 truncate w-full">
                 {accountId.slice(0, 12)}{accountId.length > 12 ? "..." : ""}
             </div>
             <div className="text-center">

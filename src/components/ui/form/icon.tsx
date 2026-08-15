@@ -168,6 +168,25 @@ const IconSelector = ({ id, value, onChange, className = "" }: IconSelectorProps
     }
 
     useEffect(() => {
+        if (!open) return
+
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "Escape") {
+                event.preventDefault()
+                setSearch("")
+                setShowAllIcons(false)
+                setOpen(false)
+            }
+        }
+
+        window.addEventListener("keydown", handleKeyDown)
+
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown)
+        }
+    }, [open])
+
+    useEffect(() => {
         if (!open || !sentinelRef.current) return
 
         const scrollContainer = sentinelRef.current.parentElement

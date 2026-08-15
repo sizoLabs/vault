@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 
 import SidebarLogo from "@component/ui/sidebar/logo"
+import SidebarUfo from "@component/ui/sidebar/ufo"
 import SidebarButton from "@component/ui/sidebar/button"
 import Search from "@component/sections/search"
 
@@ -141,7 +142,7 @@ export default function MainSidebar({
                                 onClick={() => onPanelChange("main-vault")}
                             />
 
-                            {account && account.vaults && account.vaults.map((vault: any, index: number) => (
+                            {account && account.vaults && account.vaults.length > 0 && account.vaults.map((vault: any, index: number) => (
                                 <SidebarButton
                                     key={index}
                                     icon={"ti-" + (vault.icon ? vault.icon : "vault")}
@@ -151,6 +152,12 @@ export default function MainSidebar({
                                     onClick={() => onPanelChange("vault", vault.id)}
                                 />
                             ))}
+
+                            {account && account.vaults.length === 0 && (
+                                <div className="mt-35 px-10 opacity-8 scale-200 mx-auto max-w-75">
+                                    <SidebarUfo />
+                                </div>
+                            )}
 
                         </div>
                     </div>

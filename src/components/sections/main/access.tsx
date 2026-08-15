@@ -8,6 +8,7 @@ import { getSetting } from "@logic/settings"
 import { applyThemeColor } from "@logic/settings"
 import {
     createAccount,
+    getAccountIcon,
     getAccountName,
     setAccountMasterPassword,
     checkAccountMasterPassword
@@ -77,7 +78,7 @@ const VaultAccess = (props: VaultAccessProps) => {
                 setShowAnimations(showAnimations)
 
                 if (showAnimations) {
-                    
+
                     setIsOpeningVault(true)
 
                     return setTimeout(() => {
@@ -177,6 +178,10 @@ const VaultAccess = (props: VaultAccessProps) => {
         }
     }, [selectedAccount])
 
+    const selectedAccountIcon = selectedAccount === 'new'
+        ? 'plus'
+        : getAccountIcon(selectedAccount)
+
     return (
         <div className="relative bg-white/2 border-white/10 w-full h-full squircle-md border overflow-hidden">
 
@@ -210,8 +215,11 @@ const VaultAccess = (props: VaultAccessProps) => {
                                         onClick={() => setDropdownOpen(!dropdownOpen)}
                                         className="text-md md:text-xl font-inter-medium h-fit w-full squircle-md px-5 py-3 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white flex items-center justify-center text-center cursor-pointer"
                                     >
-                                        <span className="truncate">
-                                            { selectedAccount === 'new' ? 'Create new account' : getAccountName(selectedAccount) }
+                                        <span className="flex min-w-0 items-center gap-2 text-left">
+                                            <i className={`ti ti-${selectedAccountIcon} text-xl`} />
+                                            <span className="truncate">
+                                                { selectedAccount === 'new' ? 'Create new account' : getAccountName(selectedAccount) }
+                                            </span>
                                         </span>
                                         <i className={`ti ${dropdownOpen ? 'ti-chevron-up' : 'ti-chevron-down'} ml-2`} />
                                     </button>
@@ -225,9 +233,12 @@ const VaultAccess = (props: VaultAccessProps) => {
                                                     setAccountName('Personal Account')
                                                     setDropdownOpen(false)
                                                 }}
-                                                className="px-5 py-3 cursor-pointer hover:bg-white/10 border-b border-white/10 last:border-transparent text-center"
+                                                className="px-5 py-3 cursor-pointer hover:bg-white/10 border-b border-white/10 last:border-transparent"
                                             >
-                                                Create New Account
+                                                <div className="flex items-center justify-center gap-2">
+                                                    <i className="ti ti-plus text-lg" />
+                                                    <span>Create New Account</span>
+                                                </div>
                                             </li>
 
                                             { accounts.map((accountId) => {
@@ -235,13 +246,16 @@ const VaultAccess = (props: VaultAccessProps) => {
                                                 const account = getStorage(accountId) || {}
 
                                                 let label = accountId
+                                                let icon = 'user'
 
                                                 if (account.settings) {
 
                                                     const nameSetting = account.settings.find((setting: any) => setting.id === 'account-name')
-                                                    
+                                                    const iconSetting = account.settings.find((setting: any) => setting.id === 'account-icon')
+
                                                     if (nameSetting) label = nameSetting.value
-                                                    
+                                                    if (iconSetting) icon = iconSetting.value
+
                                                 }
 
                                                 return (
@@ -254,7 +268,10 @@ const VaultAccess = (props: VaultAccessProps) => {
                                                         }}
                                                         className="px-5 py-3 cursor-pointer hover:bg-white/10 text-center border-b border-white/10 last:border-transparent"
                                                     >
-                                                        {label}
+                                                        <div className="flex items-center justify-center gap-2">
+                                                            <i className={`ti ti-${icon} text-lg`} />
+                                                            <span>{label}</span>
+                                                        </div>
                                                     </li>
                                                 )
 

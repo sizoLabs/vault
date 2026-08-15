@@ -113,6 +113,10 @@ const Settings = (props: SettingsProps) => {
 
             <div className="absolute inset-0 overflow-y-scroll no-scrollbar-but-scroll min-h-full">
 
+                <div className="absolute -top-90 -left-85 opacity-3 -z-1 mask-to-bottom">
+                    <i className="ti ti-settings text-[900px]" />
+                </div>
+
                 <div className="relative mx-auto flex max-w-200 flex-col px-5 py-5 md:p-10 pb-0 md:pb-0">
 
                     <h2 className="text-xl md:text-3xl font-inter-black mb-5">

@@ -49,6 +49,23 @@ const Dialog = (props: DialogProps) => {
         setDialogOpen(false)
     }
 
+    useEffect(() => {
+        if (!isOpen) return
+
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "Escape") {
+                event.preventDefault()
+                handleClose()
+            }
+        }
+
+        window.addEventListener("keydown", handleKeyDown)
+
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown)
+        }
+    }, [isOpen])
+
     if (!isOpen) return null
 
     return (

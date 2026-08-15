@@ -225,7 +225,7 @@ export const copyServicePasswordToClipboard = async ({
 }) => {
 
     try {
-
+        
         const service = getService({ accountId, serviceId })
         const alphabets = getAlphabetList(accountId)
         const alphabetData = alphabets.find((a: any) => a.id === service.alphabet)
@@ -242,6 +242,7 @@ export const copyServicePasswordToClipboard = async ({
 
     } catch (error) {
         showAlert('Error copying password', 'error', 'alert-circle', 3000)
+        
     }
 
 }

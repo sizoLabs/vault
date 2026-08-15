@@ -1,8 +1,17 @@
 import { getStorage, setStorage } from "@logic/storage"
-import { generateId, genServicePassword, copyToClipboard } from "@logic/utils"
+import { generateId, genServicePassword, copyToClipboard, encodeData, decodeData } from "@logic/utils"
 import { showAlert } from "@logic/alert"
 import { type IService } from "@interface/index"
 import { getAlphabetList } from "@logic/alphabet"
+
+export const getServiceDescription = async (data: string, masterPassword: string) => {
+    if (!data) return ""
+    try {
+        return await decodeData(masterPassword, data)
+    } catch {
+        return data
+    }
+}
 
 export const importServices = ({ accountId, services }: { accountId: string, services: IService[] }) => {
 
@@ -70,7 +79,7 @@ export const getService = ({ accountId, serviceId }: { accountId: string, servic
 
 }
 
-export const createService = ({
+export const createService = async ({
     accountId,
     name,
     vaultId,
@@ -79,7 +88,8 @@ export const createService = ({
     icon,
     identifier,
     alphabet,
-    length
+    length,
+    masterPassword
 }: {
     accountId: string,
     vaultId: string,
@@ -89,7 +99,8 @@ export const createService = ({
     icon: string,
     identifier: string,
     alphabet: string,
-    length: number
+    length: number,
+    masterPassword: string
 }) => {
 
     let account = getStorage(accountId)
@@ -97,11 +108,13 @@ export const createService = ({
 
     if(!services) services = [] as IService[]
 
+    const encryptedDescription = await encodeData(masterPassword, description)
+
     const newService: IService = {
         id: generateId(),
         name: name,
         icon: icon,
-        description: description,
+        description: encryptedDescription,
         url: url,
         identifier: identifier,
         alphabet: alphabet,
@@ -121,7 +134,7 @@ export const createService = ({
     
 }
 
-export const updateService = ({
+export const updateService = async ({
     accountId,
     serviceId,
     vaultId,
@@ -132,7 +145,8 @@ export const updateService = ({
     identifier,
     alphabet,
     length,
-    version
+    version,
+    masterPassword
 }: {
     accountId: string,
     serviceId: string,
@@ -144,16 +158,19 @@ export const updateService = ({
     identifier: string,
     alphabet: string,
     length: number,
-    version: number
+    version: number,
+    masterPassword: string
 }) => {
 
     let account = getStorage(accountId)
     let services = account.services
 
+    const encryptedDescription = await encodeData(masterPassword, description)
+
     for (let index = 0; index < services.length; index++) {
         if(services[index].id === serviceId) {
             services[index].name = name
-            services[index].description = description
+            services[index].description = encryptedDescription
             services[index].icon = icon
             services[index].url = url
             services[index].identifier = identifier

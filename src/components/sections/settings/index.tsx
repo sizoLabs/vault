@@ -5,11 +5,12 @@ import FileInput from "@component/ui/form/file"
 import Setting from "@component/sections/settings/setting"
 import Input from "@component/ui/form/input"
 
-import { importAccountData, exportAccountData } from "@logic/account"
+import { importAccountData, exportAccountData, changeMasterPassword, checkAccountMasterPassword } from "@logic/account"
 import { getSettings, getAccountSettings, updateSettings, applyThemeColor } from "@logic/settings"
 import { applyGradientBackgroundSetting, applyColoredBackgroundSetting } from "@logic/background"
 import { getStorage } from "@logic/storage"
 import { resetAllData } from "@logic/data"
+import { showAlert } from "@logic/alert"
 
 import { type ISettings, type IAccountSettings } from "@interface/index"
 
@@ -26,6 +27,9 @@ const Settings = (props: SettingsProps) => {
     const [ accountId, setAccountId ] = useState<string>("")
     const [ settings, setSettings ] = useState<ISettings[]>([])
     const [ accountSettings, setAccountSettings ] = useState<IAccountSettings[]>([])
+    const [ currentMasterPassword, setCurrentMasterPassword ] = useState<string>("")
+    const [ newMasterPassword, setNewMasterPassword ] = useState<string>("")
+    const [ resetMasterPassword, setResetMasterPassword ] = useState<string>("")
 
     const onSettingChange = ({ settingId, value }: { settingId: string, value: string | number | boolean }) => {
 
@@ -52,11 +56,27 @@ const Settings = (props: SettingsProps) => {
 
     }
 
-    const handleResetSubmit = () => {
+    const handleResetSubmit = async () => {
+
+        if (!resetMasterPassword) {
+            return showAlert("Please enter your Master Password to reset all data", 'error', 'exclamation-circle', 5000)
+        }
+
+        const isValidPassword = await checkAccountMasterPassword({
+            accountId,
+            masterPassword: resetMasterPassword
+        })
+
+        if (!isValidPassword) {
+            return showAlert("Master Password is incorrect", 'error', 'exclamation-circle', 5000)
+        }
+
         const confirmation = confirm("Are you sure you want to reset all data for this account? This action cannot be undone.")
-        if(confirmation) {
+        if (confirmation) {
             resetAllData(accountId)
+            setResetMasterPassword("")
             onAccountUpdated()
+            showAlert("All data has been reset successfully", 'success', 'check', 5000)
         }
     }
 
@@ -74,6 +94,47 @@ const Settings = (props: SettingsProps) => {
             event,
             onImportComplete: onAccountUpdated
         })
+    }
+
+    const handleChangeMasterPasswordSubmit = async () => {
+
+        if (!currentMasterPassword) {
+            return showAlert("Please enter your current Master Password", 'error', 'exclamation-circle', 5000)
+        }
+
+        const isValidPassword = await checkAccountMasterPassword({
+            accountId,
+            masterPassword: currentMasterPassword
+        })
+
+        if (!isValidPassword) {
+            return showAlert("Current Master Password is incorrect", 'error', 'exclamation-circle', 5000)
+        }
+
+        if(!newMasterPassword) {
+            return showAlert("Please enter a new Master Password", 'error', 'exclamation-circle', 5000)
+        }
+
+        if(newMasterPassword === currentMasterPassword) {
+            return showAlert("New Master Password cannot be the same as the current", 'error', 'exclamation-circle', 5000)
+        }
+
+        const confirmation = confirm("Are you sure you want to change the master password? All your passwords will be re-encrypted with the new master password. This action cannot be undone.")
+        if (!confirmation) return
+        
+        const success = await changeMasterPassword({
+            accountId,
+            newMasterPassword
+        })
+        
+        if (success) {
+            setCurrentMasterPassword("")
+            setNewMasterPassword("")
+            setTimeout(() => {
+                window.location.reload()
+            }, 2000)
+        }
+
     }
 
     useEffect(() => {
@@ -185,13 +246,23 @@ const Settings = (props: SettingsProps) => {
                             </div>
                             <div className="w-full md:max-w-70">
                                 <Input
+                                    id="current-master-password"
+                                    type="password"
+                                    placeholder="Current Master Password"
+                                    value={ currentMasterPassword }
+                                    onChange={ (event: React.ChangeEvent<HTMLInputElement>) => setCurrentMasterPassword(event.target.value) }
+                                    className="font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle-md mb-3"
+                                />
+                                <Input
                                     id="change-master-password"
                                     type="password"
                                     placeholder="New Master Password"
-                                    onChange={() => {}}
+                                    value={ newMasterPassword }
+                                    onChange={ (event: React.ChangeEvent<HTMLInputElement>) => setNewMasterPassword(event.target.value) }
                                     className="font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle-md mb-3"
                                 />
                                 <button
+                                    onClick={ handleChangeMasterPasswordSubmit }
                                     className="font-inter-bold h-fit w-full px-3 py-3 border duration-300 bg-rose-500/10 border-rose-500/50 hover:bg-rose-500/20 hover:border-rose-500 hover:text-white focus:bg-rose-500/20 focus:border-rose-500 squircle-md cursor-pointer"
                                 >
                                     Change Master Password
@@ -210,19 +281,27 @@ const Settings = (props: SettingsProps) => {
 
                     <div className="flex flex-col w-full form squircle-md">
                         
-                        <div className="container">
+                        <div className="container flex flex-col! gap-5">
                             <div>
                                 <h3>
                                     Reset Account Data
                                 </h3>
                                 <div className="description">
                                     This will delete all the data in this account.
-                                    <span className="block text-rose-500">
+                                    <span className="ml-1 text-rose-500">
                                         Backup your data, this action cannot be undone.
                                     </span>
                                 </div>
                             </div>
-                            <div className="option">
+                            <div className="w-full md:max-w-70">
+                                <Input
+                                    id="reset-master-password"
+                                    type="password"
+                                    placeholder="Master Password"
+                                    value={ resetMasterPassword }
+                                    onChange={ (event: React.ChangeEvent<HTMLInputElement>) => setResetMasterPassword(event.target.value) }
+                                    className="font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white squircle-md mb-3"
+                                />
                                 <button
                                     onClick={ handleResetSubmit }
                                     className="font-inter-bold h-fit w-full px-6 py-3 border duration-300 bg-rose-500/10 border-rose-500/50 hover:bg-rose-500/20 hover:border-rose-500 hover:text-white focus:bg-rose-500/20 focus:border-rose-500 squircle-md cursor-pointer"

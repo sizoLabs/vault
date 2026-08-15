@@ -146,7 +146,7 @@ export const updateSecret = async ({
 
     for (let index = 0; index < secrets.length; index++) {
         if(secrets[index].id === secretId) {
-            secrets[index].name = name
+            secrets[index].name = name === "" ? "" : name
             secrets[index].content = encryptedContent
             secrets[index].description = encryptedDescription
             secrets[index].icon = icon

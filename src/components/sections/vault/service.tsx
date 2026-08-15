@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react"
 
 import { getAlphabetList, getAlphabet } from "@logic/alphabet"
-import { updateService } from "@logic/service"
+import { updateService, deleteService, getServiceDescription } from "@logic/service"
 import { genServicePassword, copyToClipboard } from "@logic/utils"
 import { getStorage } from "@logic/storage"
 import { getVaultList } from "@logic/vault"
 import { getSetting } from "@logic/settings"
+import { showAlert } from "@logic/alert"
 
 import IconSelector from "@component/ui/form/icon"
 import Select from "@component/ui/form/select"
@@ -85,9 +86,9 @@ const ServiceModal = (props: ServiceModalProps) => {
 
         event.preventDefault()
 
-        if(!form.identifier) return
+        if(!form.identifier) return showAlert("Please fill in the required fields: Identifier", "error", "alert-circle", 3000)
 
-        updateService({
+        await updateService({
             accountId,
             serviceId,
             vaultId: form.vault || vaultId,
@@ -98,8 +99,11 @@ const ServiceModal = (props: ServiceModalProps) => {
             identifier: form.identifier,
             alphabet: form.alphabet,
             length: form.length,
-            version: form.version
+            version: form.version,
+            masterPassword: masterPassword
         })
+
+        showAlert(`<b>${form.name || "Service"}</b> updated successfully!`, 'success', 'check', 5000)
         
         onUpdate()
         onClose()
@@ -107,6 +111,23 @@ const ServiceModal = (props: ServiceModalProps) => {
     }
 
     const handleClose = () => {
+        onClose()
+    }
+
+    const handleDelete = () => {
+        if (!serviceId) return
+
+        const confirmation = confirm("Are you sure you want to delete this service? This action cannot be undone.")
+        if (!confirmation) return
+
+        deleteService({
+            accountId,
+            serviceId
+        })
+
+        showAlert(`<b>${form.name || "Service"}</b> deleted successfully!`, 'success', 'check', 5000)
+
+        onUpdate()
         onClose()
     }
 
@@ -127,7 +148,7 @@ const ServiceModal = (props: ServiceModalProps) => {
         }, 3000)
     }
 
-    const getServiceData = () => {
+    const getServiceData = async () => {
 
         if (!serviceId) {
             resetServiceState()
@@ -138,11 +159,12 @@ const ServiceModal = (props: ServiceModalProps) => {
         const service = account?.services?.find((service: IService) => service.id === serviceId)
 
         if (service) {
+            const description = await getServiceDescription(service.description, masterPassword)
             const nextForm = {
                 name: service.name,
                 icon: service.icon,
                 vault: service.vault,
-                description: service.description,
+                description,
                 identifier: service.identifier,
                 alphabet: service.alphabet,
                 length: service.length,
@@ -180,7 +202,7 @@ const ServiceModal = (props: ServiceModalProps) => {
                         {
                             label: "Delete",
                             variant: "delete",
-                            onClick: () => {}
+                            onClick: handleDelete
                         },
                         {
                             label: "Cancel",

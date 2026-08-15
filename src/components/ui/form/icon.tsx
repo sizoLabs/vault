@@ -33,10 +33,39 @@ const FALLBACK_ICONS = [
 
 const extractIconNames = (cssText: string) => {
     const matches = [ ...cssText.matchAll(/\.ti-([a-z0-9-]+)(?::before|::before)?/gi) ]
-
     return [ ...new Set(matches.map((match) => match[1]).filter(Boolean)) ]
         .filter((icon) => !icon.includes(" "))
         .sort((a, b) => a.localeCompare(b))
+}
+
+const ICON_CATEGORIES = [
+    "All",
+    "Security",
+    "People",
+    "Files",
+    "Navigation",
+    "Communication",
+    "Devices",
+    "Tools",
+    "Brands",
+    "Arrows",
+    "General"
+] as const
+
+const getIconCategory = (iconName: string) => {
+    const value = iconName.toLowerCase()
+
+    if (/password|lock|key|shield|fingerprint|safe|scan|security/.test(value)) return "Security"
+    if (/user|person|users|profile|contact|friend|group/.test(value)) return "People"
+    if (/file|folder|document|clipboard|copy|note|book|archive|database|sheet|report/.test(value)) return "Files"
+    if (/home|map|location|route|pin|globe|world|building|compass|navigate|travel/.test(value)) return "Navigation"
+    if (/mail|message|chat|bell|phone|send|at|notification|comment|sms|connection/.test(value)) return "Communication"
+    if (/device|screen|monitor|laptop|tablet|mobile|server|cloud|wifi|router|camera|phone|computer/.test(value)) return "Devices"
+    if (/search|settings|tool|wrench|gear|code|terminal|calendar|clock|star|flag|rocket|sparkles|brush/.test(value)) return "Tools"
+    if (/brand|brand-|facebook|google|github|twitter|instagram|microsoft|apple|amazon|paypal|slack|discord|youtube|spotify|linkedin|dropbox|paypal|netflix|docker|chrome|gitlab/.test(value)) return "Brands"
+    if (/arrow|chevron|caret|up|down|left|right|next|previous|back|forward|expand|collapse/.test(value)) return "Arrows"
+
+    return "General"
 }
 
 type IconSelectorProps = {
@@ -46,9 +75,11 @@ type IconSelectorProps = {
 }
 
 const IconSelector = ({ value, onChange, className = "" }: IconSelectorProps) => {
+
     const [ open, setOpen ] = useState(false)
     const [ allIcons, setAllIcons ] = useState<string[]>([])
     const [ search, setSearch ] = useState("")
+    const [ selectedCategory, setSelectedCategory ] = useState<(typeof ICON_CATEGORIES)[number]>("All")
     const [ visibleCount, setVisibleCount ] = useState(PAGE_SIZE)
     const [ showAllIcons, setShowAllIcons ] = useState(false)
     const sentinelRef = useRef<HTMLDivElement | null>(null)
@@ -59,6 +90,7 @@ const IconSelector = ({ value, onChange, className = "" }: IconSelectorProps) =>
     }, [value])
 
     useEffect(() => {
+
         if (!open || allIcons.length > 0) return
 
         let isCancelled = false
@@ -77,6 +109,7 @@ const IconSelector = ({ value, onChange, className = "" }: IconSelectorProps) =>
                 if (!isCancelled) {
                     setAllIcons(parsedIcons.length ? parsedIcons : FALLBACK_ICONS)
                 }
+
             } catch {
                 if (!isCancelled) {
                     setAllIcons(FALLBACK_ICONS)
@@ -94,15 +127,19 @@ const IconSelector = ({ value, onChange, className = "" }: IconSelectorProps) =>
     useEffect(() => {
         if (!open) return
         setVisibleCount(showAllIcons ? allIcons.length : PAGE_SIZE)
-    }, [open, search, showAllIcons, allIcons.length])
+    }, [open, search, selectedCategory, showAllIcons, allIcons.length])
 
     const filteredIcons = useMemo(() => {
         const normalizedSearch = search.trim().toLowerCase()
 
-        if (!normalizedSearch) return allIcons
+        const categoryFiltered = selectedCategory === "All"
+            ? allIcons
+            : allIcons.filter((icon) => getIconCategory(icon) === selectedCategory)
 
-        return allIcons.filter((icon) => icon.toLowerCase().includes(normalizedSearch))
-    }, [allIcons, search])
+        if (!normalizedSearch) return categoryFiltered
+
+        return categoryFiltered.filter((icon) => icon.toLowerCase().includes(normalizedSearch))
+    }, [allIcons, search, selectedCategory])
 
     const visibleIcons = filteredIcons.slice(0, visibleCount)
 
@@ -115,6 +152,18 @@ const IconSelector = ({ value, onChange, className = "" }: IconSelectorProps) =>
 
         setShowAllIcons(true)
         setVisibleCount(filteredIcons.length)
+    }
+
+    const handleCategorySelect = (nextCategory: (typeof ICON_CATEGORIES)[number]) => {
+        setSelectedCategory(nextCategory)
+        setShowAllIcons(true)
+        setSearch("")
+        setVisibleCount(nextCategory === "All" ? allIcons.length : allIcons.filter((icon) => getIconCategory(icon) === nextCategory).length)
+
+        requestAnimationFrame(() => {
+            const grid = document.querySelector(".icon-grid-scroll") as HTMLDivElement | null
+            if (grid) grid.scrollTop = 0
+        })
     }
 
     useEffect(() => {
@@ -175,7 +224,7 @@ const IconSelector = ({ value, onChange, className = "" }: IconSelectorProps) =>
                         }
                     }}
                 >
-                    <div className="w-full max-w-150 max-h-[55vh] border border-white/10 overflow-hidden rounded-2xl backdrop-blur-xl">
+                    <div className="w-full max-w-150 max-h-[60vh] border border-white/10 overflow-hidden rounded-2xl backdrop-blur-xl">
                         <div className="px-5 py-5 mb-4 flex items-center justify-between gap-3 border-b border-white/10 pb-3">
                             <span className="text-sm md:text-lg font-inter-bold text-white">Select an Icon</span>
                             <button
@@ -188,34 +237,51 @@ const IconSelector = ({ value, onChange, className = "" }: IconSelectorProps) =>
                             </button>
                         </div>
 
-                        <div className="mb-4 flex flex-col md:flex-row items-center gap-3 px-5">
-                            <div className="relative flex-1 w-full">
-                                <i className="ti ti-search absolute left-3 top-1/2 -translate-y-1/2 text-white/50" />
-                                <input
-                                    type="text"
-                                    value={search}
-                                    onChange={(event) => setSearch(event.target.value)}
-                                    placeholder="Search icon..."
-                                    className="w-full squircle-md border border-white/15 bg-white/5 py-2.5 pl-10 pr-3 text-white placeholder:text-white/40 focus:border-white/40 focus:outline-none"
-                                />
+                        <div className="mb-4 flex flex-col gap-3 px-5">
+                            <div className="flex flex-col md:flex-row items-center gap-3">
+                                <div className="relative flex-1 w-full">
+                                    <i className="ti ti-search absolute left-3 top-1/2 -translate-y-1/2 text-white/50" />
+                                    <input
+                                        type="text"
+                                        value={search}
+                                        onChange={(event) => setSearch(event.target.value)}
+                                        placeholder="Search icon..."
+                                        className="w-full squircle-md border border-white/15 bg-white/5 py-2.5 pl-10 pr-3 text-white placeholder:text-white/40 focus:border-white/40 focus:outline-none"
+                                    />
+                                </div>
+
+                                <button
+                                    type="button"
+                                    onClick={handleShowAllToggle}
+                                    className={ `w-full md:w-fit cursor-pointer squircle-md border px-6 py-3 text-xs duration-300 ${showAllIcons ? "border-primary bg-primary/20 text-white" : "border-white/15 bg-white/5 text-white/80 hover:border-primary/40 hover:bg-primary/10"}` }
+                                >
+                                    {showAllIcons ? "Hide all icons" : "Show all icons"}
+                                </button>
                             </div>
 
-                            <button
-                                type="button"
-                                onClick={handleShowAllToggle}
-                                className={ `w-full md:w-fit cursor-pointer squircle-md border px-6 py-3 text-xs duration-300 ${showAllIcons ? "border-primary bg-primary/20 text-white" : "border-white/15 bg-white/5 text-white/80 hover:border-primary/40 hover:bg-primary/10"}` }
-                            >
-                                {showAllIcons ? "Hide all icons" : "Show all icons"}
-                            </button>
+                            <div className="overflow-x-auto no-scrollbar-but-scroll md:overflow-visible">
+                                <div className="flex min-w-max md:min-w-fit gap-2 md:flex-wrap md:justify-start">
+                                    {ICON_CATEGORIES.map((category) => (
+                                        <button
+                                            key={category}
+                                            type="button"
+                                            onClick={() => handleCategorySelect(category)}
+                                            className={ `cursor-pointer shrink-0 squircle-md border px-3 py-1.5 text-[10px] font-inter-medium uppercase tracking-wide duration-300 ${selectedCategory === category ? "border-primary bg-primary/20 text-white" : "border-white/10 bg-white/5 text-white/70 hover:border-white/25 hover:bg-white/10 hover:text-white"}` }
+                                        >
+                                            {category}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
                         </div>
 
                         {allIcons.length === 0 ? (
                             <div className="py-10 text-center text-white/50">Loading icons...</div>
                         ) : filteredIcons.length === 0 ? (
-                            <div className="py-10 text-center text-white/50">No icons found for this search.</div>
+                            <div className="py-10 text-center text-white/50">No icons found for this category or search.</div>
                         ) : (
-                            <div className="flex max-h-[calc(55vh-8.5rem)] min-h-0 flex-col pb-5 px-5">
-                                <div className="grid min-h-0 max-h-full grid-cols-3 gap-3 overflow-y-auto pr-1 sm:grid-cols-5">
+                            <div className="flex max-h-[calc(55vh-8.5rem)] min-h-0 flex-col pb-15 px-5">
+                                <div className="icon-grid-scroll grid min-h-0 max-h-full grid-cols-3 gap-3 overflow-y-auto pr-1 sm:grid-cols-5">
                                     {visibleIcons.map((icon) => (
                                         <button
                                             key={icon}

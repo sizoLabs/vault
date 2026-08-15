@@ -236,6 +236,27 @@ export const checkAccountMasterPassword = async ({
         return await verifyMasterPassword({ accountId, masterPassword })
 }
 
+export const changeMasterPassword = async ({
+    accountId,
+    newMasterPassword
+}: {
+    accountId: string,
+    newMasterPassword: string
+}) => {
+    if (!newMasterPassword || newMasterPassword.trim() === '') {
+        showAlert("Master password cannot be empty", 'error', 'exclamation-circle', 5000)
+        return false
+    }
+    try {
+        await setMasterVerifier({ accountId, masterPassword: newMasterPassword })
+        showAlert("Master password changed successfully!", 'success', 'key', 5000)
+        return true
+    } catch (error) {
+        showAlert("Failed to change master password", 'error', 'exclamation-circle', 5000)
+        return false
+    }
+}
+
 const getExportFileName = (accountId: string) => {
     const rawAccountName = getAccountName(accountId)
     const safeAccountName = rawAccountName

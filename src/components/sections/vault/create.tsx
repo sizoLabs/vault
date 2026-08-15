@@ -109,9 +109,9 @@ const CreateModal = (props: CreateModalProps) => {
 
         if (mode === "service") {
 
-            if (!serviceForm.name || !serviceForm.identifier) return showAlert("Please fill in the required fields: Name and Identifier.", "error", "alert-circle", 3000)
+            if (!serviceForm.identifier) return showAlert("Please fill in the required fields: Name and Identifier.", "error", "alert-circle", 3000)
 
-            createService({
+            await createService({
                 accountId,
                 vaultId: serviceForm.vault || vaultId,
                 name: serviceForm.name,
@@ -120,14 +120,17 @@ const CreateModal = (props: CreateModalProps) => {
                 icon: serviceForm.icon,
                 identifier: serviceForm.identifier,
                 alphabet: serviceForm.alphabet,
-                length: serviceForm.length
+                length: serviceForm.length,
+                masterPassword: masterPassword
             })
+
+            showAlert(`<b>${serviceForm.name}</b> created successfully!`, 'success', 'check', 5000)
 
         }
 
         if (mode === "secret") {
 
-            if (!secretForm.name || !secretForm.content) return showAlert("Please fill in the required fields: Name and Content.", "error", "alert-circle", 3000)
+            if (!secretForm.content) return showAlert("Please fill in the required fields: Name and Content.", "error", "alert-circle", 3000)
 
             await createSecret({
                 accountId,
@@ -138,6 +141,8 @@ const CreateModal = (props: CreateModalProps) => {
                 vault: secretForm.vault || vaultId,
                 masterPassword: masterPassword
             })
+
+            showAlert(`<b>${secretForm.name}</b> created successfully!`, 'success', 'check', 5000)
 
         }
         

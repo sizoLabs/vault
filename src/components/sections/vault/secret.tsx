@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react"
 
-import { updateSecret, getSecretContent } from "@logic/secret"
+import { updateSecret, getSecretContent, deleteSecret } from "@logic/secret"
 import { getStorage } from "@logic/storage"
 import { getVaultList } from "@logic/vault"
+import { showAlert } from "@logic/alert"
 
 import IconSelector from "@component/ui/form/icon"
 import Select from "@component/ui/form/select"
@@ -58,7 +59,7 @@ const SecretModal = (props: SecretModalProps) => {
 
         event.preventDefault()
 
-        if(!form.name) return
+        if(!form.content) return showAlert("Please fill in the required fields: Content", "error", "alert-circle", 3000)
 
         await updateSecret({
             accountId,
@@ -67,9 +68,11 @@ const SecretModal = (props: SecretModalProps) => {
             description: form.description,
             icon: form.icon,
             content: form.content,
-            vault: form.vault,
+            vault: form.vault || vaultId,
             masterPassword: masterPassword
         })
+
+        showAlert(`<b>${form.name || "Secret"}</b> updated successfully!`, 'success', 'check', 5000)
         
         onUpdate()
         onClose()
@@ -78,6 +81,25 @@ const SecretModal = (props: SecretModalProps) => {
 
     const handleClose = () => {
         onClose()
+    }
+
+    const handleDelete = () => {
+
+        if (!secretId) return
+
+        const confirmation = confirm("Are you sure you want to delete this secret? This action cannot be undone.")
+        if (!confirmation) return
+
+        deleteSecret({
+            accountId,
+            secretId
+        })
+
+        showAlert(`<b>${form.name || "Secret"}</b> deleted successfully!`, 'success', 'check', 5000)
+
+        onUpdate()
+        onClose()
+
     }
 
     const getSecretData = async () => {
@@ -133,7 +155,7 @@ const SecretModal = (props: SecretModalProps) => {
                         {
                             label: "Delete",
                             variant: "delete",
-                            onClick: () => {}
+                            onClick: handleDelete
                         },
                         {
                             label: "Cancel",

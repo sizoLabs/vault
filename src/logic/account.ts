@@ -27,14 +27,14 @@ export const createAccount = (accountName: string) => {
     
     setStorage('current-account', accountId)
 
-    createAccountData({ accountName, accountId })
+    createAccountData(accountId)
 
 }
 
-const createAccountData = ({ accountName, accountId }: { accountName: string, accountId: string })  => {
+const createAccountData = (accountId: string)  => {
     createDefaultAlphabet(accountId)
     createDefaultVault(accountId)
-    createDefaultSettings({ accountName, accountId })
+    createDefaultSettings(accountId)
 }
 
 export const getAccountsLength = () => {

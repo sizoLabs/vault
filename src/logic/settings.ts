@@ -21,19 +21,19 @@ export const applyThemeColor = (accountId: string) => {
 
 }
 
-export const createDefaultSettings = ({ accountName, accountId }: { accountName: string, accountId: string }) => {
+export const createDefaultSettings = (accountId: string) => {
 
     let account = getStorage(accountId)
-    const settings = getAccountSettings(accountId)
+    const alphabets = getAlphabetList(accountId)
 
-    if(settings && settings.length > 0) return
+    if(!account) account = {}
 
-    const defaultAlphabet = getAlphabetList(accountId)[0].aid
+    const defaultAlphabet = alphabets && alphabets.length > 0 ? alphabets[0].id : "default"
 
     const defaultSettings = [
         {
             id: "account-name",
-            value: accountName
+            value: "Personal Account"
         },
         {
             id: "default-password-length",

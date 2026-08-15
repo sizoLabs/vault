@@ -19,7 +19,7 @@ export const createDefaultAlphabet = (accountId: string) => {
 
     let account = getStorage(accountId)
 
-    if(account && account.alphabets && (account.alphabets.length > 0 || account.alphabets.length === 0)) return
+    if(!account) account = {}
 
     const defaultAlphabets = [
         {

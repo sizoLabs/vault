@@ -44,12 +44,32 @@ const Vault = (props: VaultProps) => {
         setTotalAlphabets(totalAlphabets)
     }
 
-    useEffect(() => {
+    const refreshTotals = () => {
         getTotalVaults()
         getTotalServices()
         getTotalSecrets()
         getTotalAlphabets()
-    })
+    }
+
+    useEffect(() => {
+        refreshTotals()
+    }, [accountId])
+
+    useEffect(() => {
+
+        if (typeof window === "undefined") return
+
+        const handleStorageUpdate = () => {
+            refreshTotals()
+        }
+
+        window.addEventListener("vault-storage-updated", handleStorageUpdate)
+
+        return () => {
+            window.removeEventListener("vault-storage-updated", handleStorageUpdate)
+        }
+        
+    }, [accountId])
 
     useEffect(() => {
         if (accountId) {

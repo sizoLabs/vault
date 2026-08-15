@@ -9,7 +9,7 @@ export const createDefaultVault = (accountId: string) => {
 
     let account = getStorage(accountId)
 
-    if(account && account.vaults && (account.vaults.length > 0 || account.vaults.length === 0)) return
+    if(!account) account = {}
 
     const defaultVault = [
         {

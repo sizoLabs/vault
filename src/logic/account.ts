@@ -323,8 +323,6 @@ const normalizeFields = (data: any): any => {
                     newKey = "vault"
                 } else if (key === "passwords") {
                     newKey = "services"
-                } else if (key === "alphabet") {
-                    newKey = "alphabets"
                 } else if (key === "folders") {
                     newKey = "vaults"
                 } else if (key.endsWith("id") && key !== "id") {

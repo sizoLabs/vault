@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 const faqItems = [
     {
@@ -121,6 +121,15 @@ export default function FAQPage() {
 
     const [ activeItemId, setActiveItemId ] = useState<string | null>(null)
     const activeItem = faqItems.find((item) => item.id === activeItemId)
+    const answerRef = useRef<HTMLDivElement | null>(null)
+    const mobileAnswerRef = useRef<HTMLDivElement | null>(null)
+
+    useEffect(() => {
+        if (!activeItem) return
+
+        answerRef.current?.scrollTo({ top: 0, behavior: "instant" })
+        mobileAnswerRef.current?.scrollTo({ top: 0, behavior: "instant" })
+    }, [activeItemId, activeItem])
 
     return (
         <>
@@ -190,7 +199,7 @@ export default function FAQPage() {
                                 </h3>
                             )}
 
-                            <div className="flex-1 min-h-0 overflow-y-auto no-scrollbar-but-scroll mask-to-bottom mask-fade-20 pb-10 max-w-270">
+                            <div ref={answerRef} className="flex-1 min-h-0 overflow-y-auto no-scrollbar-but-scroll mask-to-bottom mask-fade-20 pb-10 max-w-270">
                                 {activeItem && activeItem.answer.map((paragraph) => (
                                     <p
                                         className="mb-5 leading-10 text-white/75 text-[28px]"
@@ -211,8 +220,6 @@ export default function FAQPage() {
             {activeItem && (
                 <>
 
-                    <div className="absolute" />
-
                     <div className="fixed inset-0 z-999 bg-black/20 backdrop-blur-[80px] lg:hidden p-10 h-screen overflow-hidden flex flex-col">
 
                         <span className="shrink-0 mb-5">
@@ -223,7 +230,7 @@ export default function FAQPage() {
                             { activeItem.question }
                         </h3>
 
-                        <div className="flex-1 min-h-0 overflow-y-auto no-scrollbar-but-scroll mask-to-bottom mask-fade-20 pb-10">
+                        <div ref={mobileAnswerRef} className="flex-1 min-h-0 overflow-y-auto no-scrollbar-but-scroll mask-to-bottom mask-fade-20 pb-10">
                             {activeItem.answer.map((paragraph) => (
                                 <p
                                     className="mb-5 text-sm leading-9 text-white/75 md:text-2xl"

@@ -19,9 +19,7 @@ const DialogOption = (props: DialogOptionProps) => {
                 <h3 className="font-inter-bold">
                     {title}
                 </h3>
-                <div className="text-sm text-white/50">
-                    {description}
-                </div>
+                <div className="text-sm text-white/50" dangerouslySetInnerHTML={{ __html: description }} />
             </div>
             <div className={`w-full md:w-auto px-5 ${isRow ? "md:flex md:justify-end md:items-center" : ""} ${className}`}>
                 {children}

@@ -374,7 +374,7 @@ const Settings = (props: SettingsProps) => {
                                 </h3>
                                 <div className="description">
                                     This will delete all the data in this account.
-                                    <span className="ml-1 text-rose-500">
+                                    <span className="ml-1 text-rose-500 font-inter-bold">
                                         Backup your data, this action cannot be undone.
                                     </span>
                                 </div>

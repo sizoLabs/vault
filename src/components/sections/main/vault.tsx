@@ -8,8 +8,9 @@ import { applyThemeColor } from "@logic/settings"
 
 import Logo from "./logo"
 import Block from "@component/ui/main/block"
-import CraftedBy from "@component/sections/main/crafted"
-import Legal from "@component/sections/main/links"
+import CraftedBy from "@component/sections/main/footer/crafted"
+import Legal from "@component/sections/main/footer/legal"
+import GitHub from "@component/sections/main/footer/github"
 
 interface VaultProps {
     accountId: string
@@ -103,14 +104,19 @@ const Vault = (props: VaultProps) => {
 
                     </div>
 
-                    <Legal
-                        onPanelChange={ onPanelChange }
-                    /> 
-
-                    <CraftedBy />
                     
                 </div>
 
+            </div>
+
+            <div className="absolute z-50 -bottom-12.5 flex w-full flex-col md:flex-row justify-between items-center gap-3 pb-15 px-5">
+                <div className="flex flex-row gap-2 items-center justify-center">
+                    <GitHub />
+                    <CraftedBy />
+                </div>
+                <Legal
+                    onPanelChange={ onPanelChange }
+                />
             </div>
 
         </div>

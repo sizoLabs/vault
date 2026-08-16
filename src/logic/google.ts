@@ -1,4 +1,4 @@
-import { getStorage, setStorage } from "./storage.ts"
+import { getSessionStorage, getStorage, removeSessionStorage, setSessionStorage, setStorage } from "./storage.ts"
 import { showAlert } from "./alert.ts"
 import { decodeData, encodeData } from "./utils.ts"
 
@@ -46,10 +46,13 @@ export const buildDriveFileName = (accountId: string, driveFileId?: string) => {
 
 }
 
+const GOOGLE_DRIVE_SESSION_KEY = (accountId: string) => `vault-google-drive:${accountId}`
+
 export const getGoogleDriveState = (accountId: string) => {
 
     const account = getStorage(accountId)
-    const savedState = account && typeof account === "object" ? account.drive : null
+    const sessionState = getSessionStorage(GOOGLE_DRIVE_SESSION_KEY(accountId))
+    const savedState = sessionState && typeof sessionState === "object" ? sessionState : (account && typeof account === "object" ? account.drive : null)
     const settings = Array.isArray(account?.settings) ? account.settings : []
     const enabledSetting = settings.find((setting: any) => setting.id === "google-drive-enabled")
 
@@ -58,7 +61,8 @@ export const getGoogleDriveState = (accountId: string) => {
             enabled: Boolean(enabledSetting?.value),
             connected: false,
             accessToken: "",
-            email: ""
+            email: "",
+            expiresAt: 0
         }
     }
 
@@ -66,32 +70,114 @@ export const getGoogleDriveState = (accountId: string) => {
         enabled: Boolean(enabledSetting?.value),
         connected: Boolean(savedState.connected),
         accessToken: String(savedState.accessToken || ""),
-        email: String(savedState.email || "")
+        email: String(savedState.email || ""),
+        expiresAt: Number(savedState.expiresAt || 0)
     }
 
 }
 
 export const setGoogleDriveState = (accountId: string, state: Record<string, any>) => {
 
-    const account = getStorage(accountId)
-    const nextAccount = account && typeof account === "object" ? account : {}
-
-    nextAccount.drive = {
+    const nextState = {
         connected: Boolean(state.connected),
         accessToken: String(state.accessToken || ""),
-        email: String(state.email || "")
+        email: String(state.email || ""),
+        expiresAt: Number(state.expiresAt || 0)
     }
 
-    setStorage(accountId, nextAccount)
+    setSessionStorage(GOOGLE_DRIVE_SESSION_KEY(accountId), nextState)
 
+    const account = getStorage(accountId)
+    const nextAccount = account && typeof account === "object" ? account : {}
+    if (nextAccount.drive) {
+        delete nextAccount.drive
+        setStorage(accountId, nextAccount)
+    }
+
+}
+
+export const isGoogleDriveAccessTokenExpired = ({ accessToken, expiresAt }: { accessToken: string, expiresAt?: number | string }) => {
+    if (!accessToken) {
+        return true
+    }
+
+    const expiresMs = Number(expiresAt ?? 0)
+    if (!Number.isFinite(expiresMs) || expiresMs <= 0) {
+        return true
+    }
+
+    return Date.now() >= expiresMs
+}
+
+const requestGoogleDriveAccessToken = async ({ accountId, prompt }: { accountId: string, prompt: "consent" | "none" }) => {
+    await ensureGoogleDriveSdk()
+
+    return await new Promise<string>((resolve, reject) => {
+        const client = (window as any).google.accounts.oauth2.initTokenClient({
+            client_id: getGoogleClientId(),
+            scope: DRIVE_SCOPE,
+            prompt,
+            callback: (response: any) => {
+                if (response?.error) {
+                    reject(new Error(response.error_description || response.error || "Google Drive token request was denied."))
+                    return
+                }
+
+                const token = String(response?.access_token || "")
+                if (!token) {
+                    reject(new Error("Google Drive token request failed: no access token returned."))
+                    return
+                }
+
+                const state = getGoogleDriveState(accountId)
+                const expiresInSeconds = Number(response?.expires_in || 3600)
+                const expiresAt = Date.now() + Math.max(0, expiresInSeconds * 1000) - 60_000
+
+                setGoogleDriveState(accountId, {
+                    ...state,
+                    connected: true,
+                    accessToken: token,
+                    expiresAt
+                })
+
+                resolve(token)
+            }
+        })
+
+        client.requestAccessToken()
+    })
+}
+
+const getFreshGoogleDriveAccessToken = async (accountId: string) => {
+    const state = getGoogleDriveState(accountId)
+    const currentToken = state.accessToken
+
+    if (!state.connected || !currentToken) {
+        throw new Error("You are not connected to Google Drive")
+    }
+
+    if (!isGoogleDriveAccessTokenExpired({ accessToken: currentToken, expiresAt: state.expiresAt })) {
+        return currentToken
+    }
+
+    try {
+        return await requestGoogleDriveAccessToken({ accountId, prompt: "none" })
+    } catch (error: any) {
+        if (error?.message) {
+            showAlert(error.message, "error", "exclamation-circle", 5000)
+        }
+        throw new Error("Your Google Drive session expired. Connect again to Google Drive.")
+    }
 }
 
 export const disconnectGoogleDrive = (accountId: string) => {
     setGoogleDriveState(accountId, {
         connected: false,
         accessToken: "",
-        email: ""
+        email: "",
+        expiresAt: 0
     })
+    removeSessionStorage(GOOGLE_DRIVE_SESSION_KEY(accountId))
     showAlert("Google Drive has been disconnected", "success", "brand-google-drive", 5000)
 }
 
@@ -190,10 +276,12 @@ export const connectGoogleDrive = async ({ accountId }: { accountId: string }) =
                     }
 
                     const email = await getGoogleUserProfile(token)
+                    const expiresAt = Date.now() + Math.max(0, Number(response.expires_in || 3600) * 1000) - 60_000
                     const nextState = {
                         connected: true,
                         accessToken: token,
-                        email
+                        email,
+                        expiresAt
                     }
 
                     setGoogleDriveState(accountId, nextState)
@@ -212,12 +300,7 @@ export const connectGoogleDrive = async ({ accountId }: { accountId: string }) =
 
 const getDriveAppDataFiles = async (accountId: string) => {
 
-    const state = getGoogleDriveState(accountId)
-    const token = state.accessToken
-
-    if (!token) {
-        throw new Error("You are not connected to Google Drive")
-    }
+    const token = await getFreshGoogleDriveAccessToken(accountId)
 
     const response = await fetch(`${DRIVE_API}/files?spaces=appDataFolder&fields=files(id,name)&supportsAllDrives=true`, {
         headers: {
@@ -250,12 +333,7 @@ const getDriveAppDataFile = async (accountId: string) => {
 
 const saveDriveFile = async ({ accountId, fileData }: { accountId: string, fileData: string }) => {
 
-    const state = getGoogleDriveState(accountId)
-    const token = state.accessToken
-
-    if (!token) {
-        throw new Error("You are not connected to Google Drive")
-    }
+    const token = await getFreshGoogleDriveAccessToken(accountId)
 
     const driveFileId = getDriveFileIdentifier(accountId)
     if (!driveFileId) {
@@ -376,9 +454,10 @@ export const pullGoogleDriveToAccount = async ({
 
         for (const file of files) {
             try {
+                const token = await getFreshGoogleDriveAccessToken(accountId)
                 const response = await fetch(`${DRIVE_API}/files/${file.id}?alt=media`, {
                     headers: {
-                        Authorization: `Bearer ${state.accessToken}`
+                        Authorization: `Bearer ${token}`
                     }
                 })
 

@@ -153,7 +153,7 @@ export const getSettings = () => {
         {
             id: "google-drive-file-id",
             name: "Google Drive File ID",
-            description: "Use a unique ID to name this vault file in Google Drive. E.g. 'personal-vault'",
+            description: "Use a unique ID to name this vault file in Google Drive.",
             placeholder: "E.g. personal-vault",
             type: "text"
         }

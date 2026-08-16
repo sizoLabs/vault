@@ -183,7 +183,7 @@ const Settings = (props: SettingsProps) => {
                     <div className="flex flex-col w-full form squircle-md">
                         { settings.map((setting) => {
 
-                            if (setting.id === "google-drive-file-id" && !isDriveSyncEnabled) {
+                            if (setting.id === "google-drive-file-id") {
                                 return null
                             }
 
@@ -196,7 +196,7 @@ const Settings = (props: SettingsProps) => {
                                     onChange={ onSettingChange }
                                 />
                             )
-                            
+
                         }) }
                     </div>
                     
@@ -253,6 +253,19 @@ const Settings = (props: SettingsProps) => {
 
                             { driveState.connected ? (
                                 <>
+                                
+                                    { settings.map((setting) => {
+                                        if (setting.id === "google-drive-file-id") return (
+                                            <Setting
+                                                key={ setting.id }
+                                                setting={ setting }
+                                                accountId={ accountId }
+                                                value={ accountSettings.find((accountSetting: { id: string }) => accountSetting.id === setting.id)?.value }
+                                                onChange={ onSettingChange }
+                                            />
+                                        )
+                                    }) }
+
                                     <div className="container">
                                         <div>
                                             <h3>

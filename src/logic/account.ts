@@ -117,7 +117,10 @@ export const exportAccountData = async ({
     masterPassword: string
 }) => {
     const account = getStorage(accountId)
-    const encodedData = await encodeData(masterPassword, JSON.stringify(account))
+    const exportPayload = account && typeof account === "object" ? { ...account } : {}
+    delete exportPayload.drive
+
+    const encodedData = await encodeData(masterPassword, JSON.stringify(exportPayload))
     downloadFile(encodedData, getExportFileName(accountId), "application/octet-stream")
     showAlert("Data exported successfully!", "success", "database-export", 5000)
 }

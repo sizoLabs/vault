@@ -66,6 +66,14 @@ export const createDefaultSettings = (accountId: string, customAccountName = "Pe
         {
             id: "disable-colored-background",
             value: false
+        },
+        {
+            id: "google-drive-enabled",
+            value: false
+        },
+        {
+            id: "google-drive-file-id",
+            value: ""
         }
     ]
 
@@ -85,6 +93,7 @@ export const getSettings = () => {
             id: "account-name",
             name: "Account Name",
             description: "The name of your account.",
+            placeholder: "E.g. Personal Account",
             type: "text"
         },
         {
@@ -134,6 +143,19 @@ export const getSettings = () => {
             name: "Disable Colored Background",
             description: "Toggle the background to colored or monotone.",
             type: "toggle"
+        },
+        {
+            id: "google-drive-enabled",
+            name: "Google Drive Sync",
+            description: "Enable synchronization of this account with a Google Drive appdata folder.",
+            type: "toggle"
+        },
+        {
+            id: "google-drive-file-id",
+            name: "Google Drive File ID",
+            description: "Use a unique ID to name this vault file in Google Drive. E.g. 'personal-vault'",
+            placeholder: "E.g. personal-vault",
+            type: "text"
         }
     ]
 
@@ -161,11 +183,12 @@ export const updateSettings = ({ accountId, settingId, value }: { accountId: str
 
     const settings = Array.isArray(account.settings) ? account.settings : []
 
-    for (let index = 0; index < settings.length; index++) {
-        if(settings[index].id === settingId) {
-            settings[index].value = value
-            break
-        }
+    const settingIndex = settings.findIndex((setting: { id: string }) => setting.id === settingId)
+    
+    if (settingIndex !== -1) {
+        settings[settingIndex].value = value
+    } else {
+        settings.push({ id: settingId, value })
     }
 
     account = {

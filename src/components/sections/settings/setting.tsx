@@ -40,8 +40,9 @@ const Setting = ({ setting, value, accountId, onChange }: SettingProps) => {
                 { setting.type === "text" ? (
                     <Input
                         id={ setting.id }
-                        defaultValue={ String(settingValue) }
+                        value={ String(settingValue) }
                         type={ setting.type }
+                        placeholder={ setting.placeholder ?? "" }
                         className="squircle-md w-full md:max-w-60"
                         onChange={ (event: React.ChangeEvent<HTMLInputElement>) => {
                             const nextValue = setting.type === "number" ? parseInt(event.target.value, 10) : event.target.value
@@ -53,7 +54,7 @@ const Setting = ({ setting, value, accountId, onChange }: SettingProps) => {
                 { setting.type === "number" ? (
                     <Input
                         id={ setting.id }
-                        defaultValue={ String(settingValue) }
+                        value={ String(settingValue) }
                         type={ setting.type }
                         className="squircle-md w-full md:max-w-23"
                         onChange={ (event: React.ChangeEvent<HTMLInputElement>) => {

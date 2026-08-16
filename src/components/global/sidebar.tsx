@@ -1,12 +1,13 @@
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
 
 import SidebarLogo from "@component/ui/sidebar/logo"
 import SidebarUfo from "@component/ui/sidebar/ufo"
 import SidebarButton from "@component/ui/sidebar/button"
-import MobileMenu from "@component/ui/sidebar/mobile-menu"
+import MobileMenu from "@component/global/mobile"
 import Search from "@component/sections/search"
+import { useResizePanel } from "@component/global/resize"
 
-interface MainSidebarProps {
+interface SidebarProps {
     panelWidth: number
     isResizing: boolean
     activePanel: string
@@ -15,13 +16,12 @@ interface MainSidebarProps {
     account: any
     activeVaultId: string | null
     onPanelChange: (panel: string, vaultId?: string) => void
-    onPointerDown: (event: React.PointerEvent<HTMLDivElement>) => void
     onPanelWidthChange: (width: number) => void
     onResizeEnd: () => void
     onOpenCreateVaultModal: () => void
 }
 
-export default function MainSidebar({
+const Sidebar = ({
     panelWidth,
     isResizing,
     activePanel,
@@ -30,46 +30,23 @@ export default function MainSidebar({
     account,
     activeVaultId,
     onPanelChange,
-    onPointerDown,
     onPanelWidthChange,
     onResizeEnd,
     onOpenCreateVaultModal
-}: MainSidebarProps) {
+}: SidebarProps) => {
 
-    const panelRef = useRef<HTMLDivElement | null>(null)
+    const panelRef = useRef<HTMLDivElement>(null)
     const [isSearchOpen, setIsSearchOpen] = useState(false)
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
-    useEffect(() => {
-        if (!isResizing) return
-
-        const onPointerMove = (event: PointerEvent) => {
-            if (!panelRef.current) return
-            const rect = panelRef.current.getBoundingClientRect()
-            const MIN_PANEL_WIDTH = 250
-            const MAX_PANEL_WIDTH = 420
-            const nextWidth = Math.min(MAX_PANEL_WIDTH, Math.max(MIN_PANEL_WIDTH, event.clientX - rect.left))
-            onPanelWidthChange(nextWidth)
-        }
-
-        const stopResize = () => {
-            onResizeEnd()
-        }
-
-        document.addEventListener("pointermove", onPointerMove)
-        document.addEventListener("pointerup", stopResize)
-        document.addEventListener("pointercancel", stopResize)
-        document.body.style.cursor = "col-resize"
-        document.body.style.userSelect = "none"
-
-        return () => {
-            document.removeEventListener("pointermove", onPointerMove)
-            document.removeEventListener("pointerup", stopResize)
-            document.removeEventListener("pointercancel", stopResize)
-            document.body.style.cursor = ""
-            document.body.style.userSelect = ""
-        }
-    }, [isResizing, onPanelWidthChange, onResizeEnd])
+    useResizePanel({
+        panelRef,
+        isResizing,
+        onPanelWidthChange,
+        onResizeEnd,
+        minWidth: 250,
+        maxWidth: 420
+    })
 
     return (
         <>
@@ -96,7 +73,7 @@ export default function MainSidebar({
                     <SidebarLogo
                         label="VAULT"
                         icon="ti-vault"
-                        onClick={() => onPanelChange("main-vault")}
+                        onClick={() => onPanelChange("home")}
                     />
                 </div>
 
@@ -148,7 +125,7 @@ export default function MainSidebar({
                     <SidebarLogo
                         label="VAULT"
                         icon="ti-vault"
-                        onClick={() => onPanelChange("main-vault")}
+                        onClick={() => onPanelChange("home")}
                     />
 
                     {accountId && (
@@ -177,7 +154,7 @@ export default function MainSidebar({
                                 label="My Vault"
                                 active={activePanel === "vault"}
                                 show={ accountId ? false : true }
-                                onClick={() => onPanelChange("main-vault")}
+                                onClick={() => onPanelChange("home")}
                             />
 
                             {account && account.vaults && account.vaults.length > 0 && account.vaults.map((vault: any, index: number) => (
@@ -204,11 +181,11 @@ export default function MainSidebar({
                         <div className="w-full h-fit flex flex-col items-left justify-left gap-1 px-2">
 
                             <SidebarButton
-                                icon="ti-book-2"
-                                label="How it works"
-                                active={activePanel === "how-it-works"}
+                                icon="ti-question-mark"
+                                label="FAQs"
+                                active={activePanel === "faq"}
                                 show={ true }
-                                onClick={() => onPanelChange("how-it-works")}
+                                onClick={() => onPanelChange("faq")}
                             />
 
                             <SidebarButton
@@ -247,16 +224,8 @@ export default function MainSidebar({
                     </div>
                 </div>
             </div>
-
-            {/* Resizer */}
-
-            <div className="hidden md:flex mx-px group active:bg-primary hover:bg-primary rounded-full duration-300 h-[98%] items-center justify-center" style={{ width: 5 }}>
-                <div
-                    className="relative flex h-full w-10 cursor-col-resize items-center justify-center"
-                    onPointerDown={onPointerDown}
-                >
-                </div>
-            </div>
         </>
     )
 }
+
+export default Sidebar

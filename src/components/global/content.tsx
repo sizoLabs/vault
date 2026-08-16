@@ -1,51 +1,51 @@
-import MainVault from "@component/sections/main/vault"
-import VaultAccess from "@component/sections/main/access"
-import HowItWorks from "@component/sections/main/pages/how-it-works"
-import Legal from "@component/sections/main/pages/legal"
+import Home from "@component/sections/home"
+import Access from "@component/sections/access"
+import FAQPage from "@component/sections/faq"
+import LegalPage from "@component/sections/legal"
 import Settings from "@component/sections/settings"
 import Vault from "@component/sections/vault"
 import Accounts from "@component/sections/accounts"
 import Alphabets from "@component/sections/alphabets"
 
-interface MainContentProps {
-    activePanel: string
+interface ContentProps {
+    activeSection: string
     accountId: string
     masterPassword: string
     vaultId: string
     account: any
     onSubmitForm: (accountId: string, masterPassword: string) => void
-    onPanelChange: (panel: string) => void
+    onSectionChange: (section: string) => void
     onAccountUpdated: () => void
 }
 
-export default function MainContent({
-    activePanel,
+const Content = ({
+    activeSection,
     accountId,
     masterPassword,
     vaultId,
     account,
     onSubmitForm,
-    onPanelChange,
+    onSectionChange,
     onAccountUpdated
-}: MainContentProps) {
+}: ContentProps) => {
     return (
         <div className="w-full h-full flex flex-col">
 
-            {activePanel === "main-vault" && (
+            {activeSection === "home" && (
                 accountId ? (
-                    <MainVault
+                    <Home
                         accountId={accountId}
-                        onPanelChange={onPanelChange}
+                        onSectionChange={onSectionChange}
                     />
                 ) : (
-                    <VaultAccess
+                    <Access
                         onSubmitForm={onSubmitForm}
-                        onPanelChange={onPanelChange}
+                        onSectionChange={onSectionChange}
                     />
                 )
             )}
 
-            {activePanel === "vault" && (
+            {activeSection === "vault" && (
                 <Vault
                     accountId={accountId}
                     vaultId={vaultId}
@@ -53,13 +53,16 @@ export default function MainContent({
                 />
             )}
 
-            {activePanel === "legal" && <Legal />}
-            {activePanel === "how-it-works" && <HowItWorks />}
-            {activePanel === "alphabets" && <Alphabets accountId={accountId} />}
-            {activePanel === "accounts" && (
+            {activeSection === "legal" && <LegalPage />}
+            {activeSection === "faq" && <FAQPage />}
+
+            {activeSection === "alphabets" && <Alphabets accountId={accountId} />}
+
+            {activeSection === "accounts" && (
                 <Accounts onSelectAccount={onSubmitForm} />
             )}
-            {activePanel === "settings" && (
+
+            {activeSection === "settings" && (
                 <Settings
                     account={account}
                     masterPassword={masterPassword}
@@ -70,3 +73,5 @@ export default function MainContent({
         </div>
     )
 }
+
+export default Content

@@ -9,10 +9,10 @@ import type { IService, IVault, ISecret } from "@interface/index"
 import ServiceCard from "@component/ui/vault/service"
 import SecretCard from "@component/ui/vault/secret"
 
-import ServiceModal from "@component/sections/vault/service"
-import SecretModal from "@component/sections/vault/secret"
-import CreateModal from "@component/sections/vault/create"
-import EditModal from "@component/sections/vault/edit"
+import CreateModal from "@component/sections/vault/create-modal"
+import EditServiceModal from "@component/sections/vault/edit-service"
+import EditSecretModal from "@component/sections/vault/edit-secret"
+import EditVaultModal from "@component/sections/vault/edit-vault"
 
 interface VaultProps {
     accountId: string
@@ -169,7 +169,7 @@ const Vault = (props: VaultProps) => {
                 onClose={ () => setIsCreateModalOpen(false) }
             />
 
-            <EditModal
+            <EditVaultModal
                 open={ isVaultModalOpen }
                 vaultId={ vaultId }
                 accountId={ accountId }
@@ -177,7 +177,7 @@ const Vault = (props: VaultProps) => {
                 onClose={ () => setIsVaultModalOpen(false) }
             />
 
-            <ServiceModal
+            <EditServiceModal
                 open={ isServiceModalOpen }
                 vaultId={ vaultId }
                 accountId={ accountId }
@@ -187,7 +187,7 @@ const Vault = (props: VaultProps) => {
                 onClose={ () => setIsServiceModalOpen(false) }
             />
 
-            <SecretModal
+            <EditSecretModal
                 open={ isSecretModalOpen }
                 vaultId={ vaultId }
                 accountId={ accountId }

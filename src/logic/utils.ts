@@ -62,8 +62,22 @@ const createPassword = async (hash: string, length: number, alphabet: string): P
     return result
 }
 
+export const ensureCryptoAvailability = () => {
+    const cryptoApi = globalThis.crypto ?? (typeof window !== "undefined" ? window.crypto : undefined)
+    if (!cryptoApi || !cryptoApi.subtle) {
+        const isSecureContext = typeof window !== "undefined" ? window.isSecureContext : globalThis.isSecureContext === true
+        const reason = isSecureContext
+            ? "Web Crypto was not initialized correctly"
+            : "This page is not running in a secure context. Use HTTPS or localhost."
+
+        throw new Error(`Web Crypto is unavailable: ${reason}`)
+    }
+    return cryptoApi
+}
+
 const createHash = async (str: string): Promise<string> => {
-    const buffer = await crypto.subtle.digest("SHA-512", new TextEncoder().encode(str))
+    const cryptoApi = ensureCryptoAvailability()
+    const buffer = await cryptoApi.subtle.digest("SHA-512", new TextEncoder().encode(str))
     return Array.prototype.map.call(new Uint8Array(buffer), x => (('00' + x.toString(16)).slice(-2))).join('')
 }
 
@@ -94,11 +108,12 @@ export const downloadFile = (data: string, filename: string, type: string) => {
 
 const generateKey = async (masterKey: string, salt: BufferSource, iterations: number, length: number, hash: HashAlgorithmIdentifier, algorithm = 'AES-CBC'): Promise<CryptoKey> => {
 
+	const cryptoApi = ensureCryptoAvailability()
 	const encoder = new TextEncoder()
 
-	const keyMaterial = await window.crypto.subtle.importKey('raw', encoder.encode(masterKey), { name: 'PBKDF2' }, false, ['deriveKey'])
+	const keyMaterial = await cryptoApi.subtle.importKey('raw', encoder.encode(masterKey), { name: 'PBKDF2' }, false, ['deriveKey'])
 
-	return await window.crypto.subtle.deriveKey({
+	return await cryptoApi.subtle.deriveKey({
 		name: 'PBKDF2',
 		salt,
 		iterations,
@@ -112,14 +127,15 @@ const generateKey = async (masterKey: string, salt: BufferSource, iterations: nu
 
 export const encodeData = async (masterKey: string, data: any) => {
 
+	const cryptoApi = ensureCryptoAvailability()
 	const encoder = new TextEncoder()
 
-	const salt = window.crypto.getRandomValues(new Uint8Array(16))
-	const iv = window.crypto.getRandomValues(new Uint8Array(16))
+	const salt = cryptoApi.getRandomValues(new Uint8Array(16))
+	const iv = cryptoApi.getRandomValues(new Uint8Array(16))
 	const bufferData = encoder.encode(data)
 	const key = await generateKey(masterKey, salt, 100000, 256, 'SHA-256')
 
-	const encodedData = await window.crypto.subtle.encrypt({ name: "AES-CBC", iv: iv }, key, bufferData)
+	const encodedData = await cryptoApi.subtle.encrypt({ name: "AES-CBC", iv: iv }, key, bufferData)
 
 	return bufToBase64(new Uint8Array([...salt, ...iv, ...new Uint8Array(encodedData)]).buffer)
 
@@ -127,6 +143,7 @@ export const encodeData = async (masterKey: string, data: any) => {
 
 export const decodeData = async (masterKey: string, data: string) => {
 
+	const cryptoApi = ensureCryptoAvailability()
 	const decoder = new TextDecoder()
 
 	const bufferData = base64ToBuf(data)
@@ -134,7 +151,7 @@ export const decodeData = async (masterKey: string, data: string) => {
 	const iv = bufferData.slice(16, 32)
 	const key = await generateKey(masterKey, salt, 100000, 256, 'SHA-256')
 
-	const decodeDataBuffer = await window.crypto.subtle.decrypt({ name: "AES-CBC", iv: iv }, key, bufferData.slice(32))
+	const decodeDataBuffer = await cryptoApi.subtle.decrypt({ name: "AES-CBC", iv: iv }, key, bufferData.slice(32))
 
 	return decoder.decode(decodeDataBuffer)
 
@@ -144,15 +161,17 @@ export const bufToBase64 = (b: ArrayBuffer) => btoa(String.fromCharCode(...new U
 export const base64ToBuf = (s: string) => Uint8Array.from(atob(s), c => c.charCodeAt(0)).buffer
 
 export const randomBytes = (len = 16) => {
+	const cryptoApi = ensureCryptoAvailability()
 	const b = new Uint8Array(len)
-	window.crypto.getRandomValues(b)
+	cryptoApi.getRandomValues(b)
 	return b.buffer
 }
 
 export const deriveHmacKey = async (password: string, salt: ArrayBuffer, iterations = 200000) => {
+	const cryptoApi = ensureCryptoAvailability()
 	const enc = new TextEncoder()
-	const baseKey = await window.crypto.subtle.importKey('raw', enc.encode(password), { name: 'PBKDF2' }, false, ['deriveKey'])
-	const key = await window.crypto.subtle.deriveKey(
+	const baseKey = await cryptoApi.subtle.importKey('raw', enc.encode(password), { name: 'PBKDF2' }, false, ['deriveKey'])
+	const key = await cryptoApi.subtle.deriveKey(
 		{ name: 'PBKDF2', salt, iterations, hash: 'SHA-256' },
 		baseKey,
 		{ name: 'HMAC', hash: 'SHA-256' },

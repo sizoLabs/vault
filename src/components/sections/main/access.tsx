@@ -1,7 +1,5 @@
 import { useEffect, useState, useRef } from "react"
 
-import type { ISettings } from "@interface/settings"
-
 import { showAlert } from "@logic/alert"
 import { getStorage, setStorage } from "@logic/storage"
 import { getSetting } from "@logic/settings"
@@ -16,8 +14,9 @@ import {
 
 import Logo from "@component/sections/main/logo"
 import OpenVault from "@component/sections/main/open-vault"
-import CraftedBy from "@component/sections/main/crafted"
-import Legal from "@component/sections/main/links"
+import CraftedBy from "@component/sections/main/footer/crafted"
+import Legal from "@component/sections/main/footer/legal"
+import GitHub from "@component/sections/main/footer/github"
 
 interface VaultAccessProps {
     onSubmitForm: (
@@ -313,14 +312,18 @@ const VaultAccess = (props: VaultAccessProps) => {
                         </form>
                     </div>
 
-                    <Legal
-                        onPanelChange={ onPanelChange }
-                    />
-
-                    <CraftedBy />
-
                 </div>
 
+            </div>
+
+            <div className="absolute z-50 -bottom-12.5 flex w-full flex-col md:flex-row justify-between items-center gap-3 pb-15 px-5">
+                <div className="flex flex-row gap-2 items-center justify-center">
+                    <GitHub />
+                    <CraftedBy />
+                </div>
+                <Legal
+                    onPanelChange={ onPanelChange }
+                />
             </div>
 
             { showAnimations && isOpeningVault && (

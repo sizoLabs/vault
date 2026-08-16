@@ -7,5 +7,6 @@ export interface ISettings {
     id: string
     name: string
     description: string
+    placeholder?: string
     type: string
 }

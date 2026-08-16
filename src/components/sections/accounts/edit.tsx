@@ -245,7 +245,7 @@ const EditAccountModal = (props: EditAccountModalProps) => {
                 </DialogOption>
                 <DialogOption
                     title="Change Master Password"
-                    description="Change the master password for this account"
+                    description={`Change the master password for this account. <span style="color: #ff2056; font-weight: bold; font-family: Inter Bold;">All your passwords will be re-encrypted with the new master password. Backup your data, this action cannot be undone.</span>`}
                     layout="col"
                 >
                     <div className="w-full">

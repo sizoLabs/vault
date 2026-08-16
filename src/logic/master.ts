@@ -1,5 +1,5 @@
 import { getStorage, setStorage } from "@logic/storage"
-import { bufToBase64, base64ToBuf, randomBytes, deriveHmacKey, equalArrayBuffers } from "@logic/utils"
+import { bufToBase64, base64ToBuf, randomBytes, deriveHmacKey, equalArrayBuffers, ensureCryptoAvailability } from "@logic/utils"
 
 export const setMasterVerifier = async ({
     accountId,
@@ -9,10 +9,11 @@ export const setMasterVerifier = async ({
     masterPassword: string
 }) => {
 
+    const cryptoApi = ensureCryptoAvailability()
     const salt = new Uint8Array(randomBytes(16))
     const key = await deriveHmacKey(masterPassword, salt.buffer)
     const enc = new TextEncoder()
-    const verifierBuf = await crypto.subtle.sign('HMAC', key, enc.encode('vault-verifier-v1'))
+    const verifierBuf = await cryptoApi.subtle.sign('HMAC', key, enc.encode('vault-verifier-v1'))
 
     const stored = {
         salt: bufToBase64(salt.buffer),
@@ -38,6 +39,7 @@ export const verifyMasterPassword = async ({
     masterPassword: string
 }) => {
 
+    const cryptoApi = ensureCryptoAvailability()
     const account = getStorage(accountId)
     if (!account || !account.master) return false
 
@@ -45,7 +47,7 @@ export const verifyMasterPassword = async ({
     const saltBuf = base64ToBuf(saltB64)
     const key = await deriveHmacKey(masterPassword, saltBuf)
     const enc = new TextEncoder()
-    const computed = await crypto.subtle.sign('HMAC', key, enc.encode('vault-verifier-v1'))
+    const computed = await cryptoApi.subtle.sign('HMAC', key, enc.encode('vault-verifier-v1'))
     const storedVerifierBuf = base64ToBuf(verifierB64)
 
     return equalArrayBuffers(computed, storedVerifierBuf)

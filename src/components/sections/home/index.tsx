@@ -6,20 +6,18 @@ import { getSecretCount } from "@logic/secret"
 import { getAlphabetCount } from "@logic/alphabet"
 import { applyThemeColor } from "@logic/settings"
 
-import Logo from "./logo"
+import Logo from "../../ui/global/logo"
 import Block from "@component/ui/main/block"
-import CraftedBy from "@component/sections/main/footer/crafted"
-import Legal from "@component/sections/main/footer/legal"
-import GitHub from "@component/sections/main/footer/github"
+import Footer from "@component/global/footer"
 
-interface VaultProps {
+interface HomeProps {
     accountId: string
-    onPanelChange: (panel: string) => void
+    onSectionChange: (section: string) => void
 }
 
-const Vault = (props: VaultProps) => {
+const Home = (props: HomeProps) => {
 
-    const { accountId, onPanelChange } = props
+    const { accountId, onSectionChange } = props
     const [ totalVaults, setTotalVaults ] = useState(0)
     const [ totalServices, setTotalServices ] = useState(0)
     const [ totalSecrets, setTotalSecrets ] = useState(0)
@@ -109,19 +107,11 @@ const Vault = (props: VaultProps) => {
 
             </div>
 
-            <div className="absolute z-50 -bottom-12.5 flex w-full flex-col md:flex-row justify-between items-center gap-3 pb-15 px-5">
-                <div className="flex flex-row gap-2 items-center justify-center">
-                    <GitHub />
-                    <CraftedBy />
-                </div>
-                <Legal
-                    onPanelChange={ onPanelChange }
-                />
-            </div>
+            <Footer onSectionChange={ onSectionChange } />
 
         </div>
     )
 
 }
 
-export default Vault
+export default Home

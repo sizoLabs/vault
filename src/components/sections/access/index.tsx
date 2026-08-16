@@ -12,23 +12,21 @@ import {
     checkAccountMasterPassword
 } from "@logic/account"
 
-import Logo from "@component/sections/main/logo"
-import OpenVault from "@component/sections/main/open-vault"
-import CraftedBy from "@component/sections/main/footer/crafted"
-import Legal from "@component/sections/main/footer/legal"
-import GitHub from "@component/sections/main/footer/github"
+import Logo from "@component/ui/global/logo"
+import OpenAnimation from "@component/sections/access/open-animation"
+import Footer from "@component/global/footer"
 
-interface VaultAccessProps {
+interface AccessProps {
     onSubmitForm: (
         accountId: string,
         masterPassword: string
     ) => void
-    onPanelChange: (panel: string) => void
+    onSectionChange: (section: string) => void
 }
 
-const VaultAccess = (props: VaultAccessProps) => {
+const Access = (props: AccessProps) => {
 
-    const { onSubmitForm, onPanelChange } = props
+    const { onSubmitForm, onSectionChange } = props
 
     const dropdownRef = useRef<HTMLDivElement | null>(null)
 
@@ -316,18 +314,10 @@ const VaultAccess = (props: VaultAccessProps) => {
 
             </div>
 
-            <div className="absolute z-50 -bottom-12.5 flex w-full flex-col md:flex-row justify-between items-center gap-3 pb-15 px-5">
-                <div className="flex flex-row gap-2 items-center justify-center">
-                    <GitHub />
-                    <CraftedBy />
-                </div>
-                <Legal
-                    onPanelChange={ onPanelChange }
-                />
-            </div>
+            <Footer onSectionChange={ onSectionChange } />
 
             { showAnimations && isOpeningVault && (
-                <OpenVault vaultOpened={vaultOpened} />
+                <OpenAnimation vaultOpened={vaultOpened} />
             )}
 
         </div>
@@ -335,4 +325,4 @@ const VaultAccess = (props: VaultAccessProps) => {
 
 }
 
-export default VaultAccess
+export default Access

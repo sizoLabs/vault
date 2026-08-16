@@ -56,7 +56,7 @@ export default function MobileMenu({
                         <SidebarLogo
                             label="VAULT"
                             icon="ti-vault"
-                            onClick={() => onPanelChange("main-vault")}
+                            onClick={() => onPanelChange("home")}
                         />
 
                         <button
@@ -80,7 +80,7 @@ export default function MobileMenu({
                                         label="My Vault"
                                         active={activePanel === "vault"}
                                         show={accountId ? false : true}
-                                        onClick={() => handlePanelChange("main-vault")}
+                                        onClick={() => handlePanelChange("home")}
                                         className="w-full"
                                     />
 
@@ -111,11 +111,11 @@ export default function MobileMenu({
                             <div className="w-full flex flex-col items-left justify-left gap-1">
 
                                 <SidebarButton
-                                    icon="ti-book-2"
-                                    label="How it works"
-                                    active={activePanel === "how-it-works"}
+                                    icon="ti-question-mark"
+                                    label="FAQs"
+                                    active={activePanel === "faq"}
                                     show={true}
-                                    onClick={() => handlePanelChange("how-it-works")}
+                                    onClick={() => handlePanelChange("faq")}
                                 />
 
                                 <SidebarButton

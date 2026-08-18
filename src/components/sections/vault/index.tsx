@@ -105,7 +105,7 @@ const Vault = (props: VaultProps) => {
                                 { vaultData.name}
                             </h2>
                             
-                            <div className="mt-3 md:mt-0 md:ml-5 flex flex-row justify-between gap-2">
+                            <div className="mt-5 md:mt-0 md:ml-5 flex flex-row justify-between gap-2">
                                 <button
                                     onClick={ () => handleEditVault() }
                                     className="text-[20px] pl-2 pr-2.5 pt-1.5 pb-1 bg-white/5 squircle-md  border border-white/10 align-middle inline-block -mt-1.25 cursor-pointer hover:border-white/30 hover:bg-white/10 duration-300"

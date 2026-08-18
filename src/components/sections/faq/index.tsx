@@ -135,6 +135,10 @@ export default function FAQPage() {
         <>
             <div className="relative h-full w-full overflow-hidden squircle-md border border-white/10 bg-white/2">
 
+                <div className="absolute -top-60 -left-100 opacity-5 -z-1 mask-to-bottom">
+                    <i className="ti ti-question-mark text-[1200px]" />
+                </div>
+
                 <div className="flex h-full flex-col gap-5 md:gap-8 px-5 py-5 md:px-10 md:py-8">
 
                     <h2

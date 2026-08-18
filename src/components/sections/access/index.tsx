@@ -176,7 +176,7 @@ const Access = (props: AccessProps) => {
     }, [selectedAccount])
 
     const selectedAccountIcon = selectedAccount === 'new'
-        ? 'plus'
+        ? 'user-plus'
         : getAccountIcon(selectedAccount)
 
     return (
@@ -233,8 +233,10 @@ const Access = (props: AccessProps) => {
                                                 className="px-5 py-3 cursor-pointer hover:bg-white/10 border-b border-white/10 last:border-transparent"
                                             >
                                                 <div className="flex items-center justify-center gap-2">
-                                                    <i className="ti ti-plus text-lg" />
-                                                    <span>Create New Account</span>
+                                                    <i className="ti ti-user-plus text-lg" />
+                                                    <span className="font-inter-medium text-lg">
+                                                        Create New Account
+                                                    </span>
                                                 </div>
                                             </li>
 
@@ -265,9 +267,14 @@ const Access = (props: AccessProps) => {
                                                         }}
                                                         className="px-5 py-3 cursor-pointer hover:bg-white/10 text-center border-b border-white/10 last:border-transparent"
                                                     >
-                                                        <div className="flex items-center justify-center gap-2">
-                                                            <i className={`ti ti-${icon} text-lg`} />
-                                                            <span>{label}</span>
+                                                        <div className="flex flex-col items-center justify-center gap-2">
+                                                            <div className="font-inter-medium text-lg">
+                                                                <i className={`ti ti-${icon} text-lg mr-2`} />
+                                                                <span>{label}</span>
+                                                            </div>
+                                                            <span className="text-[10px] -mt-2 text-white/50">
+                                                                {accountId}
+                                                            </span>
                                                         </div>
                                                     </li>
                                                 )

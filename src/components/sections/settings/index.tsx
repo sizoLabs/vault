@@ -259,7 +259,7 @@ const Settings = (props: SettingsProps) => {
                     <div className="flex flex-col w-full form squircle-md">
                         { settings.map((setting) => {
 
-                            if (setting.id === "google-drive-file-id") {
+                            if (setting.id === "google-drive-file-id" || setting.id === "google-drive-enabled") {
                                 return null
                             }
 
@@ -278,114 +278,131 @@ const Settings = (props: SettingsProps) => {
                     
                 </div>
 
-                { isDriveSyncEnabled ? (
-                    <div className="relative mx-auto flex max-w-200 flex-col px-5 py-5 md:p-10 pb-0 md:pb-0">
+                <div className="relative mx-auto flex max-w-200 flex-col px-5 py-5 md:p-10 pb-0 md:pb-0">
 
-                        <h2 className="text-xl md:text-3xl font-inter-black mb-5">
-                            <i className="ti ti-brand-google-drive mr-2 align-middle inline-block -mt-1.25" /> Google Drive Sync
-                        </h2>
+                    <h2 className="text-xl md:text-3xl font-inter-black mb-5">
+                        <i className="ti ti-brand-google-drive mr-2 align-middle inline-block -mt-1.25" /> Google Drive Sync
+                    </h2>
 
-                        <div className="flex flex-col w-full form squircle-md">
-                            <div className="container">
-                                <div>
-                                    <h3>
-                                        Google Drive Connection
-                                    </h3>
-                                    <div className="description">
-                                        { driveState.connected && (
-                                            <>
-                                                Connected as
-                                                <b className="ml-1">
-                                                    @{ formatGoogleDriveUserLabel(driveState.email) }
-                                                </b>
-                                            </>
-                                        )}
-                                        { !driveState.connected && (
-                                            <>
-                                               { isGoogleDriveConfigured() ? "Connect this account to Google Drive appdata." : "Add PUBLIC_GOOGLE_CLIENT_ID in your .env file to enable sync." }
-                                            </>
+                    <div className="flex flex-col w-full form squircle-md">
+
+                        { settings.map((setting) => {
+                                if (setting.id === "google-drive-enabled") return (
+                                    <Setting
+                                        key={ setting.id }
+                                        setting={ setting }
+                                        accountId={ accountId }
+                                        value={ accountSettings.find((accountSetting: { id: string }) => accountSetting.id === setting.id)?.value }
+                                        onChange={ onSettingChange }
+                                    />
+                                )}
+                        )}
+
+
+                        { isDriveSyncEnabled ? (
+                            <>
+                                <div className="container">
+                                    <div>
+                                        <h3>
+                                            Google Drive Connection
+                                        </h3>
+                                        <div className="description">
+                                            { driveState.connected && (
+                                                <>
+                                                    Connected as
+                                                    <b className="ml-1">
+                                                        @{ formatGoogleDriveUserLabel(driveState.email) }
+                                                    </b>
+                                                </>
+                                            )}
+                                            { !driveState.connected && (
+                                                <>
+                                                { isGoogleDriveConfigured() ? "Connect this account to Google Drive appdata." : "Add PUBLIC_GOOGLE_CLIENT_ID in your .env file to enable sync." }
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="option flex flex-col md:flex-row gap-2">
+                                        {!driveState.connected ? (
+                                            <button
+                                                onClick={ handleConnectGoogleDrive }
+                                                disabled={ !isGoogleDriveConfigured() }
+                                                className="file-input-button disabled:opacity-50 disabled:cursor-not-allowed"
+                                            >
+                                                <i className="ti ti-brand-google-drive text-xl mr-1 align-middle inline-block -mt-1" /> Connect to Google Drive
+                                            </button>
+                                        ) : (
+                                            <button
+                                                onClick={ handleDisconnectGoogleDrive }
+                                                className="file-input-button bg-rose-500/10 border-rose-500/50 hover:bg-rose-500/20 hover:border-rose-500"
+                                            >
+                                                <i className="ti ti-power text-xl mr-1 align-middle inline-block -mt-1" /> Disconnect
+                                            </button>
                                         )}
                                     </div>
-                                </div>
-                                <div className="option flex flex-col md:flex-row gap-2">
-                                    {!driveState.connected ? (
-                                        <button
-                                            onClick={ handleConnectGoogleDrive }
-                                            disabled={ !isGoogleDriveConfigured() }
-                                            className="file-input-button disabled:opacity-50 disabled:cursor-not-allowed"
-                                        >
-                                            <i className="ti ti-brand-google-drive text-xl mr-1 align-middle inline-block -mt-1" /> Connect to Google Drive
-                                        </button>
-                                    ) : (
-                                        <button
-                                            onClick={ handleDisconnectGoogleDrive }
-                                            className="file-input-button bg-rose-500/10 border-rose-500/50 hover:bg-rose-500/20 hover:border-rose-500"
-                                        >
-                                            <i className="ti ti-power text-xl mr-1 align-middle inline-block -mt-1" /> Disconnect
-                                        </button>
-                                    )}
-                                </div>
-                            </div>
-
-                            { driveState.connected ? (
-                                <>
                                 
-                                    { settings.map((setting) => {
-                                        if (setting.id === "google-drive-file-id") return (
-                                            <Setting
-                                                key={ setting.id }
-                                                setting={ setting }
-                                                accountId={ accountId }
-                                                value={ accountSettings.find((accountSetting: { id: string }) => accountSetting.id === setting.id)?.value }
-                                                onChange={ onSettingChange }
-                                            />
-                                        )
-                                    }) }
+                                </div>
 
-                                    <div className="container">
-                                        <div>
-                                            <h3>
-                                                Sync from Google Drive
-                                            </h3>
-                                            <div className="description">
-                                                Download the .vault file from Drive and apply it to this account.
+                                { driveState.connected ? (
+                                    <>
+                                    
+                                        { settings.map((setting) => {
+                                            if (setting.id === "google-drive-file-id") return (
+                                                <Setting
+                                                    key={ setting.id }
+                                                    setting={ setting }
+                                                    accountId={ accountId }
+                                                    value={ accountSettings.find((accountSetting: { id: string }) => accountSetting.id === setting.id)?.value }
+                                                    onChange={ onSettingChange }
+                                                />
+                                            )
+                                        }) }
+
+                                        <div className="container">
+                                            <div>
+                                                <h3>
+                                                    Sync from Google Drive
+                                                </h3>
+                                                <div className="description">
+                                                    Download the .vault file from Drive and apply it to this account.
+                                                </div>
+                                            </div>
+                                            <div className="option">
+                                                <button
+                                                    onClick={ handlePullGoogleDrive }
+                                                    disabled={ !canUseDriveSyncActions }
+                                                    className="file-input-button disabled:opacity-50 disabled:cursor-not-allowed"
+                                                >
+                                                    <i className="ti ti-download text-xl mr-1 align-middle inline-block -mt-1" /> Synchronize from Drive
+                                                </button>
                                             </div>
                                         </div>
-                                        <div className="option">
-                                            <button
-                                                onClick={ handlePullGoogleDrive }
-                                                disabled={ !canUseDriveSyncActions }
-                                                className="file-input-button disabled:opacity-50 disabled:cursor-not-allowed"
-                                            >
-                                                <i className="ti ti-download text-xl mr-1 align-middle inline-block -mt-1" /> Synchronize from Drive
-                                            </button>
-                                        </div>
-                                    </div>
 
-                                    <div className="container">
-                                        <div>
-                                            <h3>
-                                                Upload local data to Drive
-                                            </h3>
-                                            <div className="description">
-                                                Replace the Google Drive copy with the current local account data.
+                                        <div className="container">
+                                            <div>
+                                                <h3>
+                                                    Upload local data to Drive
+                                                </h3>
+                                                <div className="description">
+                                                    Replace the Google Drive copy with the current local account data.
+                                                </div>
+                                            </div>
+                                            <div className="option">
+                                                <button
+                                                    onClick={ handlePushGoogleDrive }
+                                                    disabled={ !canUseDriveSyncActions }
+                                                    className="file-input-button disabled:opacity-50 disabled:cursor-not-allowed"
+                                                >
+                                                    <i className="ti ti-upload text-xl mr-1 align-middle inline-block -mt-1" /> Replace Drive Data
+                                                </button>
                                             </div>
                                         </div>
-                                        <div className="option">
-                                            <button
-                                                onClick={ handlePushGoogleDrive }
-                                                disabled={ !canUseDriveSyncActions }
-                                                className="file-input-button disabled:opacity-50 disabled:cursor-not-allowed"
-                                            >
-                                                <i className="ti ti-upload text-xl mr-1 align-middle inline-block -mt-1" /> Replace Drive Data
-                                            </button>
-                                        </div>
-                                    </div>
-                                </>
-                            ) : null }
-                        </div>
+                                    </>
+                                ) : null }
+                            </>
+                        ) : null }
                     </div>
-                ) : null }
+                </div>
 
                 <div className="relative mx-auto flex max-w-200 flex-col px-5 py-5 md:p-10 pb-0 md:pb-0">
 

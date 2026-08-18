@@ -1,14 +1,22 @@
 import { useEffect, useState } from "react"
 
+import { buildMasterSeedBlocks } from "@logic/utils"
+
 import FileInput from "@component/ui/form/file"
 
 import Setting from "@component/sections/settings/setting"
 import Input from "@component/ui/form/input"
 
-import { importAccountData, exportAccountData, checkAccountMasterPassword } from "@logic/account"
+import {
+    importAccountData,
+    exportAccountData,
+    checkAccountMasterPassword,
+    setAccountMasterPassword
+} from "@logic/account"
 import { getSettings, getAccountSettings, updateSettings, applyThemeColor } from "@logic/settings"
 import { applyGradientBackgroundSetting, applyColoredBackgroundSetting } from "@logic/background"
 import { getStorage } from "@logic/storage"
+import { removeMasterVerifier } from "@logic/master"
 import { resetAllData } from "@logic/data"
 import { showAlert } from "@logic/alert"
 import { syncServicesWithChromeExtension } from "@logic/service"
@@ -39,6 +47,7 @@ const Settings = (props: SettingsProps) => {
     const [ settings, setSettings ] = useState<ISettings[]>([])
     const [ accountSettings, setAccountSettings ] = useState<IAccountSettings[]>([])
     const [ resetMasterPassword, setResetMasterPassword ] = useState<string>("")
+    const [ masterSeedBlocks, setMasterSeedBlocks ] = useState<Array<{ id: number, seed: string, color: { r: number, g: number, b: number }, token: string }>>([])
     const [ driveState, setDriveState ] = useState<{ enabled: boolean, connected: boolean, accessToken: string, email: string }>({
         enabled: false,
         connected: false,
@@ -75,6 +84,14 @@ const Settings = (props: SettingsProps) => {
 
         if (settingId === "google-drive-enabled") {
             syncDriveState(accountId)
+        }
+
+        if (settingId === "store-master-verifier") {
+            if (value === false) {
+                removeMasterVerifier(accountId)
+            } else if (masterPassword) {
+                setAccountMasterPassword({ accountId, masterPassword })
+            }
         }
 
     }
@@ -154,6 +171,29 @@ const Settings = (props: SettingsProps) => {
     const isDriveSyncEnabled = Boolean(accountSettings.find((setting) => setting.id === "google-drive-enabled")?.value) || driveState.enabled
     const driveFileIdentifier = String(accountSettings.find((setting) => setting.id === "google-drive-file-id")?.value || "").trim()
     const canUseDriveSyncActions = driveState.connected && Boolean(driveFileIdentifier)
+    const isMasterVerifierDisabled = accountSettings.some((setting) => setting.id === "store-master-verifier" && setting.value === false)
+
+    useEffect(() => {
+        let isMounted = true
+
+        if (!isMasterVerifierDisabled || !masterPassword) {
+            setMasterSeedBlocks([])
+            return () => {
+                isMounted = false
+            }
+        }
+
+        const loadSeedBlocks = async () => {
+            const blocks = await buildMasterSeedBlocks(masterPassword)
+            if (isMounted) setMasterSeedBlocks(blocks)
+        }
+
+        loadSeedBlocks()
+
+        return () => {
+            isMounted = false
+        }
+    }, [isMasterVerifierDisabled, masterPassword])
 
     useEffect(() => {
 
@@ -206,6 +246,61 @@ const Settings = (props: SettingsProps) => {
                     </div>
                     
                 </div>
+
+                { isMasterVerifierDisabled ? (
+                    <div className="relative mx-auto flex max-w-200 flex-col px-5 py-5 md:p-10 pb-0 md:pb-0">
+                        <h2 className="text-xl md:text-3xl font-inter-black mb-5">
+                            <i className="ti ti-square-f0 mr-2 align-middle inline-block -mt-1.25" /> Master Password Tokens
+                        </h2>
+
+                        <div className="flex flex-col w-full form squircle-md">
+                            <div className="container flex-col! gap-5">
+
+                                <div>
+                                    <h3>
+                                        Tokens for Master Password Verification
+                                    </h3>
+                                    <div className="description">
+                                        This allows you to know if the master password is correct. Memorize these tokens, so when you access again you will know if the master password is correct.
+                                    </div>
+                                </div>
+
+                                <div className="w-full">
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
+                                        { masterSeedBlocks.length > 0 ? masterSeedBlocks.map((block) => (
+                                            <div
+                                                style={{ background: `rgba(${block.color.r}, ${block.color.g}, ${block.color.b}, 0.1)`, borderColor: `rgba(${block.color.r}, ${block.color.g}, ${block.color.b}, 0.8)` }}
+                                                key={ block.id }
+                                                className="squircle-md border border-white/10 bg-black/10 p-3"
+                                            >
+                                                <div className="flex items-center justify-between">
+                                                    <span className="text-lg font-inter-bold text-white">
+                                                        Token { block.id }
+                                                    </span>
+                                                </div>
+                                                <div className="mt-3 flex flex-row items-center justify-around gap-1">
+                                                    <span className="block w-full text-4xl font-inter-black text-left">
+                                                        { block.token }
+                                                    </span>
+                                                    <span className="block min-h-10 w-full h-full squircle-full" style={{ backgroundColor: `rgba(${block.color.r}, ${block.color.g}, ${block.color.b}, 1)` }}></span>
+                                                </div>
+                                            </div>
+                                            
+                                        )) : (
+                                            <div className="md:col-span-4 text-rose-500 bg-rose-500/5 border border-rose-500/50 px-3 py-3 squircle-md">
+                                                Seed preview is unavailable until a master password is available in the current session.
+                                            </div>
+                                        ) }
+                                        <div className="md:col-span-4 text-amber-500 bg-amber-500/5 border border-amber-500/50 p-3 squircle-md mt-3">
+                                                This shows because the "Store Master Password Verification" setting is disabled.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                ) : null }
 
                 { isDriveSyncEnabled ? (
                     <div className="relative mx-auto flex max-w-200 flex-col px-5 py-5 md:p-10 pb-0 md:pb-0">

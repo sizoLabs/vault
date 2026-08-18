@@ -40,6 +40,10 @@ export const createDefaultSettings = (accountId: string, customAccountName = "Pe
             value: customAccountIcon
         },
         {
+            id: "store-master-verifier",
+            value: true
+        },
+        {
             id: "default-password-length",
             value: 14
         },
@@ -101,6 +105,12 @@ export const getSettings = () => {
             name: "Account Icon",
             description: "The icon for your account.",
             type: "icon"
+        },
+        {
+            id: "store-master-verifier",
+            name: "Master Password Verification",
+            description: "Keep a verifier in local storage so the app can validate the master password on access. Disable it to skip this check entirely.",
+            type: "toggle"
         },
         {
             id: "default-password-length",
@@ -165,8 +175,12 @@ export const getSettings = () => {
 
 export const getAccountSettings = (accountId: string) => {
     const account = getStorage(accountId)
-    const settings = account?.settings
-    if(!settings || settings.length === 0) return []
+    const settings = Array.isArray(account?.settings) ? [ ...account.settings ] : []
+
+    if (!settings.some((setting: { id?: string }) => setting?.id === "store-master-verifier")) {
+        settings.push({ id: "store-master-verifier", value: true })
+    }
+
     return settings
 }
 

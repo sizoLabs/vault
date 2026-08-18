@@ -224,3 +224,37 @@ export const mixWithWhite = (defaultColor: string, hex: string, percentage = 0.2
         b: Math.round(b * ratio + 255 * percentage)
     })
 }
+
+export const buildMasterSeedBlocks = async (masterPassword: string) => {
+    if (!masterPassword) return []
+
+    const cryptoApi = globalThis.crypto ?? (typeof window !== "undefined" ? window.crypto : undefined)
+    if (!cryptoApi || !cryptoApi.subtle) return []
+
+    const hashBuffer = await cryptoApi.subtle.digest("SHA-512", new TextEncoder().encode(masterPassword))
+    const hashHex = Array.from(new Uint8Array(hashBuffer)).map((byte) => byte.toString(16).padStart(2, "0")).join("")
+
+    const blocks: Array<{ id: number, seed: string, color: { r: number, g: number, b: number }, token: string }> = []
+    const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+
+    for (let index = 0; index < 4; index++) {
+        const seed = hashHex.slice(index * 32, (index + 1) * 32) || "00000000000000000000000000000000"
+        const color = {
+            r: Number.parseInt(seed.slice(0, 2), 16),
+            g: Number.parseInt(seed.slice(2, 4), 16),
+            b: Number.parseInt(seed.slice(4, 6), 16)
+        }
+        const numericSeed = Array.from(seed).reduce((total, char, charIndex) => total + char.charCodeAt(0) * (charIndex + 1), 0)
+        const first = alphabet[numericSeed % alphabet.length]
+        const second = alphabet[Math.floor(numericSeed / 13) % alphabet.length]
+
+        blocks.push({
+            id: index + 1,
+            seed,
+            color,
+            token: `${first}${second}`
+        })
+    }
+
+    return blocks
+}

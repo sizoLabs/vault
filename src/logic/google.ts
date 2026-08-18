@@ -468,6 +468,12 @@ export const pullGoogleDriveToAccount = async ({
                 const encryptedData = await response.text()
                 const decodedData = await decodeData(masterPassword, encryptedData)
                 const parsedData = JSON.parse(decodedData)
+                const parsedSettings = Array.isArray(parsedData?.settings) ? parsedData.settings : []
+                const storeMasterSetting = parsedSettings.find((setting: { id?: string }) => setting?.id === "store-master-verifier")
+
+                if (storeMasterSetting && storeMasterSetting.value === false) {
+                    delete parsedData.master
+                }
 
                 setStorage(accountId, parsedData)
                 showAlert("Google Drive data was applied to this account", "success", "database-export", 5000)

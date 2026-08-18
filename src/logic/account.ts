@@ -1,7 +1,8 @@
 import { getStorage, setStorage, removeStorage } from "@logic/storage"
 
+import { deleteChromeExtensionAccount } from "@logic/service"
 import { generateAccountId } from "@logic/utils"
-import { setMasterVerifier, verifyMasterPassword } from "@logic/master"
+import { setMasterVerifier, verifyMasterPassword, removeMasterVerifier } from "@logic/master"
 
 import { createDefaultAlphabet } from "@logic/alphabet"
 import { createDefaultVault } from "@logic/vault"
@@ -106,6 +107,7 @@ export const deleteAccount = (id: string) => {
     removeStorage(id)
     
     setStorage("accounts", accounts)
+    deleteChromeExtensionAccount({ accountId: id })
     
 }
 
@@ -123,6 +125,22 @@ export const exportAccountData = async ({
     const encodedData = await encodeData(masterPassword, JSON.stringify(exportPayload))
     downloadFile(encodedData, getExportFileName(accountId), "application/octet-stream")
     showAlert("Data exported successfully!", "success", "database-export", 5000)
+}
+
+const sanitizeImportedAccountData = (accountId: string, data: any) => {
+    const accountData = data && typeof data === 'object' ? data : {}
+    const settings = Array.isArray(accountData.settings) ? accountData.settings : []
+    const persistSetting = settings.find((setting: { id?: string }) => setting?.id === "store-master-verifier")
+
+    if (persistSetting && persistSetting.value === false) {
+        delete accountData.master
+    } else if (!persistSetting && !accountData.master) {
+        return accountData
+    } else if (!persistSetting && accountData.master) {
+        delete accountData.master
+    }
+
+    return accountData
 }
 
 export const importAccountData = ({
@@ -160,7 +178,7 @@ export const importAccountData = ({
 
             const data = reader.result as string
             const decodedData = await decodeData(masterPassword, data)
-            const parsedData = JSON.parse(decodedData)
+            const parsedData = sanitizeImportedAccountData(accountId, JSON.parse(decodedData))
 
             let account = getStorage(accountId)
 
@@ -226,6 +244,16 @@ export const importAccountData = ({
                 setStorage(accountId, parsedData)
             }
 
+            if (parsedData && typeof parsedData === "object") {
+                const parsedSettings = Array.isArray(parsedData.settings) ? parsedData.settings : []
+                const storeMasterSetting = parsedSettings.find((setting: { id?: string }) => setting?.id === "store-master-verifier")
+
+                if (storeMasterSetting && storeMasterSetting.value === false) {
+                    delete parsedData.master
+                    setStorage(accountId, parsedData)
+                }
+            }
+
             onImportComplete()
 
             showAlert("Data imported to your account!", "success", "database-import", 5000)
@@ -246,6 +274,15 @@ export const setAccountMasterPassword = async ({
     accountId: string,
     masterPassword: string
 }) => {
+        const account = getStorage(accountId) || {}
+        const settings = Array.isArray(account.settings) ? account.settings : []
+        const storeMasterSetting = settings.find((setting: { id?: string }) => setting?.id === "store-master-verifier")
+
+        if (storeMasterSetting && storeMasterSetting.value === false) {
+            removeMasterVerifier(accountId)
+            return
+        }
+
         await setMasterVerifier({ accountId, masterPassword })
 }
 

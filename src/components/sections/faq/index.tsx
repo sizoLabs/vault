@@ -1,4 +1,185 @@
 import { useEffect, useRef, useState } from "react"
+import * as randomseed from "random-seed"
+
+const createHash = async (value: string): Promise<string> => {
+    if (!value) return ""
+    const cryptoApi = globalThis.crypto
+    if (!cryptoApi || !cryptoApi.subtle) return ""
+    const buffer = await cryptoApi.subtle.digest("SHA-512", new TextEncoder().encode(value))
+    return Array.from(new Uint8Array(buffer), (byte) => byte.toString(16).padStart(2, "0")).join("")
+}
+
+const createPassword = async (hash: string, length: number, alphabet: string): Promise<string> => {
+    if (!hash || !alphabet || !length) return ""
+    const seed = randomseed.create(hash)
+    let result = ""
+
+    for (let index = 0; index < length; index++) {
+        result += alphabet[seed(alphabet.length)]
+    }
+
+    return result
+}
+
+const HowItWorksDemo = () => {
+    const [ form, setForm ] = useState({
+        identifier: "user@google",
+        alphabet: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%",
+        master: "lorem ipsum dolor sit amet",
+        length: 16
+    })
+
+    const [ derived, setDerived ] = useState({
+        masterHash: "",
+        identifierHash: "",
+        alphabetHash: "",
+        combinedHash: "",
+        password: ""
+    })
+
+    useEffect(() => {
+        let isMounted = true
+
+        const generatePreview = async () => {
+            const masterHash = await createHash(form.master)
+            const identifierHash = await createHash(form.identifier)
+            const alphabetHash = await createHash(form.alphabet)
+            const combinedHash = await createHash(masterHash + identifierHash + alphabetHash)
+            const password = await createPassword(combinedHash, form.length, form.alphabet)
+
+            if (isMounted) {
+                setDerived({
+                    masterHash,
+                    identifierHash,
+                    alphabetHash,
+                    combinedHash,
+                    password
+                })
+            }
+        }
+
+        generatePreview()
+
+        return () => {
+            isMounted = false
+        }
+    }, [ form ])
+
+    const updateField = (field: keyof typeof form, value: string | number) => {
+        setForm((current) => ({
+            ...current,
+            [field]: value
+        }))
+    }
+
+    return (
+        <div className="mb-10 md:mb-25 space-y-5">
+            <div className="grid gap-4 md:grid-cols-3">
+
+                <label className="flex flex-col gap-2 squircle-md border border-white/10 bg-white/2 p-5 text-left">
+                    <span className="text-lg font-inter-bold text-white/80">
+                        Identifier
+                    </span>
+                    <input
+                        value={form.identifier}
+                        onChange={(event) => updateField("identifier", event.target.value)}
+                        className="squircle-md border border-white/10 bg-white/2 px-3 py-2 text-sm text-white outline-none ring-0 placeholder:text-white/35 hover:border-primary hover:bg-primary/10 focus:border-primary duration-300"
+                        placeholder="E.g. myuser@google, gmail/user..."
+                        spellCheck="false"
+                    />
+                    <span className="mt-2 break-all text-[11px] leading-5 text-white/50">
+                        Seed: {derived.identifierHash || "Waiting..."}
+                    </span>
+                </label>
+
+                <label className="flex flex-col gap-2 squircle-md border border-white/10 bg-white/2 p-4 text-left">
+                    <span className="text-lg font-inter-bold text-white/80">
+                        Alphabet
+                    </span>
+                    <input
+                        value={form.alphabet}
+                        onChange={(event) => updateField("alphabet", event.target.value)}
+                        className="squircle-md border border-white/10 bg-white/2 px-3 py-2 text-sm text-white outline-none ring-0 placeholder:text-white/35 hover:border-primary hover:bg-primary/10 focus:border-primary duration-300"
+                        placeholder="abcdefghijklmnopqrstuvwxyz"
+                        spellCheck="false"
+                    />
+                    <span className="mt-2 break-all text-[11px] leading-5 text-white/50">
+                        Seed: {derived.alphabetHash || "Waiting..."}
+                    </span>
+                </label>
+
+                <label className="flex flex-col gap-2 squircle-md border border-white/10 bg-white/2 p-4 text-left">
+                    <span className="text-lg font-inter-bold text-white/80">
+                        Master password
+                    </span>
+                    <input
+                        type="password"
+                        value={form.master}
+                        onChange={(event) => updateField("master", event.target.value)}
+                        className="squircle-md border border-white/10 bg-white/2 px-3 py-2 text-sm text-white outline-none ring-0 placeholder:text-white/35 hover:border-primary hover:bg-primary/10 focus:border-primary duration-300"
+                        placeholder="Enter any master password"
+                    />
+                    <span className="mt-2 break-all text-[11px] leading-5 text-white/50">
+                        Seed: {derived.masterHash || "Waiting..."}
+                    </span>
+                </label>
+            </div>
+
+            <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
+                <div className="squircle-md border border-white/10 bg-white/3 p-5">
+                    <div className="mb-3 flex items-center justify-between gap-3">
+                        <span className="text-lg font-inter-bold text-white/80">
+                        Combined seed
+                        </span>
+                        <span className="squircle-md border border-white/10 bg-black/20 px-2 py-1 text-[10px] text-white/50 inline-block">SHA-512</span>
+                    </div>
+                    <p className="break-all text-[11px] leading-5 text-white/80 md:text-xs">{derived.combinedHash || "Waiting..."}</p>
+                    <p className="mt-4 text-xs text-white/50">
+                        masterHash + identifierHash + alphabetHash = combined seed
+                    </p>
+                </div>
+
+                <div className="squircle-md border border-primary/50 bg-primary/5 hover:border-primary hover:bg-primary/10 duration-300 p-5">
+
+                    <div className="mb-3 flex items-center justify-between gap-3">
+
+                        <span className="text-lg font-inter-bold text-white/80">
+                            Generated Password
+                        </span>
+
+                        <label className="flex flex-col md:flex-row items-center gap-2 text-[10px] text-white/80">
+                            <span className="block w-full text-white/80">
+                                Length
+                            </span>
+                            <input
+                                type="number"
+                                min={4}
+                                max={64}
+                                value={form.length}
+                                onChange={(event) => updateField("length", Number(event.target.value) || 8)}
+                                className="w-16 squircle-md border border-primary/20 bg-black/20 pr-2 py-1 text-center text-white outline-none focus:border-primary/60"
+                            />
+                        </label>
+
+                    </div>
+
+                    <p className="break-all text-lg font-inter-bold text-white md:text-xl">
+                        { !derived.password ? (
+                            <span className="mt-2 break-all text-[11px] leading-5 text-white/50">
+                                Waiting...
+                            </span>
+                        ) : derived.password}
+                    </p>
+
+                    <p className="mt-4 text-[11px] text-white/50">
+                        Using {form.alphabet.length} characters from the alphabet
+                    </p>
+
+                </div>
+            </div>
+        </div>
+    )
+}
 
 const faqItems = [
     {
@@ -7,7 +188,8 @@ const faqItems = [
         answer: [
             "Vault uses a deterministic cryptographic hash system with SHA-512 technology. Here's what happens: you provide your master password, a service identifier, and a character set. These inputs are combined and hashed using SHA-512, which creates a unique cryptographic fingerprint.",
             "The resulting hash is then converted into hexadecimal values to increase strength, and these values are filtered through your chosen character set to generate your final password. Because the process is deterministic, the same combination of inputs will always create the exact same password.",
-            "This means Vault never stores your actual passwords anywhere. They're generated on-demand in your browser whenever you need them, which eliminates the need for password databases or cloud storage."
+            "This means Vault never stores your actual passwords anywhere. They're generated on-demand in your browser whenever you need them, which eliminates the need for password databases or cloud storage.",
+            "Since there is nothing that says 'this is Juan's Gmail password', even if someone gets access to your device, they still cannot reconstruct your passwords without knowing your master password. This gives Vault a level of privacy and security that is difficult to achieve with traditional password managers."
         ]
     },
     {
@@ -23,8 +205,8 @@ const faqItems = [
         id: "data-storage",
         question: "Where is my information stored?",
         answer: [
-            "All your data is stored locally in your browser's storage (IndexedDB or LocalStorage, depending on your browser). This includes your accounts, service configurations, custom alphabets, and application settings. Your metadata stays entirely on your device.",
-            "We only store the metadata that helps organize your passwords. Things like service identifiers ('gmail', 'github'), account names, custom character sets you create, vault organization, and your settings. The actual passwords themselves are never stored because they're generated whenever you need them.",
+            "All your data is stored locally in your browser's storage. This includes your accounts, service configurations, custom alphabets, and application settings. Your metadata stays entirely on your device.",
+            "We only store the metadata that helps organize your passwords. Things like service identifiers ('gmail', 'bluesky'), account names, custom character sets you create, vault organization, and your settings. The actual passwords themselves are never stored because they're generated whenever you need them.",
             "Nothing leaves your device unless you choose to export your data as an encrypted file or enable Google Drive synchronization. You have complete control over what data is stored locally and whether it's synced elsewhere."
         ]
     },
@@ -87,6 +269,15 @@ const faqItems = [
         ]
     },
     {
+        id: "import-passwords",
+        question: "Can I import passwords from other password managers?",
+        answer: [
+            "No. Vault does not support importing passwords from other password managers because Vault does not store passwords at all. It only generates them on demand from your master password, a service identifier, and the selected alphabet.",
+            "Since Vault never saves the final password anywhere, there is nothing to import from another manager. The only data Vault keeps locally is your account metadata, service configuration, and custom alphabets used to generate the passwords.",
+            "This is intentional: the generated password is recreated each time using the same inputs, so the vault itself does not contain a password database to migrate."
+        ]
+    },
+    {
         id: "account-organization",
         question: "How do I organize multiple accounts and services?",
         answer: [
@@ -135,6 +326,10 @@ export default function FAQPage() {
         <>
             <div className="relative h-full w-full overflow-hidden squircle-md border border-white/10 bg-white/2">
 
+                <div className="absolute -top-60 -left-100 opacity-5 -z-1 mask-to-bottom">
+                    <i className="ti ti-question-mark text-[1200px]" />
+                </div>
+
                 <div className="flex h-full flex-col gap-5 md:gap-8 px-5 py-5 md:px-10 md:py-8">
 
                     <h2
@@ -160,14 +355,14 @@ export default function FAQPage() {
                                         onClick={() => setActiveItemId(item.id)}
                                         className={`group flex justify-start flex-col w-full items-start gap-0 md:gap-3 squircle-md md:squircle-lg border px-3 md:px-6 py-3 md:py-6 text-left transition-all duration-300 cursor-pointer ${
                                             isActive
-                                                ? "border-primary/50 bg-primary/10 text-white"
+                                                ? "border-primary bg-primary/10 text-white"
                                                 : "border-white/10 bg-white/2 text-white/75 hover:border-white/20 hover:bg-white/10 hover:text-white"
                                         }`}
                                     >
 
-                                        <div className="block shrink-0 px-1 pr-1 text-sm md:text-2xl font-inter-black min-w-fit">
+                                        <div className="block shrink-0 px-1 pr-1 text-lm md:text-2xl font-inter-black min-w-fit">
                                             {faqItems.findIndex((faqItem) => faqItem.id === item.id) + 1}
-                                            <span className="opacity-50 ml-1.5 text-[18px] font-inter-medium">of {faqItems.length}</span>
+                                            <span className="opacity-50 ml-1.5 text-xs md:text-[18px] font-inter-medium">of {faqItems.length}</span>
                                         </div>
 
                                         <span className="text-sm md:text-[23px] leading-7 font-inter-bold">
@@ -185,7 +380,7 @@ export default function FAQPage() {
                             {!activeItem && (
                                 <div className="flex flex-col items-start justify-center h-full max-w-150 mx-auto gap-5 text-left">
                                     <h3 className="text-xl font-inter-black md:text-6xl">
-                                        Read the questions users frequently ask about Vault
+                                        Read the frequently asked questions about Vault
                                     </h3>
                                     <p className="text-sm text-white/70 md:text-2xl">
                                         Click on a question to view its answer
@@ -200,13 +395,32 @@ export default function FAQPage() {
                             )}
 
                             <div ref={answerRef} className="flex-1 min-h-0 overflow-y-auto no-scrollbar-but-scroll mask-to-bottom mask-fade-20 pb-10 max-w-270">
-                                {activeItem && activeItem.answer.map((paragraph) => (
+                                {activeItem && activeItem.id === "how-it-works" ? (
+                                    <>
+                                        {activeItem.answer.map((paragraph) => (
+                                            <p
+                                                className="mb-5 leading-10 text-white/75 text-[28px]"
+                                                key={paragraph}
+                                                dangerouslySetInnerHTML={{ __html: paragraph }}
+                                            />
+                                        ))}
+                                        <div className="pt-2">
+                                            <h2 className="mb-5 text-3xl font-inter-bold text-white md:text-4xl">
+                                                Demostration of Vault in action
+                                            </h2>
+                                            <div className="mb-5 text-white/75 text-[18px]">
+                                                This is for demonstration purposes only. You can try it out with your own master password, identifier, and alphabet to see how Vault generates a unique password for you. This is a simple demonstration and does not include all the features of Vault.
+                                            </div>
+                                            <HowItWorksDemo />
+                                        </div>
+                                    </>
+                                ) : activeItem ? activeItem.answer.map((paragraph) => (
                                     <p
                                         className="mb-5 leading-10 text-white/75 text-[28px]"
                                         key={paragraph}
                                         dangerouslySetInnerHTML={{ __html: paragraph }}
                                     />
-                                ))}
+                                )) : null}
                             </div>
 
                         </section>
@@ -231,7 +445,26 @@ export default function FAQPage() {
                         </h3>
 
                         <div ref={mobileAnswerRef} className="flex-1 min-h-0 overflow-y-auto no-scrollbar-but-scroll mask-to-bottom mask-fade-20 pb-10">
-                            {activeItem.answer.map((paragraph) => (
+                            {activeItem.id === "how-it-works" ? (
+                                <>
+                                    {activeItem.answer.map((paragraph) => (
+                                        <p
+                                            className="mb-5 text-sm text-white/75 md:text-2xl"
+                                            key={paragraph}
+                                            dangerouslySetInnerHTML={{ __html: paragraph }}
+                                        />
+                                    ))}
+                                    <div className="pt-2">
+                                            <h2 className="mb-5 text-xl font-inter-bold text-white md:text-4xl">
+                                                Demostration of Vault in action
+                                            </h2>
+                                            <div className="mb-5 text-white/75 text-sm">
+                                               This is for demonstration purposes only. You can try it out with your own master password, identifier, and alphabet to see how Vault generates a unique password for you. This is a simple demonstration and does not include all the features of Vault.
+                                            </div>
+                                        <HowItWorksDemo />
+                                    </div>
+                                </>
+                            ) : activeItem.answer.map((paragraph) => (
                                 <p
                                     className="mb-5 text-sm leading-9 text-white/75 md:text-2xl"
                                     key={paragraph}

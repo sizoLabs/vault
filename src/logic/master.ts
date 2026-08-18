@@ -1,6 +1,14 @@
 import { getStorage, setStorage } from "@logic/storage"
 import { bufToBase64, base64ToBuf, randomBytes, deriveHmacKey, equalArrayBuffers, ensureCryptoAvailability } from "@logic/utils"
 
+const getAccountStoreMasterVerifierSetting = (account: any): boolean => {
+    const settings = Array.isArray(account?.settings) ? account.settings : []
+    const matchingSetting = settings.find((setting: { id?: string, value?: unknown }) => setting?.id === "store-master-verifier")
+
+    if (!matchingSetting || typeof matchingSetting.value === "undefined") return true
+    return Boolean(matchingSetting.value)
+}
+
 export const setMasterVerifier = async ({
     accountId,
     masterPassword
@@ -8,6 +16,13 @@ export const setMasterVerifier = async ({
     accountId: string,
     masterPassword: string
 }) => {
+
+    const account = getStorage(accountId) || {}
+
+    if (!getAccountStoreMasterVerifierSetting(account)) {
+        removeMasterVerifier(accountId)
+        return
+    }
 
     const cryptoApi = ensureCryptoAvailability()
     const salt = new Uint8Array(randomBytes(16))
@@ -20,14 +35,12 @@ export const setMasterVerifier = async ({
         verifier: bufToBase64(verifierBuf)
     }
 
-    let account = getStorage(accountId) || {}
-
-    account = {
+    const nextAccount = {
         ...account,
         master: stored
     }
 
-    setStorage(accountId, account)
+    setStorage(accountId, nextAccount)
 
 }
 
@@ -39,11 +52,16 @@ export const verifyMasterPassword = async ({
     masterPassword: string
 }) => {
 
-    const cryptoApi = ensureCryptoAvailability()
     const account = getStorage(accountId)
-    if (!account || !account.master) return false
+    if (!account || !account.master) return true
 
+    if (!getAccountStoreMasterVerifierSetting(account)) return true
+
+    const cryptoApi = ensureCryptoAvailability()
     const { salt: saltB64, verifier: verifierB64 } = account.master
+
+    if (!saltB64 || !verifierB64) return true
+
     const saltBuf = base64ToBuf(saltB64)
     const key = await deriveHmacKey(masterPassword, saltBuf)
     const enc = new TextEncoder()

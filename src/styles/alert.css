@@ -1,25 +1,53 @@
 .alerts-container {
-    @apply fixed bottom-5 md:top-5 right-5 z-999 flex flex-col gap-3 pointer-events-none items-end
+    @apply fixed top-20 left-1/2 -translate-x-1/2 z-999 flex flex-col gap-1 pointer-events-none items-center md:top-5 md:left-auto md:right-5 md:translate-x-0 md:items-end w-full px-5
 }
 
 .alert {
     corner-shape: squircle;
     border-radius: 50px;
     opacity: 0;
-    transform: translateX(calc(100% + 2rem));
+    transform: translateY(calc(-100% - 2rem));
     transition: transform 0.35s ease-in-out, opacity 0.25s ease-in-out;
-    @apply w-fit bg-white/5 text-white border border-darker/10 dark:border-white/10 pt-2 py-2.5 pb-2 pl-0.75 pr-3 text-[15px] backdrop-blur-xl pointer-events-auto
+    @apply w-full md:w-fit bg-white/5 text-white border border-darker/10 dark:border-white/10 py-3 px-4 md:py-0.5 md:pl-0.75 md:pr-3 md:text-[15px] backdrop-blur-3xl pointer-events-auto
+}
+
+.alert span {
+    @apply hidden md:inline-block border px-2 py-2 mr-2
+}
+
+.alert .alert-close {
+    corner-shape: squircle;
+    border-radius: 50px;
+    @apply ml-3 transition-colors cursor-pointer border-none bg-transparent text-current items-center justify-center hidden md:inline-block p-0 w-8 h-8
+}
+
+.alert .alert-close .ti {
+    @apply align-middle -mt-px pb-0
+}
+
+.alert i {
+    @apply text-[24px] inline-block align-bottom -mt-0.75 
 }
 
 .alert.show {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateY(0);
+}
+
+@media (min-width: 768px) {
+    .alert {
+        transform: translateX(calc(100% + 2rem));
+    }
+
+    .alert.show {
+        transform: translateX(0);
+    }
 }
 
 .alert.error span {
     corner-shape: squircle;
     border-radius: 50px;
-    @apply bg-rose-500/15 text-rose-500 border-rose-500 border px-2 py-2 mr-2
+    @apply bg-rose-500/15 text-rose-500 border-rose-500
 }
 
 .alert.error .alert-close {
@@ -29,7 +57,7 @@
 .alert.success span {
     corner-shape: squircle;
     border-radius: 50px;
-    @apply bg-emerald-500/15 text-emerald-500 border-emerald-500 border px-2 py-2 mr-2
+    @apply bg-emerald-500/15 text-emerald-500 border-emerald-500
 }
 
 .alert.success .alert-close {
@@ -39,15 +67,11 @@
 .alert.info span {
     corner-shape: squircle;
     border-radius: 50px;
-    @apply bg-cyan-500/15 text-cyan-500 border-cyan-500 border px-2 py-2 mr-2
+    @apply bg-cyan-500/15 text-cyan-500 border-cyan-500
 }
 
 .alert.info .alert-close {
     @apply hover:bg-cyan-500/15
-}
-
-.alert i {
-    @apply text-[24px] inline-block align-bottom -mt-0.75 
 }
 
 .alert-close {
@@ -61,11 +85,11 @@
 }
 
 .alert.success {
-    @apply text-emerald-500 bg-emerald-500/5 border-emerald-500/30 border
+    @apply text-white md:text-emerald-500 bg-emerald-500/60 md:bg-emerald-500/5 border-emerald-500/30 border
 }
 
 .alert.error {
-    @apply  text-rose-500 bg-rose-500/5 border-rose-500/30 border
+    @apply  text-white md:text-rose-500 bg-rose-500/60 md:bg-rose-500/5 border-rose-500/30 border
 }
 
 .alert.info {
@@ -74,5 +98,11 @@
 
 .alert.disapear {
     opacity: 0;
-    transform: translateX(calc(100% + 2rem));
+    transform: translateY(calc(-100% - 2rem));
+}
+
+@media (min-width: 768px) {
+    .alert.disapear {
+        transform: translateX(calc(100% + 2rem));
+    }
 }

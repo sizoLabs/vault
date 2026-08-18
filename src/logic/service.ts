@@ -15,6 +15,56 @@ export const getServiceDescription = async (data: string, masterPassword: string
     }
 }
 
+export const sendChromeExtensionCommand = ({ type, payload = {} }: { type: string, payload?: Record<string, any> }): Promise<boolean> => {
+    if (typeof window === "undefined") return Promise.resolve(false)
+
+    return new Promise((resolve) => {
+        const requestId = `cmd-${Date.now()}-${Math.random()}`
+        const timeout = setTimeout(() => {
+            window.removeEventListener('message', responseHandler)
+            console.warn(`Command timeout: ${type}`)
+            resolve(false)
+        }, 5000) // 5 second timeout
+
+        const responseHandler = (event: MessageEvent) => {
+            if (
+                event.data?.source === 'vault-extension-response' &&
+                event.data?.requestId === requestId
+            ) {
+                clearTimeout(timeout)
+                window.removeEventListener('message', responseHandler)
+                resolve(event.data?.success === true)
+            }
+        }
+
+        window.addEventListener('message', responseHandler)
+
+        const detail = {
+            source: "vault-extension-command",
+            type,
+            payload,
+            requestId
+        }
+
+        window.postMessage(detail, "*")
+    })
+}
+
+export const deleteChromeExtensionAccount = async ({ accountId }: { accountId?: string } = {}): Promise<boolean> => {
+    const resolvedAccountId = accountId || getStorage("current-account")
+    if (!resolvedAccountId) return false
+
+    return await sendChromeExtensionCommand({
+        type: "DELETE_ACCOUNT",
+        payload: { accountId: resolvedAccountId }
+    })
+}
+
+export const clearChromeExtensionData = async (): Promise<boolean> => await sendChromeExtensionCommand({
+    type: "CLEAR_ALL",
+    payload: {}
+})
+
 export const syncServicesWithChromeExtension = ({ accountId }: { accountId?: string } = {}) => {
 
     const resolvedAccountId = accountId || getStorage("current-account")

@@ -1,5 +1,6 @@
 import { getStorage, setStorage, removeStorage } from "@logic/storage"
 
+import { deleteChromeExtensionAccount } from "@logic/service"
 import { generateAccountId } from "@logic/utils"
 import { setMasterVerifier, verifyMasterPassword, removeMasterVerifier } from "@logic/master"
 
@@ -106,6 +107,7 @@ export const deleteAccount = (id: string) => {
     removeStorage(id)
     
     setStorage("accounts", accounts)
+    deleteChromeExtensionAccount({ accountId: id })
     
 }
 

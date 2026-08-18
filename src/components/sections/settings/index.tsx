@@ -11,6 +11,7 @@ import { applyGradientBackgroundSetting, applyColoredBackgroundSetting } from "@
 import { getStorage } from "@logic/storage"
 import { resetAllData } from "@logic/data"
 import { showAlert } from "@logic/alert"
+import { syncServicesWithChromeExtension } from "@logic/service"
 import {
     connectGoogleDrive,
     disconnectGoogleDrive,
@@ -116,6 +117,10 @@ const Settings = (props: SettingsProps) => {
             event,
             onImportComplete: onAccountUpdated
         })
+    }
+
+    const handleSyncChromeExtension = () => {
+        syncServicesWithChromeExtension({ accountId })
     }
 
     const handleConnectGoogleDrive = async () => {
@@ -310,6 +315,34 @@ const Settings = (props: SettingsProps) => {
                         </div>
                     </div>
                 ) : null }
+
+                <div className="relative mx-auto flex max-w-200 flex-col px-5 py-5 md:p-10 pb-0 md:pb-0">
+
+                    <h2 className="text-xl md:text-3xl font-inter-black mb-5">
+                        <i className="ti ti-brand-chrome mr-2 align-middle inline-block -mt-1.25" /> Chrome Extension Sync
+                    </h2>
+
+                    <div className="flex flex-col w-full form squircle-md">
+                        <div className="container gap-5">
+                            <div>
+                                <h3>
+                                    Synchronize with Vault extension
+                                </h3>
+                                <div className="description">
+                                    Send the current account data to the Vault extension so it can match passwords on websites.
+                                </div>
+                            </div>
+                            <div className="option min-w-65">
+                                <button
+                                    onClick={ handleSyncChromeExtension }
+                                    className="file-input-button"
+                                >
+                                    <i className="ti ti-brand-chrome text-xl mr-1 align-middle inline-block -mt-1" /> Sync with extension
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <div className="relative mx-auto flex max-w-200 flex-col px-5 py-5 md:p-10 pb-0 md:pb-0">
 

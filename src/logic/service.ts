@@ -3,6 +3,7 @@ import { generateId, genServicePassword, copyToClipboard, encodeData, decodeData
 import { showAlert } from "@logic/alert"
 import { type IService } from "@interface/index"
 import { getAlphabetList } from "@logic/alphabet"
+import { getAccountName, getAccountIcon } from "@logic/account"
 
 export const getServiceDescription = async (data: string, masterPassword: string) => {
     if (!data || typeof data !== 'string' || data.trim() === '') return ""
@@ -12,6 +13,40 @@ export const getServiceDescription = async (data: string, masterPassword: string
         console.error('Error decoding service description:', error)
         return ""
     }
+}
+
+export const syncServicesWithChromeExtension = ({ accountId }: { accountId?: string } = {}) => {
+
+    const resolvedAccountId = accountId || getStorage("current-account")
+    const currentAccount = resolvedAccountId ? getStorage(resolvedAccountId) : null
+
+    if (!currentAccount || typeof window === "undefined") {
+        return showAlert("Failed to sync services with Chrome extension", "error", "x", 2500)
+    }
+
+    const services = Array.isArray(currentAccount.services) ? currentAccount.services : []
+    const alphabets = Array.isArray(currentAccount.alphabets) ? currentAccount.alphabets : []
+    const info = {
+        id: resolvedAccountId,
+        name: getAccountName(resolvedAccountId),
+        icon: getAccountIcon(resolvedAccountId),
+    }
+    const master = currentAccount.master || null
+
+    const detail = {
+        source: "vault-extension-sync",
+        payload: {
+            info,
+            services,
+            alphabets,
+            master
+        }
+    }
+
+    window.postMessage(detail, "*")
+    showAlert("Vault synchronized with extension!", "success", "check", 2500)
+    return true
+
 }
 
 export const importServices = ({ accountId, services }: { accountId: string, services: IService[] }) => {

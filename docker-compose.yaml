@@ -6,7 +6,7 @@ services:
       NODE_ENV: production
       HOST: 0.0.0.0
       PORT: 4321
-      PUBLIC_GOOGLE_CLIENT_ID: ${PUBLIC_GOOGLE_CLIENT_ID:-}
+      PUBLIC_GOOGLE_CLIENT_ID: ${PUBLIC_GOOGLE_CLIENT_ID}
     ports:
       - "4321:4321"
     healthcheck:

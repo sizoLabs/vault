@@ -10,6 +10,8 @@ VAULT is a secure, privacy-focused password manager and generator that operates 
 - **Folder-Based Organization:** Organize your credentials into custom vaults (folders) for better structure and management.
 - **Import/Export:** Seamlessly backup and transfer your data between devices via encrypted files.
 - **Custom Character Sets:** Define personalized alphabets to generate passwords that meet specific requirements.
+- **Google Drive Synchronization:** Manually back up and restore encrypted vault data using Google Drive's private application storage.
+- **Chrome Extension:** Synchronize accounts, services, and alphabets with the VAULT Chrome extension.
 
 ## How It Works
 
@@ -30,6 +32,8 @@ VAULT operates entirely in your browser, your data never leaves your device and 
 
 ## Installation
 
+### Local development
+
 Clone the repository and install dependencies:
 
 ```sh
@@ -47,6 +51,10 @@ Build the project for production:
 ```sh
 pnpm build
 ```
+
+### Production deployment
+
+For production deployment with Coolify, follow the instructions in [COOLIFY.md](COOLIFY.md). They cover the Docker Compose configuration, domain and port setup, Google OAuth configuration, and update procedure.
 
 ## Contributing
 

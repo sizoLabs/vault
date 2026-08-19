@@ -12,7 +12,8 @@ services:
     healthcheck:
       test:
         - CMD-SHELL
-        - 'wget -qO- http://127.0.0.1:4321/'
+        - 'node -e "fetch(\"http://127.0.0.1:4321/\").then((response) => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))"'
       interval: 5s
       timeout: 20s
       retries: 10
+      start_period: 10s

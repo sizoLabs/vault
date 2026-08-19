@@ -1,6 +1,6 @@
 services:
   vault:
-    image: ghcr.io/sizoLabs/vault:latest
+    image: ghcr.io/sizolabs/vault:latest
     restart: unless-stopped
     environment:
       NODE_ENV: production

@@ -9,6 +9,7 @@ import { applyThemeColor } from "@logic/settings"
 import Logo from "../../ui/global/logo"
 import Block from "@component/ui/main/block"
 import Footer from "@component/global/footer"
+import Version from "@component/sections/settings/version"
 
 interface HomeProps {
     accountId: string
@@ -79,6 +80,8 @@ const Home = (props: HomeProps) => {
     return (
         <div className="relative bg-white/2 border-white/10 w-full h-full squircle-md border overflow-hidden">
 
+            <Version />
+
             <div className="absolute inset-0 overflow-y-scroll no-scrollbar-but-scroll">
 
                 <div className="z-50 relative mx-auto flex min-h-full w-full max-w-full flex-col items-center justify-center p-5 md:max-w-300">
@@ -102,7 +105,6 @@ const Home = (props: HomeProps) => {
 
                     </div>
 
-                    
                 </div>
 
             </div>

@@ -15,6 +15,7 @@ import {
 import Logo from "@component/ui/global/logo"
 import OpenAnimation from "@component/sections/access/open-animation"
 import Footer from "@component/global/footer"
+import Version from "@component/sections/settings/version"
 
 interface AccessProps {
     onSubmitForm: (
@@ -181,6 +182,8 @@ const Access = (props: AccessProps) => {
 
     return (
         <div className="relative bg-white/2 border-white/10 w-full h-full squircle-md border overflow-hidden">
+
+            <Version />
 
             <div className="absolute inset-0 overflow-y-scroll no-scrollbar-but-scroll">
 

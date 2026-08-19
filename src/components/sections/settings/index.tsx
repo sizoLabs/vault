@@ -32,6 +32,7 @@ import {
 } from "@logic/google"
 
 import { type ISettings, type IAccountSettings } from "@interface/index"
+import Version from "@component/sections/settings/version"
 
 interface SettingsProps {
     account?: any
@@ -608,7 +609,7 @@ const Settings = (props: SettingsProps) => {
                     </div>
                 ) : null }
 
-                <div className="relative mx-auto flex max-w-200 flex-col px-5 py-5 md:p-10 pb-10">
+                <div className="relative mx-auto flex max-w-200 flex-col px-5 py-5 md:p-10 pb-0 md:pb-0">
 
                     <h2 className="text-xl md:text-3xl font-inter-black mb-5">
                         <i className="ti ti-trash mr-2 align-middle inline-block -mt-1.25" /> Reset Account Data
@@ -646,6 +647,17 @@ const Settings = (props: SettingsProps) => {
                             </div>
                         </div>
 
+                    </div>
+                </div>
+
+                <div className="relative mx-auto flex max-w-200 flex-col px-5 py-5 md:p-10 pb-10">
+
+                    <h2 className="text-xl md:text-3xl font-inter-black mb-5">
+                        <i className="ti ti-vault mr-2 align-middle inline-block -mt-1.25" /> Vault Version
+                    </h2>
+
+                    <div className="flex flex-col w-full form squircle-md">
+                        <Version detailed />
                     </div>
                 </div>
 

@@ -5,6 +5,9 @@ import { decodeData, encodeData } from "./utils.ts"
 declare global {
     interface Window {
         google?: any
+        __VAULT_CONFIG__?: {
+            googleClientId?: string
+        }
     }
 }
 
@@ -13,7 +16,10 @@ const DRIVE_API = "https://www.googleapis.com/drive/v3"
 const DRIVE_UPLOAD_API = "https://www.googleapis.com/upload/drive/v3"
 
 export const getGoogleClientId = () => {
-    if (typeof import.meta !== "undefined" && import.meta.env && import.meta.env.PUBLIC_GOOGLE_CLIENT_ID) {
+    if (typeof window !== "undefined" && window.__VAULT_CONFIG__?.googleClientId) {
+        return String(window.__VAULT_CONFIG__.googleClientId).trim()
+    }
+    if (import.meta.env.DEV && import.meta.env.PUBLIC_GOOGLE_CLIENT_ID) {
         return String(import.meta.env.PUBLIC_GOOGLE_CLIENT_ID).trim()
     }
     return "REPLACE_WITH_GOOGLE_CLIENT_ID"

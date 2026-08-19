@@ -2,13 +2,16 @@
 
     import "@style/main.css"
 
-    const SITE_URL = import.meta.env.PUBLIC_SITE_URL
+    const runtimeEnv = (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env || {}
+    const runtimeConfig = JSON.stringify({
+        googleClientId: runtimeEnv.PUBLIC_GOOGLE_CLIENT_ID || ""
+    }).replace(/</g, "\\u003c")
 
     const meta = {
         name: "VAULT",
         title: "Error 404 - VAULT - Password Manager",
         description: "The world's most secure Password Manager",
-        url: SITE_URL
+        url: window.location.origin
     }
 
 ---
@@ -41,6 +44,7 @@
 
 	</head>
 	<body data-theme="dark" class="subpixel-antialiased">
+        <script is:inline set:html={`window.__VAULT_CONFIG__ = ${runtimeConfig};`} />
 	    <slot />
 	</body>
 </html>

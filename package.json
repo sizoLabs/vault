@@ -1,21 +1,21 @@
 {
   "name": "vault",
-  "version": "0.1.0",
+  "version": "0.4.0",
   "description": "The world's most secure Password Manager",
   "keywords": [
-      "vault",
-      "password manager",
-      "password",
-      "manager",
-      "secrets",
-      "alphabets",
-      "encryption"
+    "vault",
+    "password manager",
+    "password",
+    "manager",
+    "secrets",
+    "alphabets",
+    "encryption"
   ],
   "license": "MIT",
   "author": {
-      "name": "Lucas O.S.",
-      "email": "lucas@sizo.dev",
-      "url": "https://sizo.dev"
+    "name": "Lucas O.S.",
+    "email": "lucas@sizo.dev",
+    "url": "https://sizo.dev"
   },
   "type": "module",
   "engines": {

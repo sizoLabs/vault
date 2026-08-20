@@ -1,23 +1,35 @@
 # Deploying VAULT with Coolify
 
-## Initial deployment
+VAULT can be deployed in Coolify in two independent ways. Choose the option that best fits your configuration and update workflow:
+
+- **Public Git Repository** uses the Compose file committed to the repository and the published image from GHCR.
+- **Docker Compose** lets you edit the Compose configuration directly in Coolify and run the published image from GHCR.
+
+## Option 1: Public Git Repository
 
 1. Create a new resource in Coolify and select **Public Git Repository**.
+2. Set the repository URL to `https://github.com/sizoLabs/vault`.
+3. Select **Docker Compose** as the build pack. Coolify will use the [`docker-compose.yaml`](docker-compose.yaml) committed to the repository.
+4. The Compose file uses `ghcr.io/sizolabs/vault:latest`. The Compose configuration cannot be edited from this resource.
+5. In the resource's environment variables, set `PORT` if you need a port other than `4321`.
+6. Optionally add `PUBLIC_GOOGLE_CLIENT_ID` to the environment variables as described in [Google Drive synchronization](#google-drive-synchronization).
+7. Open **Domains**, add a domain or edit the existing one, and set the port to `4321` or the value configured in `PORT`.
+8. Deploy the resource.
 
-2. Set the repository URL to `https://github.com/sizoLabs/vault` and select **Docker Compose** as the build pack.
+## Option 2: Docker Compose
 
-Alternatively, create a new **Docker Compose** resource, then copy and paste the contents of [`docker-compose.yaml`](docker-compose.yaml) into Coolify's Compose configuration. The image is pulled from GHCR, so the repository is not required for this option.
+1. Create a new **Docker Compose** resource in Coolify.
+2. Copy the contents of [`docker-compose.yaml`](docker-compose.yaml) into Coolify's Compose configuration.
+3. The Compose file pulls `ghcr.io/sizolabs/vault:latest`; no Git repository is required.
+4. Modify the Compose configuration as needed, including the image, ports, environment variables, and health check.
+5. If you keep the provided configuration, `PORT` defaults to `4321`.
+6. Optionally add `PUBLIC_GOOGLE_CLIENT_ID` to the environment variables as described in [Google Drive synchronization](#google-drive-synchronization).
+7. Open **Domains**, add a domain or edit the existing one, and set the port to `4321` or the value configured in `PORT`.
+8. Deploy the resource.
 
-3. To enable **Google Drive** synchronization, follow the [Google OAuth configuration](#configuring-google-oauth) steps below and add the resulting Client ID to the `PUBLIC_GOOGLE_CLIENT_ID` environment variable. Leave this variable unset to keep Google Drive synchronization disabled.
+## Google Drive synchronization
 
-4. Optionally set the `PORT` environment variable to the port you want to use. If you leave it unset, the default is `4321`.
-5. Configure the domain and set the service port to the same value as `PORT` (or `4321` when it is unset).
-
-6. Deploy the resource.
-
-## Configuring Google OAuth
-
-Complete these steps only if you want to enable Google Drive synchronization.
+Complete these steps only if you want to enable Google Drive synchronization. Leave `PUBLIC_GOOGLE_CLIENT_ID` unset to keep synchronization disabled.
 
 1. Open the [Google Cloud Console](https://console.cloud.google.com/) and create a project on the [project creation page](https://console.cloud.google.com/projectcreate).
 2. Select the new project, open the [API Library](https://console.cloud.google.com/apis/library), search for **Google Drive API**, and click **Enable**.
@@ -30,7 +42,7 @@ Complete these steps only if you want to enable Google Drive synchronization.
 4. Open the [Credentials page](https://console.cloud.google.com/apis/credentials) and click **Create credentials** > **OAuth client ID**.
 5. Select **Web application** as the application type. Under **Authorized JavaScript origins**, add the complete deployed origin, for example `https://example.com`. Do not include a path or trailing slash. VAULT uses a browser-based token flow, so no redirect URI is required.
 6. Click **Create** and copy the generated **Client ID**. It ends in `.apps.googleusercontent.com`. This is the public ID; do not use the client secret.
-7. In Coolify, add the following environment variable to the Docker Compose service:
+7. In Coolify, add the following environment variable to the deployed service:
 
 	`PUBLIC_GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com`
 
@@ -38,7 +50,5 @@ Complete these steps only if you want to enable Google Drive synchronization.
 
 ## Updating
 
-To update an existing deployment:
-
-1. Stop the service.
-2. Deploy it again with the cache disabled (**Deploy without cache**).
+- Redeploy (without cache) the resource in Coolify to pull the latest image of Vault.
+- Alternatively, stop the resource and deploy it again to force Coolify to clean the cache and the image before redeploying.

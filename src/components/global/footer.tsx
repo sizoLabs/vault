@@ -18,7 +18,7 @@ const Footer = (props: FooterProps) => {
                         target="_blank"
                         className="hover:font-inter-bold opacity-30 group-hover:opacity-80 hover:opacity-100 duration-300"
                     >
-                        Lucas O.S.
+                        SizoDev
                     </a>
                 </div>
             </div>

@@ -52,6 +52,19 @@ export const getVault = ({ accountId, vaultId }: { accountId: string, vaultId: s
 
 }
 
+export const reorderVaults = ({ accountId, vaultId, direction }: { accountId: string, vaultId: string, direction: -1 | 1 }) => {
+    const account = getStorage(accountId)
+    const vaults = Array.isArray(account?.vaults) ? account.vaults : []
+    const currentIndex = vaults.findIndex((vault: any) => vault.id === vaultId)
+    const targetIndex = currentIndex + direction
+
+    if (currentIndex < 0 || targetIndex < 0 || targetIndex >= vaults.length) return
+
+    const [movedVault] = vaults.splice(currentIndex, 1)
+    vaults.splice(targetIndex, 0, movedVault)
+    setStorage(accountId, { ...account, vaults })
+}
+
 export const createVault = ({ accountId, vaultName, vaultIcon }: { accountId: string, vaultName: string, vaultIcon: string }) => {
     
     let account = getStorage(accountId)

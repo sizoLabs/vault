@@ -23,6 +23,8 @@ import { syncServicesWithChromeExtension, deleteChromeExtensionAccount, clearChr
 import {
     connectGoogleDrive,
     disconnectGoogleDrive,
+    deleteCurrentGoogleDriveData,
+    deleteAllGoogleDriveData,
     formatGoogleDriveUserLabel,
     getGoogleDriveState,
     isGoogleDriveConfigured,
@@ -40,6 +42,8 @@ interface SettingsProps {
     onAccountUpdated: () => void
 }
 
+type DriveAction = "connect" | "disconnect" | "pull" | "push" | "delete-current" | "delete-all"
+
 const Settings = (props: SettingsProps) => {
 
     const { account, masterPassword, onAccountUpdated } = props
@@ -55,6 +59,7 @@ const Settings = (props: SettingsProps) => {
         accessToken: "",
         email: ""
     })
+    const [ driveActionLoading, setDriveActionLoading ] = useState<DriveAction | null>(null)
 
     const syncDriveState = (currentAccountId = accountId) => {
         setDriveState(getGoogleDriveState(currentAccountId))
@@ -173,31 +178,75 @@ const Settings = (props: SettingsProps) => {
     }
 
     const handleConnectGoogleDrive = async () => {
-        const connectedState = await connectGoogleDrive({ accountId })
-        if (connectedState) {
-            setDriveState(getGoogleDriveState(accountId))
-            updateSettings({ accountId, settingId: "google-drive-enabled", value: true })
-            setAccountSettings((current) => current.map((setting) => setting.id === "google-drive-enabled" ? { ...setting, value: true } : setting))
-            onAccountUpdated()
+        setDriveActionLoading("connect")
+        try {
+            const connectedState = await connectGoogleDrive({ accountId })
+            if (connectedState) {
+                setDriveState(getGoogleDriveState(accountId))
+                updateSettings({ accountId, settingId: "google-drive-enabled", value: true })
+                setAccountSettings((current) => current.map((setting) => setting.id === "google-drive-enabled" ? { ...setting, value: true } : setting))
+                onAccountUpdated()
+            }
+        } finally {
+            setDriveActionLoading(null)
         }
     }
 
     const handlePullGoogleDrive = async () => {
-        const synced = await pullGoogleDriveToAccount({ accountId, masterPassword })
-        if (synced) {
-            onAccountUpdated()
+        setDriveActionLoading("pull")
+        try {
+            const synced = await pullGoogleDriveToAccount({ accountId, masterPassword })
+            if (synced) {
+                onAccountUpdated()
+            }
+        } finally {
+            setDriveActionLoading(null)
         }
     }
 
     const handlePushGoogleDrive = async () => {
-        await pushLocalAccountToGoogleDrive({ accountId, masterPassword })
+        setDriveActionLoading("push")
+        try {
+            await pushLocalAccountToGoogleDrive({ accountId, masterPassword })
+        } finally {
+            setDriveActionLoading(null)
+        }
     }
 
     const handleDisconnectGoogleDrive = () => {
-        disconnectGoogleDrive(accountId)
-        setDriveState(getGoogleDriveState(accountId))
-        updateSettings({ accountId, settingId: "google-drive-enabled", value: false })
-        setAccountSettings((current) => current.map((setting) => setting.id === "google-drive-enabled" ? { ...setting, value: false } : setting))
+        setDriveActionLoading("disconnect")
+        try {
+            disconnectGoogleDrive(accountId)
+            setDriveState(getGoogleDriveState(accountId))
+            updateSettings({ accountId, settingId: "google-drive-enabled", value: false })
+            setAccountSettings((current) => current.map((setting) => setting.id === "google-drive-enabled" ? { ...setting, value: false } : setting))
+        } finally {
+            setDriveActionLoading(null)
+        }
+    }
+
+    const handleDeleteCurrentGoogleDriveData = async () => {
+        const confirmed = confirm("Delete the current account data from Google Drive? This action cannot be undone.")
+        if (!confirmed) return
+
+        setDriveActionLoading("delete-current")
+        try {
+            await deleteCurrentGoogleDriveData(accountId)
+        } finally {
+            setDriveActionLoading(null)
+        }
+    }
+
+    const handleDeleteAllGoogleDriveData = async () => {
+        const confirmed = confirm("Delete all Vault data saved in Google Drive? This action cannot be undone.")
+        if (!confirmed) return
+
+        setDriveActionLoading("delete-all")
+        try {
+            await deleteAllGoogleDriveData(accountId)
+        } finally {
+            setDriveActionLoading(null)
+        }
     }
 
     const isDriveSyncEnabled = Boolean(accountSettings.find((setting) => setting.id === "google-drive-enabled")?.value) || driveState.enabled
@@ -327,17 +376,18 @@ const Settings = (props: SettingsProps) => {
                                         {!driveState.connected ? (
                                             <button
                                                 onClick={ handleConnectGoogleDrive }
-                                                disabled={ !isGoogleDriveConfigured() }
+                                                disabled={ !isGoogleDriveConfigured() || driveActionLoading === "connect" }
                                                 className="file-input-button disabled:opacity-50 disabled:cursor-not-allowed"
                                             >
-                                                <i className="ti ti-brand-google-drive text-xl mr-1 align-middle inline-block -mt-1" /> Connect to Google Drive
+                                                <i className={ `${driveActionLoading === "connect" ? "ti ti-loader-2 animate-spin" : "ti ti-brand-google-drive"} text-xl mr-1 align-middle inline-block -mt-1` } /> { driveActionLoading === "connect" ? "Connecting..." : "Connect to Google Drive" }
                                             </button>
                                         ) : (
                                             <button
                                                 onClick={ handleDisconnectGoogleDrive }
-                                                className="file-input-button bg-rose-500/10 border-rose-500/50 hover:bg-rose-500/20 hover:border-rose-500"
+                                                disabled={ driveActionLoading === "disconnect" }
+                                                className="file-input-button bg-rose-500/10 border-rose-500/50 hover:bg-rose-500/20 hover:border-rose-500 disabled:opacity-50 disabled:cursor-not-allowed"
                                             >
-                                                <i className="ti ti-power text-xl mr-1 align-middle inline-block -mt-1" /> Disconnect
+                                                <i className={ `${driveActionLoading === "disconnect" ? "ti ti-loader-2 animate-spin" : "ti ti-power"} text-xl mr-1 align-middle inline-block -mt-1` } /> { driveActionLoading === "disconnect" ? "Disconnecting..." : "Disconnect" }
                                             </button>
                                         )}
                                     </div>
@@ -371,10 +421,10 @@ const Settings = (props: SettingsProps) => {
                                             <div className="option">
                                                 <button
                                                     onClick={ handlePullGoogleDrive }
-                                                    disabled={ !canUseDriveSyncActions }
+                                                    disabled={ !canUseDriveSyncActions || driveActionLoading === "pull" }
                                                     className="file-input-button disabled:opacity-50 disabled:cursor-not-allowed"
                                                 >
-                                                    <i className="ti ti-download text-xl mr-1 align-middle inline-block -mt-1" /> Synchronize from Drive
+                                                    <i className={ `${driveActionLoading === "pull" ? "ti ti-loader-2 animate-spin" : "ti ti-download"} text-xl mr-1 align-middle inline-block -mt-1` } /> { driveActionLoading === "pull" ? "Synchronizing..." : "Synchronize from Drive" }
                                                 </button>
                                             </div>
                                         </div>
@@ -382,19 +432,59 @@ const Settings = (props: SettingsProps) => {
                                         <div className="container">
                                             <div>
                                                 <h3>
-                                                    Upload local data to Drive
+                                                    Upload account data to Drive
                                                 </h3>
                                                 <div className="description">
                                                     Replace the Google Drive copy with the current local account data.
                                                 </div>
                                             </div>
-                                            <div className="option">
+                                            <div className="option md:min-w-60">
                                                 <button
                                                     onClick={ handlePushGoogleDrive }
-                                                    disabled={ !canUseDriveSyncActions }
+                                                    disabled={ !canUseDriveSyncActions || driveActionLoading === "push" }
                                                     className="file-input-button disabled:opacity-50 disabled:cursor-not-allowed"
                                                 >
-                                                    <i className="ti ti-upload text-xl mr-1 align-middle inline-block -mt-1" /> Replace Drive Data
+                                                    <i className={ `${driveActionLoading === "push" ? "ti ti-loader-2 animate-spin" : "ti ti-upload"} text-xl mr-1 align-middle inline-block -mt-1` } /> { driveActionLoading === "push" ? "Uploading..." : "Replace Account Data" }
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div className="container">
+                                            <div>
+                                                <h3>
+                                                    Delete Account Data from Drive
+                                                </h3>
+                                                <div className="description">
+                                                    Remove the active account's .vault file from Google Drive.
+                                                </div>
+                                            </div>
+                                            <div className="option md:min-w-55">
+                                                <button
+                                                    onClick={ handleDeleteCurrentGoogleDriveData }
+                                                    disabled={ !canUseDriveSyncActions || driveActionLoading === "delete-current" }
+                                                    className="h-fit w-full px-6 py-3 border duration-300 bg-rose-500/10 border-rose-500/50 hover:bg-rose-500/20 hover:border-rose-500 hover:text-white focus:bg-rose-500/20 focus:border-rose-500 disabled:opacity-50 disabled:cursor-not-allowed squircle-md cursor-pointer"
+                                                >
+                                                    <i className={ `${driveActionLoading === "delete-current" ? "ti ti-loader-2 animate-spin" : "ti ti-trash"} text-xl mr-1 align-middle inline-block -mt-1` } /> { driveActionLoading === "delete-current" ? "Deleting..." : "Delete Account Data" }
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div className="container">
+                                            <div>
+                                                <h3>
+                                                    Delete All Vault Data from Drive
+                                                </h3>
+                                                <div className="description">
+                                                    Remove every .vault file saved by Vault in Google Drive.
+                                                </div>
+                                            </div>
+                                            <div className="option md:min-w-60">
+                                                <button
+                                                    onClick={ handleDeleteAllGoogleDriveData }
+                                                    disabled={ driveActionLoading === "delete-all" }
+                                                    className="h-fit w-full px-6 py-3 border duration-300 bg-rose-500/10 border-rose-500/50 hover:bg-rose-500/20 hover:border-rose-500 hover:text-white focus:bg-rose-500/20 focus:border-rose-500 disabled:opacity-50 disabled:cursor-not-allowed squircle-md cursor-pointer"
+                                                >
+                                                    <i className={ `${driveActionLoading === "delete-all" ? "ti ti-loader-2 animate-spin" : "ti ti-trash"} text-xl mr-1 align-middle inline-block -mt-1` } /> { driveActionLoading === "delete-all" ? "Deleting..." : "Delete All Vault Data" }
                                                 </button>
                                             </div>
                                         </div>
@@ -469,7 +559,7 @@ const Settings = (props: SettingsProps) => {
                         <div className="container gap-5">
                             <div>
                                 <h3>
-                                    Delete current account data from extension
+                                    Delete Account Data from Extension
                                 </h3>
                                 <div className="description">
                                     Remove the synced data for the active account from the Vault extension.
@@ -478,9 +568,9 @@ const Settings = (props: SettingsProps) => {
                             <div className="option min-w-65">
                                 <button
                                     onClick={ handleDeleteCurrentAccountFromExtension }
-                                    className="font-inter-bold h-fit w-full px-6 py-3 border duration-300 bg-rose-500/10 border-rose-500/50 hover:bg-rose-500/20 hover:border-rose-500 hover:text-white focus:bg-rose-500/20 focus:border-rose-500 squircle-md cursor-pointer"
+                                    className="h-fit w-full px-6 py-3 border duration-300 bg-rose-500/10 border-rose-500/50 hover:bg-rose-500/20 hover:border-rose-500 hover:text-white focus:bg-rose-500/20 focus:border-rose-500 squircle-md cursor-pointer"
                                 >
-                                    <i className="ti ti-trash text-xl mr-1 align-middle inline-block -mt-1" /> Delete account data
+                                    <i className="ti ti-trash text-xl mr-1 align-middle inline-block -mt-1" /> Delete Account Data
                                 </button>
                             </div>
                         </div>
@@ -488,7 +578,7 @@ const Settings = (props: SettingsProps) => {
                         <div className="container gap-5">
                             <div>
                                 <h3>
-                                    Delete all extension data
+                                    Delete All Extension Data
                                 </h3>
                                 <div className="description">
                                     Delete every synced account from the Vault extension.
@@ -497,9 +587,9 @@ const Settings = (props: SettingsProps) => {
                             <div className="option min-w-65">
                                 <button
                                     onClick={ handleDeleteAllExtensionData }
-                                    className="font-inter-bold h-fit w-full px-6 py-3 border duration-300 bg-rose-500/10 border-rose-500/50 hover:bg-rose-500/20 hover:border-rose-500 hover:text-white focus:bg-rose-500/20 focus:border-rose-500 squircle-md cursor-pointer"
+                                    className="h-fit w-full px-6 py-3 border duration-300 bg-rose-500/10 border-rose-500/50 hover:bg-rose-500/20 hover:border-rose-500 hover:text-white focus:bg-rose-500/20 focus:border-rose-500 squircle-md cursor-pointer"
                                 >
-                                    <i className="ti ti-trash text-xl mr-1 align-middle inline-block -mt-1" /> Delete all extension data
+                                    <i className="ti ti-trash text-xl mr-1 align-middle inline-block -mt-1" /> Delete All Accounts Data
                                 </button>
                             </div>
                         </div>
@@ -640,7 +730,7 @@ const Settings = (props: SettingsProps) => {
                                 />
                                 <button
                                     onClick={ handleResetSubmit }
-                                    className="font-inter-bold h-fit w-full px-6 py-3 border duration-300 bg-rose-500/10 border-rose-500/50 hover:bg-rose-500/20 hover:border-rose-500 hover:text-white focus:bg-rose-500/20 focus:border-rose-500 squircle-md cursor-pointer"
+                                    className="h-fit w-full px-6 py-3 border duration-300 bg-rose-500/10 border-rose-500/50 hover:bg-rose-500/20 hover:border-rose-500 hover:text-white focus:bg-rose-500/20 focus:border-rose-500 squircle-md cursor-pointer"
                                 >
                                     <i className="ti ti-trash text-xl mr-1 align-middle inline-block -mt-1" /> Reset All Data
                                 </button>
@@ -656,7 +746,7 @@ const Settings = (props: SettingsProps) => {
                         <i className="ti ti-vault mr-2 align-middle inline-block -mt-1.25" /> Vault Version
                     </h2>
 
-                    <div className="flex flex-col w-full form squircle-md">
+                    <div className="flex flex-col w-full form squircle-md pt-1 pb-0">
                         <Version detailed />
                     </div>
                 </div>

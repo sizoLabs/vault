@@ -72,6 +72,31 @@ export const getSecret = ({ accountId, secretId }: { accountId: string, secretId
 
 }
 
+export const reorderSecret = ({ accountId, vaultId, secretId, direction }: { accountId: string, vaultId: string, secretId: string, direction: -1 | 1 }) => {
+    const account = getStorage(accountId)
+    const secrets = Array.isArray(account?.secrets) ? account.secrets : []
+    const vaultSecretIndexes = secrets.reduce((indexes: number[], secret: ISecret, index: number) => {
+        if (secret.vault === vaultId) indexes.push(index)
+        return indexes
+    }, [])
+    let currentVaultIndex = -1
+    for (let index = 0; index < vaultSecretIndexes.length; index++) {
+        if (secrets[vaultSecretIndexes[index]].id === secretId) {
+            currentVaultIndex = index
+            break
+        }
+    }
+    const targetVaultIndex = currentVaultIndex + direction
+
+    if (currentVaultIndex < 0 || targetVaultIndex < 0 || targetVaultIndex >= vaultSecretIndexes.length) return
+
+    const currentIndex = vaultSecretIndexes[currentVaultIndex]
+    const targetIndex = vaultSecretIndexes[targetVaultIndex]
+    const [movedSecret] = secrets.splice(currentIndex, 1)
+    secrets.splice(targetIndex > currentIndex ? targetIndex : targetIndex, 0, movedSecret)
+    setStorage(accountId, { ...account, secrets })
+}
+
 export const createSecret = async ({
     accountId,
     name,

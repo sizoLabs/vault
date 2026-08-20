@@ -1,4 +1,7 @@
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
+import { DndContext, PointerSensor, closestCenter, useSensor, useSensors, type DragEndEvent, type Modifier } from "@dnd-kit/core"
+import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable"
+import { CSS } from "@dnd-kit/utilities"
 
 import SidebarLogo from "@component/ui/sidebar/logo"
 import SidebarUfo from "@component/ui/sidebar/ufo"
@@ -6,6 +9,8 @@ import SidebarButton from "@component/ui/sidebar/button"
 import MobileMenu from "@component/global/mobile"
 import Search from "@component/sections/search"
 import { useResizePanel } from "@component/global/resize"
+import { getSetting } from "@logic/settings"
+import { reorderVaults } from "@logic/vault"
 
 interface SidebarProps {
     panelWidth: number
@@ -20,6 +25,52 @@ interface SidebarProps {
     onResizeEnd: () => void
     onOpenCreateVaultModal: () => void
 }
+
+const SortableVault = ({ vault, active, onClick }: { vault: any, active: boolean, onClick: () => void }) => {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        setActivatorNodeRef,
+        transform,
+        transition,
+        isDragging
+    } = useSortable({ id: vault.id })
+
+    return (
+        <div
+            ref={setNodeRef}
+            style={{ transform: CSS.Transform.toString(transform), transition }}
+            className={`relative z-10 flex items-center gap-1 ${isDragging ? "z-999" : ""}`}
+        >
+            <button
+                ref={setActivatorNodeRef}
+                type="button"
+                className="absolute z-999 right-2 flex h-8 w-8 shrink-0 items-center justify-center squircle-md border border-white/20 bg-white/2 text-white transition hover:border-primary hover:bg-primary/20 hover:text-white cursor-grab active:cursor-grabbing duration-300"
+                aria-label={`Drag ${vault.name}`}
+                {...attributes}
+                {...listeners}
+            >
+                <i className="ti ti-grip-vertical text-base" />
+            </button>
+            <div className="flex-1">
+                <SidebarButton
+                    icon={"ti-" + (vault.icon ? vault.icon : "vault")}
+                    label={vault.name}
+                    active={active}
+                    show={true}
+                    onClick={onClick}
+                    className={`w-full backdrop-blur-xl ${isDragging ? "bg-primary/40! border-primary! shadow-xl" : ""}`}
+                />
+            </div>
+        </div>
+    )
+}
+
+const restrictVaultsToVerticalAxis: Modifier = ({ transform }) => ({
+    ...transform,
+    x: 0
+})
 
 const Sidebar = ({
     panelWidth,
@@ -36,8 +87,38 @@ const Sidebar = ({
 }: SidebarProps) => {
 
     const panelRef = useRef<HTMLDivElement>(null)
+
     const [isSearchOpen, setIsSearchOpen] = useState(false)
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+    const [vaults, setVaults] = useState<any[]>(account?.vaults ?? [])
+
+    const sensors = useSensors(useSensor(PointerSensor, {
+        activationConstraint: {
+            distance: 6
+        }
+    }))
+
+    const isVaultOrganizationEnabled = Boolean(accountId && getSetting({ accountId, settingId: "enable-organize-vaults" }))
+
+    useEffect(() => setVaults(account?.vaults ?? []), [account?.vaults])
+
+    const handleVaultDragEnd = ({ active, over }: DragEndEvent) => {
+        if (!over || active.id === over.id || !accountId) return
+
+        const currentIndex = vaults.findIndex((vault) => vault.id === active.id)
+        const targetIndex = vaults.findIndex((vault) => vault.id === over.id)
+        if (currentIndex < 0 || targetIndex < 0) return
+
+        const direction = currentIndex < targetIndex ? 1 : -1
+        for (let index = currentIndex; index !== targetIndex; index += direction) {
+            reorderVaults({ accountId, vaultId: active.id.toString(), direction })
+        }
+
+        const reorderedVaults = [...vaults]
+        const [movedVault] = reorderedVaults.splice(currentIndex, 1)
+        reorderedVaults.splice(targetIndex, 0, movedVault)
+        setVaults(reorderedVaults)
+    }
 
     useResizePanel({
         panelRef,
@@ -157,18 +238,40 @@ const Sidebar = ({
                                 onClick={() => onPanelChange("home")}
                             />
 
-                            {account && account.vaults && account.vaults.length > 0 && account.vaults.map((vault: any, index: number) => (
+                            {isVaultOrganizationEnabled ? (
+                                <DndContext
+                                    sensors={sensors}
+                                    collisionDetection={closestCenter}
+                                    modifiers={[restrictVaultsToVerticalAxis]}
+                                    onDragEnd={handleVaultDragEnd}
+                                >
+                                    <SortableContext
+                                        items={vaults.map((vault) => vault.id)}
+                                        strategy={verticalListSortingStrategy}
+                                    >
+                                        {vaults.map((vault, index) => (
+                                            <SortableVault
+                                                key={vault.id ?? index}
+                                                vault={vault}
+                                                active={activePanel === "vault" && activeVaultId === vault.id}
+                                                onClick={() => onPanelChange("vault", vault.id)}
+                                            />
+                                        ))}
+                                    </SortableContext>
+                                </DndContext>
+                            ) : vaults.map((vault, index) => (
                                 <SidebarButton
-                                    key={index}
+                                    key={vault.id ?? index}
                                     icon={"ti-" + (vault.icon ? vault.icon : "vault")}
                                     label={vault.name}
                                     active={activePanel === "vault" && activeVaultId === vault.id}
-                                    show={ accountId ? true : false }
+                                    show={accountId ? true : false}
                                     onClick={() => onPanelChange("vault", vault.id)}
+                                    className="w-full"
                                 />
                             ))}
 
-                            {account && account.vaults.length === 0 && (
+                            {accountId && vaults.length === 0 && (
                                 <div className="mt-35 px-10 opacity-8 scale-200 mx-auto max-w-75">
                                     <SidebarUfo />
                                 </div>

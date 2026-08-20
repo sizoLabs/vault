@@ -19,7 +19,8 @@ const SecretCard = ({
     accountId,
     masterPassword,
     secret,
-    onSettingsClick
+    onSettingsClick,
+    className = ""
 }: SecretCardProps) => {
 
     const [ isCopied, setIsCopied ] = useState(false)
@@ -42,7 +43,7 @@ const SecretCard = ({
 
     return (
         <div
-            className={`z-40 relative group bg-white/2 px-5 py-5 squircle-md border w-full border-white/10 hover:bg-primary/15 hover:border-primary hover:shadow-xl hover:-translate-y-0.5 duration-300 min-w-40 sm:max-w-50 flex flex-col justify-center items-center cursor-pointer backdrop-blur-2xl ${isCopied ? "border-emerald-500! hover:border-emerald-500! bg-emerald-500/20!" : ""}`}
+            className={`z-40 relative group bg-white/2 px-5 py-5 squircle-md border w-full border-white/10 hover:bg-primary/15 hover:border-primary hover:shadow-xl hover:-translate-y-0.5 duration-300 min-w-40 sm:max-w-50 flex flex-col justify-center items-center cursor-pointer backdrop-blur-2xl ${isCopied ? "border-emerald-500! hover:border-emerald-500! bg-emerald-500/20!" : ""} ${className}`}
             onClick={ handleCopyPassword }  
         >
             <div className="font-inter-bold text-center mb-3">

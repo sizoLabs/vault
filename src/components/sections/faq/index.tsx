@@ -189,7 +189,7 @@ const faqItems = [
             "Vault uses a deterministic cryptographic hash system with SHA-512 technology. Here's what happens: you provide your master password, a service identifier, and a character set. These inputs are combined and hashed using SHA-512, which creates a unique cryptographic fingerprint.",
             "The resulting hash is then converted into hexadecimal values to increase strength, and these values are filtered through your chosen character set to generate your final password. Because the process is deterministic, the same combination of inputs will always create the exact same password.",
             "This means Vault never stores your actual passwords anywhere. They're generated on-demand in your browser whenever you need them, which eliminates the need for password databases or cloud storage.",
-            "Since there is nothing that says 'this is Juan's Gmail password', even if someone gets access to your device, they still cannot reconstruct your passwords without knowing your master password. This gives Vault a level of privacy and security that is difficult to achieve with traditional password managers."
+            "Since there is nothing that says 'this is Juan's Gmail password', even if someone gets access to your device, they still cannot reconstruct your passwords without knowing your master password. If Master Password Verification is disabled, there is also no stored reference that can confirm whether a guessed master password is correct. This gives Vault a level of privacy and security that is difficult to achieve with traditional password managers."
         ]
     },
     {
@@ -197,8 +197,8 @@ const faqItems = [
         question: "What is the master password used for?",
         answer: [
             "Your master password is the cryptographic key to your entire vault. It's the primary input in the SHA-512 hashing algorithm that generates all your service passwords. Without it, your passwords cannot be recreated.",
-            "Your master password is never stored anywhere. Not on our servers, not in your browser storage, and not in any backup. It only exists in your memory. And that's actually a good thing because it means no one can access your passwords, even if they somehow breach the application.",
-            "Of course, this also means if you forget your master password, your generated passwords cannot be recovered. That's why it's really important to create a strong, memorable master password and keep it safe. Consider using a passphrase with words and numbers for both security and memorability."
+            "Your master password itself is never stored anywhere. Not on our servers, not in your browser storage, and not in any backup. If Master Password Verification is enabled, Vault stores only a cryptographic verifier derived from it, together with a random salt. This verifier can confirm whether a password is correct, but it cannot reveal the master password. If verification is disabled, even that verifier is removed and the master password exists only in your memory.",
+            "Of course, this also means if you forget your master password, your generated passwords cannot be recovered. That's why it's really important to create a strong, memorable master password and keep it safe. Consider using a passphrase with words for both security and memorability."
         ]
     },
     {
@@ -231,6 +231,15 @@ const faqItems = [
         ]
     },
     {
+        id: "chrome-extension",
+        question: "How does the Vault Chrome extension work?",
+        answer: [
+            "The Vault Chrome extension lets you use your generated passwords while browsing websites. It can identify the matching service and generate the password without requiring you to keep the Vault web application open in another tab.",
+            "To use it, open the Chrome Extension Sync section in Vault and manually synchronize the current account. Vault sends the account's service configurations and custom alphabets to the extension so it can match services on websites. This feature is currently available only in desktop browsers.",
+            "The extension does not receive a database of your generated passwords. It uses the synchronized configuration together with your master password to recreate passwords when needed. You can delete the synchronized data for the current account or clear all extension data from the same settings section."
+        ]
+    },
+    {
         id: "google-tokens",
         question: "What are access tokens and how do they work?",
         answer: [
@@ -246,7 +255,8 @@ const faqItems = [
         answer: [
             "Vault operates with a privacy-first approach that significantly reduces security risks compared to traditional password managers. Your actual passwords are never stored anywhere. They're generated when you need them, which means there's no central database of passwords that could be breached.",
             "All password generation and management happens entirely within your browser, using standard cryptographic algorithms with SHA-512 technology. Your data never leaves your device and is never transmitted to external servers, so you have complete control over your information.",
-            "However, security depends on how strong your master password is. A strong master password is really important because if someone gets access to it, they can generate all your passwords. Also, while Vault's architecture is solid, we recommend forking the project and hosting it locally, auditing the code, or creating your own implementation for maximum peace of mind. The code is open-source and available on <a href=\"https://github.com/sizoLabs/vault\" target=\"_blank\" style=\"text-decoration: underline;\">GitHub</a> for transparency.",
+            "If someone obtains the data stored in your browser and Master Password Verification is disabled, they still cannot determine your master password from that data. Vault does not store anything that says 'this is my master password' or provides an anchor for testing guesses. Without that anchor, an attacker has no way to know when an offline password check is correct, so they cannot tell when to stop trying. They could only attempt to brute-force the login of each external web service, but those services typically apply strict protections against this kind of attack.",
+            "However, security still depends on protecting your master password. If Master Password Verification is enabled, someone with your browser data could use the stored verifier to test password guesses offline, so choose a strong master password. If verification is disabled, browser data cannot confirm guesses, but anyone who learns the master password can still generate all your passwords. Also, while Vault's architecture is solid, we recommend forking the project and hosting it locally, auditing the code, or creating your own implementation for maximum peace of mind. The code is open-source and available on <a href=\"https://github.com/sizoLabs/vault\" target=\"_blank\" style=\"text-decoration: underline;\">GitHub</a> for transparency.",
             "Remember, Vault is provided as-is, and you're responsible for checking that its security meets your needs before using it for sensitive accounts."
         ]
     },

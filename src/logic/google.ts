@@ -332,6 +332,26 @@ const getDriveAppDataFiles = async (accountId: string) => {
     })
 }
 
+const getAllDriveVaultFiles = async (accountId: string) => {
+
+    const token = await getFreshGoogleDriveAccessToken(accountId)
+
+    const response = await fetch(`${DRIVE_API}/files?spaces=appDataFolder&fields=files(id,name)&supportsAllDrives=true`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    })
+
+    if (!response.ok) {
+        throw new Error("Google Drive request failed")
+    }
+
+    const data = await response.json()
+    const files = Array.isArray(data.files) ? data.files : []
+
+    return files.filter((file: any) => typeof file?.name === "string" && file.name.toLowerCase().endsWith(".vault"))
+}
+
 const getDriveAppDataFile = async (accountId: string) => {
     const files = await getDriveAppDataFiles(accountId)
     return files.length > 0 ? files[0] : null
@@ -502,4 +522,59 @@ export const pullGoogleDriveToAccount = async ({
         return false
     }
 
+}
+
+const deleteDriveFiles = async (accountId: string, files: Array<{ id?: string }>) => {
+
+    const token = await getFreshGoogleDriveAccessToken(accountId)
+    const filesToDelete = files.filter((file) => file?.id)
+
+    await Promise.all(filesToDelete.map(async (file) => {
+        const response = await fetch(`${DRIVE_API}/files/${encodeURIComponent(String(file.id))}?supportsAllDrives=true`, {
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+
+        if (!response.ok && response.status !== 404) {
+            throw new Error("Could not delete the Google Drive file")
+        }
+    }))
+
+    return filesToDelete.length
+}
+
+export const deleteCurrentGoogleDriveData = async (accountId: string) => {
+    try {
+        const files = await getDriveAppDataFiles(accountId)
+        const deletedCount = await deleteDriveFiles(accountId, files)
+        showAlert(
+            deletedCount ? "The current account data was deleted from Google Drive" : "No data was found for this account in Google Drive",
+            deletedCount ? "success" : "info",
+            deletedCount ? "trash" : "info-circle",
+            5000
+        )
+        return deletedCount > 0
+    } catch (error: any) {
+        showAlert(error?.message || "Could not delete the account data from Google Drive", "error", "exclamation-circle", 5000)
+        return false
+    }
+}
+
+export const deleteAllGoogleDriveData = async (accountId: string) => {
+    try {
+        const files = await getAllDriveVaultFiles(accountId)
+        const deletedCount = await deleteDriveFiles(accountId, files)
+        showAlert(
+            deletedCount ? "All Vault data was deleted from Google Drive" : "No Vault data was found in Google Drive",
+            deletedCount ? "success" : "info",
+            deletedCount ? "trash" : "info-circle",
+            5000
+        )
+        return deletedCount > 0
+    } catch (error: any) {
+        showAlert(error?.message || "Could not delete Vault data from Google Drive", "error", "exclamation-circle", 5000)
+        return false
+    }
 }

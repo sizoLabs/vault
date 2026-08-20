@@ -40,7 +40,8 @@ jobs:
           git push origin "${TAG}"
 
           gh workflow run docker-image.yml \
-            --ref "${TAG}"
+            --ref "${TAG}" \
+            --field "version=${TAG}"
 
           gh release create "${TAG}" \
             --target "${GITHUB_SHA}" \

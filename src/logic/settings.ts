@@ -72,6 +72,14 @@ export const createDefaultSettings = (accountId: string, customAccountName = "Pe
             value: false
         },
         {
+            id: "enable-organize-vaults",
+            value: false
+        },
+        {
+            id: "enable-organize-services",
+            value: false
+        },
+        {
             id: "google-drive-enabled",
             value: false
         },
@@ -152,6 +160,18 @@ export const getSettings = () => {
             id: "disable-colored-background",
             name: "Disable Colored Background",
             description: "Toggle the background to colored or monotone.",
+            type: "toggle"
+        },
+        {
+            id: "enable-organize-vaults",
+            name: "Enable Vault Organization",
+            description: "Drag and drop vaults in the sidebar to reorder them.",
+            type: "toggle"
+        },
+        {
+            id: "enable-organize-services",
+            name: "Enable Service & Secret Organization",
+            description: "Drag and drop services and secrets within a vault to reorder them.",
             type: "toggle"
         },
         {

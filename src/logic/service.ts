@@ -165,6 +165,25 @@ export const getService = ({ accountId, serviceId }: { accountId: string, servic
 
 }
 
+export const reorderService = ({ accountId, vaultId, serviceId, direction }: { accountId: string, vaultId: string, serviceId: string, direction: -1 | 1 }) => {
+    const account = getStorage(accountId)
+    const services = Array.isArray(account?.services) ? account.services : []
+    const vaultServiceIndexes = services.reduce((indexes: number[], service: IService, index: number) => {
+        if (service.vault === vaultId) indexes.push(index)
+        return indexes
+    }, [])
+    const currentVaultIndex = vaultServiceIndexes.findIndex((index) => services[index].id === serviceId)
+    const targetVaultIndex = currentVaultIndex + direction
+
+    if (currentVaultIndex < 0 || targetVaultIndex < 0 || targetVaultIndex >= vaultServiceIndexes.length) return
+
+    const currentIndex = vaultServiceIndexes[currentVaultIndex]
+    const targetIndex = vaultServiceIndexes[targetVaultIndex]
+    const [movedService] = services.splice(currentIndex, 1)
+    services.splice(targetIndex > currentIndex ? targetIndex : targetIndex, 0, movedService)
+    setStorage(accountId, { ...account, services })
+}
+
 export const createService = async ({
     accountId,
     name,

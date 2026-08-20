@@ -17,7 +17,7 @@ export default function SidebarButton({ icon, label, active, show, onClick, clas
         <button
             type="button"
             onClick={ onClick }
-            className={`block h-fit text-md font-inter-bold squircle-md px-3 py-2.5 border text-left cursor-pointer duration-300 hover:bg-primary/30 hover:border-primary hover:text-white ${active ? "bg-primary/30 border-primary text-white" : "bg-white/2 border-white/10"} ${className}`}
+            className={`relative z-0 block h-fit text-md font-inter-bold squircle-md px-3 py-2.5 border text-left cursor-pointer duration-300 hover:bg-primary/30 hover:border-primary hover:text-white ${active ? "bg-primary/30 border-primary text-white" : "bg-white/2 border-white/10"} ${className}`}
         >
             <i className={`ti ${icon} text-[20px] inline-block align-middle -mt-0.5 mr-2 text-white`}></i>
             { label }

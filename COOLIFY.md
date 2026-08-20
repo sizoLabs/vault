@@ -6,11 +6,14 @@
 
 2. Set the repository URL to `https://github.com/sizoLabs/vault` and select **Docker Compose** as the build pack.
 
+Alternatively, create a new **Docker Compose** resource, then copy and paste the contents of [`docker-compose.yaml`](docker-compose.yaml) into Coolify's Compose configuration. The image is pulled from GHCR, so the repository is not required for this option.
+
 3. To enable **Google Drive** synchronization, follow the [Google OAuth configuration](#configuring-google-oauth) steps below and add the resulting Client ID to the `PUBLIC_GOOGLE_CLIENT_ID` environment variable. Leave this variable unset to keep Google Drive synchronization disabled.
 
-4. Configure the domain and set the service port to `4321`.
+4. Optionally set the `PORT` environment variable to the port you want to use. If you leave it unset, the default is `4321`.
+5. Configure the domain and set the service port to the same value as `PORT` (or `4321` when it is unset).
 
-5. Deploy the resource.
+6. Deploy the resource.
 
 ## Configuring Google OAuth
 

@@ -1,9 +1,12 @@
 name: Docker Image
 
 on:
-  push:
-    tags:
-      - "v*.*.*"
+  workflow_call:
+    inputs:
+      version:
+        description: "Version to build and push (e.g., v1.2.3)"
+        required: true
+        type: string
   workflow_dispatch:
     inputs:
       version:
@@ -43,8 +46,8 @@ jobs:
           tags: |
             type=ref,event=tag
             type=raw,value=${{ inputs.version }}
-            type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
+            type=semver,pattern={{major}}.{{minor}},value=${{ inputs.version }}
+            type=semver,pattern={{major}},value=${{ inputs.version }}
             type=raw,value=latest
       
       - uses: docker/build-push-action@v6

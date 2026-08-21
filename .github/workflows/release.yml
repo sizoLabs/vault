@@ -6,11 +6,12 @@ on:
       - main
 
 jobs:
-  release:
+  tag:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      actions: write
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
 
     steps:
       - uses: actions/checkout@v4
@@ -21,7 +22,8 @@ jobs:
         id: version
         run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
 
-      - name: Create tag and release
+      - name: Create tag
+        id: tag
         env:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ steps.version.outputs.version }}
@@ -39,11 +41,31 @@ jobs:
           git tag "${TAG}" "${GITHUB_SHA}"
           git push origin "${TAG}"
 
-          gh workflow run docker-image.yml \
-            --ref "${TAG}" \
-            --field "version=${TAG}"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
 
+  image:
+    needs: tag
+    uses: ./.github/workflows/docker-image.yml
+    permissions:
+      contents: read
+      packages: write
+    with:
+      version: ${{ needs.tag.outputs.tag }}
+
+  release:
+    needs: [tag, image]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.tag.outputs.tag }}
+          SHA: ${{ github.sha }}
+        run: |
           gh release create "${TAG}" \
-            --target "${GITHUB_SHA}" \
+            --target "${SHA}" \
             --title "${TAG}" \
             --generate-notes

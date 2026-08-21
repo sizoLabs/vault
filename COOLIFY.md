@@ -35,18 +35,20 @@ Complete these steps only if you want to enable Google Drive synchronization. Le
 2. Select the new project, open the [API Library](https://console.cloud.google.com/apis/library), search for **Google Drive API**, and click **Enable**.
 3. Open **Google Auth Platform** from the Google Cloud navigation menu, or go to the [Google Auth Platform setup](https://console.cloud.google.com/auth/branding). Configure the app:
 	- Choose **External** unless the app is restricted to a Google Workspace organization.
-	- Enter an app name and a support email.
+	- Enter **VAULT - Password Manager** as the app name and add a support email.
+	- Upload [`app-icon.png`](public/app-icon.png) as the app icon.
 	- Add the deployed site's domain as an authorized domain, for example `example.com`.
 	- Add your email as a developer contact.
 	- If the app is in testing, add the Google accounts that will use it as test users.
-4. Open the [Credentials page](https://console.cloud.google.com/apis/credentials) and click **Create credentials** > **OAuth client ID**.
-5. Select **Web application** as the application type. Under **Authorized JavaScript origins**, add the complete deployed origin, for example `https://example.com`. Do not include a path or trailing slash. VAULT uses a browser-based token flow, so no redirect URI is required.
-6. Click **Create** and copy the generated **Client ID**. It ends in `.apps.googleusercontent.com`. This is the public ID; do not use the client secret.
-7. In Coolify, add the following environment variable to the deployed service:
+4. After completing the app configuration, request a manual review from Google to verify the application.
+5. Open the [Credentials page](https://console.cloud.google.com/apis/credentials) and click **Create credentials** > **OAuth client ID**.
+6. Select **Web application** as the application type. Under **Authorized JavaScript origins**, add the complete deployed origin, for example `https://example.com`. Do not include a path or trailing slash. VAULT uses a browser-based token flow, so no redirect URI is required.
+7. Click **Create** and copy the generated **Client ID**. It ends in `.apps.googleusercontent.com`. This is the public ID; do not use the client secret.
+8. In Coolify, add the following environment variable to the deployed service:
 
 	`PUBLIC_GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com`
 
-8. Redeploy the service. Then, in VAULT, enable Google Drive synchronization and connect your Google account.
+9. Redeploy the service. Then, in VAULT, enable Google Drive synchronization and connect your Google account.
 
 ## Updating
 

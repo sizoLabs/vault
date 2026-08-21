@@ -4,14 +4,17 @@ import { APP_VERSION, checkForUpdate, getAvailableUpdate } from "@logic/version"
 
 interface VersionProps {
     detailed?: boolean
+    accountId?: string
 }
 
-const Version = ({ detailed = false }: VersionProps) => {
+const Version = ({ detailed = false, accountId = "" }: VersionProps) => {
 
     const [ availableUpdate, setAvailableUpdate ] = useState<string | null>(null)
     const [ isChecking, setIsChecking ] = useState(true)
 
     useEffect(() => {
+
+        if (!detailed || !accountId) return
 
         let isMounted = true
 
@@ -26,7 +29,7 @@ const Version = ({ detailed = false }: VersionProps) => {
             isMounted = false
         }
 
-    }, [])
+    }, [detailed, accountId])
 
     if (detailed) return (
         <div className="container">

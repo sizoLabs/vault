@@ -31,6 +31,8 @@ VAULT can be deployed in Coolify in two independent ways. Choose the option that
 
 Complete these steps only if you want to enable Google Drive synchronization. Leave `PUBLIC_GOOGLE_CLIENT_ID` unset to keep synchronization disabled.
 
+> **Warning:** The official VAULT instance does not share its Google Drive API credentials. Every self-hosted instance must use its own Google Cloud project and OAuth client ID.
+
 1. Open the [Google Cloud Console](https://console.cloud.google.com/) and create a project on the [project creation page](https://console.cloud.google.com/projectcreate).
 2. Select the new project, open the [API Library](https://console.cloud.google.com/apis/library), search for **Google Drive API**, and click **Enable**.
 3. Open **Google Auth Platform** from the Google Cloud navigation menu, or go to the [Google Auth Platform setup](https://console.cloud.google.com/auth/branding). Configure the app:

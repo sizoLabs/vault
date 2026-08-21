@@ -747,7 +747,7 @@ const Settings = (props: SettingsProps) => {
                     </h2>
 
                     <div className="flex flex-col w-full form squircle-md pt-1 pb-0">
-                        <Version detailed />
+                        <Version detailed accountId={ accountId } />
                     </div>
                 </div>
 

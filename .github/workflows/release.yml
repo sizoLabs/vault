@@ -12,6 +12,7 @@ jobs:
       contents: write
     outputs:
       tag: ${{ steps.tag.outputs.tag }}
+      created: ${{ steps.tag.outputs.created }}
 
     steps:
       - uses: actions/checkout@v4
@@ -32,6 +33,7 @@ jobs:
 
           if git ls-remote --exit-code --tags origin "refs/tags/${TAG}" > /dev/null 2>&1; then
             echo "Release ${TAG} already exists"
+            echo "created=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
@@ -42,9 +44,11 @@ jobs:
           git push origin "${TAG}"
 
           echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "created=true" >> "$GITHUB_OUTPUT"
 
   image:
     needs: tag
+    if: needs.tag.outputs.created == 'true'
     uses: ./.github/workflows/docker-image.yml
     permissions:
       contents: read
@@ -54,6 +58,7 @@ jobs:
 
   release:
     needs: [tag, image]
+    if: needs.tag.outputs.created == 'true' && needs.image.result == 'success'
     runs-on: ubuntu-latest
     permissions:
       contents: write

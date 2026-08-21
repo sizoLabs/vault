@@ -4,6 +4,7 @@ import { showAlert } from "@logic/alert"
 import { getStorage, setStorage } from "@logic/storage"
 import { getSetting } from "@logic/settings"
 import { applyThemeColor } from "@logic/settings"
+import { buildMasterSeedBlocks } from "@logic/utils"
 import {
     createAccount,
     getAccountIcon,
@@ -38,6 +39,11 @@ const Access = (props: AccessProps) => {
     const [ isOpeningVault, setIsOpeningVault ] = useState(false)
     const [ vaultOpened, setVaultOpened ] = useState(false)
     const [ showAnimations, setShowAnimations ] = useState(false)
+    const [ masterPassword, setMasterPassword ] = useState("")
+    const [ masterSeedBlocks, setMasterSeedBlocks ] = useState<Array<{ id: number, seed: string, color: { r: number, g: number, b: number }, token: string }>>([])
+
+    const selectedAccountData = selectedAccount === 'new' ? null : getStorage(selectedAccount)
+    const shouldShowMasterSeedBlocks = selectedAccount === 'new' || !selectedAccountData?.master?.verifier
 
     const handleSubmit = (event: any) => {
 
@@ -176,6 +182,25 @@ const Access = (props: AccessProps) => {
         }
     }, [selectedAccount])
 
+    useEffect(() => {
+        let isMounted = true
+
+        if (!shouldShowMasterSeedBlocks || !masterPassword) {
+            setMasterSeedBlocks([])
+            return () => {
+                isMounted = false
+            }
+        }
+
+        buildMasterSeedBlocks(masterPassword).then((blocks) => {
+            if (isMounted) setMasterSeedBlocks(blocks)
+        })
+
+        return () => {
+            isMounted = false
+        }
+    }, [masterPassword, shouldShowMasterSeedBlocks])
+
     const selectedAccountIcon = selectedAccount === 'new'
         ? 'user-plus'
         : getAccountIcon(selectedAccount)
@@ -199,7 +224,7 @@ const Access = (props: AccessProps) => {
                         Serverless, open source and <b className="text-primary">free forever</b>.
                     </div>
 
-                    <div className="flex flex-col gap-10 max-w-200 mb-25">
+                    <div className="flex flex-col gap-10 max-w-95 mb-25">
                         
                         <form
                             onSubmit={ handleSubmit }
@@ -306,6 +331,8 @@ const Access = (props: AccessProps) => {
                                 placeholder="Enter your Master Password"
                                 type="password"
                                 name="password"
+                                value={masterPassword}
+                                onChange={(event) => setMasterPassword(event.target.value)}
                                 className="text-md md:text-xl font-inter-medium h-fit w-full squircle-md px-5 py-3 border text-center duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white"
                             />
 
@@ -316,6 +343,37 @@ const Access = (props: AccessProps) => {
                             >
                                 {isOpeningVault ? selectedAccount === 'new' ? 'Creating...' : 'Unlocking...' : (accounts && accounts.length > 0 && selectedAccount !== 'new' ? 'Unlock Account' : 'Create Account')}
                             </button>
+
+                            { shouldShowMasterSeedBlocks && (
+                                <div className="flex flex-col gap-3 p-4 text-left max-w-full bg-white/2 border-white/10 border squircle-md">
+                                    <div>
+                                        <h3 className="font-inter-bold text-lg">
+                                            <i className="ti ti-square-f0 mr-0.5 align-middle inline-block -mt-0.5" /> Master Password Tokens
+                                        </h3>
+                                        <div className="text-xs text-white/60">
+                                            Here you can check if the tokens are correct.
+                                            { selectedAccount === 'new' && " Remember them when you create your account." }
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                                        { masterSeedBlocks.length > 0 ? masterSeedBlocks.map((block) => (
+                                            <div
+                                                style={{ background: `rgba(${block.color.r}, ${block.color.g}, ${block.color.b}, 0.2)`, borderColor: `rgba(${block.color.r}, ${block.color.g}, ${block.color.b}, 0.8)` }}
+                                                key={ block.id }
+                                                className="squircle-md border px-2 py-1 flex items-center justify-between gap-2 text-white/80"
+                                            >
+                                                <div className="text-lg font-inter-black">{ block.token }</div>
+                                                <span className="block h-5 w-5 squircle-full" style={{ backgroundColor: `rgba(${block.color.r}, ${block.color.g}, ${block.color.b}, 1)` }}></span>
+                                            </div>
+                                        )) : (
+                                            <div className="col-span-2 text-sm text-white/50 md:col-span-4">
+                                                Enter your Master Password to view the tokens.
+                                            </div>
+                                        ) }
+                                    </div>
+                                </div>
+                            )}
 
                         </form>
                     </div>

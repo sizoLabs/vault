@@ -202,6 +202,17 @@ const faqItems = [
         ]
     },
     {
+        id: "multiple-master-passwords",
+        question: "Can I use multiple master passwords with one account?",
+        answer: [
+            "Yes. If Master Password Verification is disabled, you can open the same account with any master password you choose. Each master password becomes a different input to Vault's deterministic generation process, so it produces a different password for the same service.",
+            "This makes it possible to use one master password for some services and another master password for other services, without storing or labeling which one was used. Someone looking at your account data cannot determine which master password you use for each service because Vault stores no verifier that can confirm whether a guessed master password is correct.",
+            "You can also use a separate master password only when encrypting data for export or decrypting it during import, then use other master passwords to access the account and generate different service passwords. This is an advanced strategy for making the relationship between your services and master passwords harder to infer. It does not replace choosing strong, memorable master passwords or protecting them carefully.",
+            "Master Password Tokens are especially useful for this setup. By writing down or memorizing the tokens associated with your master passwords, you can keep track of which master password to use for each context without storing the passwords themselves.",
+            "In practical terms, this makes it 99.9% impossible for someone to reproduce your service passwords from your account data alone. The remaining risk is not a weakness in the generation process: it is that someone reaches your written tokens or you disclose them to another person. This percentage is an illustrative security estimate, not a mathematical guarantee."
+        ]
+    },
+    {
         id: "data-storage",
         question: "Where is my information stored?",
         answer: [

@@ -216,15 +216,15 @@ const Access = (props: AccessProps) => {
                     
                     <Logo />
 
-                    <div className="text-2xl md:text-4xl text-center mb-3">
+                    <div className="text-2xl md:text-4xl text-center mb-2">
                         The world's <b className="font-inter-black">most secure</b> Password Manager
                     </div>
 
-                    <div className="text-xl md:text-3xl text-center text-white/60 mb-15">
-                        Serverless, open source and <b className="text-primary">free forever</b>.
+                    <div className="text-xl md:text-[26px] text-center text-white/60 mb-15">
+                        Serverless, self-hosted, open source and <b className="text-primary">free forever</b>.
                     </div>
 
-                    <div className="flex flex-col gap-10 max-w-95 mb-25">
+                    <div className="flex flex-col gap-10 max-w-95">
                         
                         <form
                             onSubmit={ handleSubmit }

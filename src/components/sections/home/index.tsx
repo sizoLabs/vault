@@ -92,11 +92,11 @@ const Home = (props: HomeProps) => {
                         The world's <b className="font-inter-black">most secure</b> Password Manager
                     </div>
 
-                    <div className="text-xl md:text-3xl text-center text-white/60 mb-15">
-                        Serverless, open source and <b className="text-primary">free forever</b>.
+                    <div className="text-xl md:text-[26px] text-center text-white/60 mb-15">
+                        Serverless, self-hosted, open source and <b className="text-primary">free forever</b>.
                     </div>
 
-                    <div className="flex flex-row flex-wrap justify-center intems-center gap-2 md:gap-5 w-full mb-15">
+                    <div className="flex flex-row flex-wrap justify-center intems-center gap-2 md:gap-5 w-full">
 
                         <Block value={ totalVaults } label={ (totalVaults > 1) ? "Vaults" : (totalVaults === 0) ? "Vaults" : "Vault" } />
                         <Block value={ totalServices } label="Services" />

@@ -6,7 +6,7 @@ export const APP_VERSION = packageJson.version
 export const GITHUB_REPOSITORY = "sizoLabs/vault"
 
 const VERSION_CHECK_STORAGE_KEY = "version-check"
-const VERSION_CHECK_INTERVAL = 24 * 60 * 60 * 1000
+const VERSION_CHECK_INTERVAL = 3 * 1000
 
 let versionCheckPromise: Promise<VersionCheckCache> | null = null
 

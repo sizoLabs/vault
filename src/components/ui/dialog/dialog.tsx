@@ -70,7 +70,7 @@ const Dialog = (props: DialogProps) => {
 
     return (
         <>
-            <div className="fixed inset-0 z-80 h-screen w-full bg-white/2 backdrop-blur-[80px]" />
+            <div className="fixed inset-0 z-80 h-screen w-full bg-white/2 lite:bg-darker backdrop-blur-[80px] lite:backdrop-blur-none" />
 
             <div
                 className="fixed inset-0 z-80 flex items-center justify-center"
@@ -86,7 +86,7 @@ const Dialog = (props: DialogProps) => {
                     <div className={`relative m-0 h-auto max-h-[calc(100vh-2.5rem)] md:m-auto md:max-h-[calc(100vh-5rem)] overflow-auto w-full rounded-2xl border bg-white/5 border-white/10 text-white no-scrollbar-but-scroll ${className}`}>
 
                         {(title || showCloseButton) && (
-                            <div className="z-90 bg-white/5 px-5 pt-5 pb-4 sticky top-0 backdrop-blur-xl w-full border-b border-white/10">
+                            <div className="z-90 bg-white/5 px-5 pt-5 pb-4 sticky top-0 backdrop-blur-xl lite:backdrop-blur-none lite:bg-darker w-full border-b border-white/10">
                                 {showCloseButton && (
                                     <button
                                         type="button"

@@ -228,7 +228,7 @@ const IconSelector = ({ id, value, onChange, className = "" }: IconSelectorProps
             <button
                 type="button"
                 onClick={() => setOpen((current) => !current)}
-                className={ `font-inter-medium flex w-fit self-start items-center justify-center gap-3 squircle-md border pl-1 py-1 text-left duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white cursor-pointer ${className}` }
+                className={ `font-inter-medium flex w-fit self-start items-center justify-center gap-3 squircle-md border pl-1 py-1 text-left duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white cursor-pointer lite:bg-darker ${className}` }
             >
                 <span className="flex items-center gap-3 min-w-0">
                     <span className="flex h-10 w-10 items-center justify-center squircle-md border border-white/10 bg-white/5 text-xl text-white">
@@ -250,7 +250,7 @@ const IconSelector = ({ id, value, onChange, className = "" }: IconSelectorProps
                         }
                     }}
                 >
-                    <div className="relative z-999 w-full h-full max-w-200 overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-2xl shadow-black/30 backdrop-blur-3xl">
+                    <div className="relative z-999 w-full h-full max-w-200 overflow-hidden rounded-2xl border border-white/10 bg-white/5 lite:bg-darker shadow-2xl shadow-black/30 backdrop-blur-3xl lite:backdrop-blur-none">
 
                         <div className="px-5 py-5 mb-4 flex items-center justify-between gap-3 border-b border-white/10 bg-white/5 pb-3">
                             <span className="text-sm md:text-lg font-inter-bold text-white">Select an Icon</span>
@@ -280,7 +280,7 @@ const IconSelector = ({ id, value, onChange, className = "" }: IconSelectorProps
                                 <button
                                     type="button"
                                     onClick={handleShowAllToggle}
-                                    className={ `w-full md:w-fit cursor-pointer squircle-md border px-6 py-3 text-xs duration-300 ${showAllIcons ? "border-primary bg-primary/20 text-white" : "border-white/15 bg-white/5 text-white/80 hover:border-primary/40 hover:bg-primary/10"}` }
+                                    className={ `w-full md:w-fit cursor-pointer squircle-md border px-6 py-3 text-xs duration-300 ${showAllIcons ? "border-primary bg-primary/20 text-white" : "border-white/15 bg-white/5 lite:bg-darker text-white/80 hover:border-primary/40 hover:bg-primary/10"}` }
                                 >
                                     {showAllIcons ? "Hide all icons" : "Show all icons"}
                                 </button>
@@ -293,7 +293,7 @@ const IconSelector = ({ id, value, onChange, className = "" }: IconSelectorProps
                                             key={category}
                                             type="button"
                                             onClick={() => handleCategorySelect(category)}
-                                            className={ `cursor-pointer shrink-0 squircle-md border px-3 py-1.5 text-[10px] font-inter-medium uppercase tracking-wide duration-300 ${selectedCategory === category ? "border-primary bg-primary/20 text-white" : "border-white/10 bg-white/5 text-white/70 hover:border-white/25 hover:bg-white/10 hover:text-white"}` }
+                                            className={ `cursor-pointer shrink-0 squircle-md border px-3 py-1.5 text-[10px] font-inter-medium uppercase tracking-wide lite:duration-0 duration-300 ${selectedCategory === category ? "border-primary bg-primary/20 text-white" : "border-white/10 bg-white/5 lite:bg-darker text-white/70 hover:border-white/25 hover:bg-white/10 hover:text-white"}` }
                                         >
                                             {category}
                                         </button>
@@ -314,7 +314,7 @@ const IconSelector = ({ id, value, onChange, className = "" }: IconSelectorProps
                                             key={icon}
                                             type="button"
                                             onClick={() => handleSelect(icon)}
-                                            className={ `flex flex-col items-center justify-center gap-2 squircle-md border px-2 py-3 duration-300 cursor-pointer ${normalizedValue === icon ? "border-primary bg-primary/20 text-white" : "border-white/10 bg-white/5 text-white/80 hover:border-white/40 hover:bg-white/10"}` }
+                                            className={ `flex flex-col items-center justify-center gap-2 squircle-md border px-2 py-3 duration-300 lite:duration-0 cursor-pointer ${normalizedValue === icon ? "border-primary bg-primary/20 text-white" : "border-white/10 bg-white/5 lite:bg-darker text-white/80 hover:border-white/40 hover:bg-white/10"}` }
                                             aria-label={icon}
                                         >
                                             <i className={ `ti ti-${icon} text-3xl md:text-5xl` } />

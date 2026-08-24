@@ -120,7 +120,7 @@ export default function Search({ account, accountId, masterPassword, isOpen, onO
     return (
         <>
             {isOpen && (
-                <div className="z-60 fixed inset-0 bg-white/2 backdrop-blur-[80px]">
+                <div className="z-60 fixed inset-0 lite:bg-darker lite:backdrop-blur-none bg-white/2 backdrop-blur-[80px]">
 
                     <div className="absolute -top-60 -left-35 opacity-5 -z-1 mask-to-bottom">
                         <i className="ti ti-search text-[900px]" />

@@ -38,7 +38,7 @@ const Select = (props: SelectProps) => {
             <button
                 type="button"
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="font-inter-medium h-fit w-full squircle-md px-3 py-2.5 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white flex justify-between items-center cursor-pointer"
+                className="font-inter-medium h-fit w-full squircle-md px-3 py-2.5 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white flex justify-between items-center cursor-pointer lite:bg-darker"
             >
                 <span className="truncate">
                     { selectedOption ? selectedOption.name : "Select an option" }
@@ -47,7 +47,7 @@ const Select = (props: SelectProps) => {
             </button>
 
             { dropdownOpen && (
-                <ul className="absolute left-0 right-0 mt-0.5 max-h-50 overflow-y-auto squircle squircle-sm bg-white/5 backdrop-blur-xl border border-white/30 z-50">
+                <ul className="absolute left-0 right-0 mt-0.5 max-h-50 overflow-y-auto squircle squircle-sm bg-white/5 lite:bg-darker backdrop-blur-xl lite:backdrop-blur-none border border-white/30 z-50">
                     { optionList && optionList.map((option: any) => (
                         <li
                             key={ option.id }

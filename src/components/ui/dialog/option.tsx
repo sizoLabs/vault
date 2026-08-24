@@ -14,7 +14,7 @@ const DialogOption = (props: DialogOptionProps) => {
     const isRow = layout === "row"
 
     return (
-        <div className={`pt-5 pb-5 border-b border-white/10 last:border-0 flex ${isRow ? "flex-col md:flex-row" : "flex-col"} gap-5 justify-between`}>
+        <div className={`pt-5 pb-5 lite:bg-darker border-b border-white/10 last:border-0 flex ${isRow ? "flex-col md:flex-row" : "flex-col"} gap-5 justify-between`}>
             <div className="px-5">
                 <h3 className="font-inter-bold">
                     {title}

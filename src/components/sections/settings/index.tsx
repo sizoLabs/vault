@@ -542,17 +542,27 @@ const Settings = (props: SettingsProps) => {
                                 <i className="ti ti-brand-chrome text-[800px]" />
                             </div>
                             <div className="relative z-10 w-full">
-                                <h2 className="text-xl md:text-2xl font-inter-black mb-2">
+                                <h2 className="text-xl md:text-2xl font-inter-black mb-4">
                                     Download VAULT Chrome Extension
                                 </h2>
-                                <a
-                                    href="https://github.com/sizoLabs/vault-chrome-extension"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="block w-fit px-6 py-3 border duration-300 bg-emerald-500/10 border-emerald-500/50 hover:bg-emerald-500/30 hover:border-emerald-500 hover:text-white squircle-md backdrop-blur-3xl font-inter-bold"
-                                >
-                                    <i className="ti ti-download text-xl mr-1 align-middle inline-block -mt-1" /> Download Extension from GitHub
-                                </a>
+                                <div className="flex flex-row items-center justify-start gap-3 flex-wrap">
+                                    <a
+                                        href="https://chromewebstore.google.com/detail/vault/dgofgcnbknjnpdfkhlmhkekieapnbhbl"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="block w-fit px-6 py-3 border duration-300 bg-emerald-500/10 border-emerald-500/50 hover:bg-emerald-500/30 hover:border-emerald-500 hover:text-white squircle-md backdrop-blur-3xl font-inter-bold"
+                                    >
+                                        <i className="ti ti-download text-xl mr-1 align-middle inline-block -mt-1" /> Download Extension
+                                    </a>
+                                    <a
+                                        href="https://github.com/sizoLabs/vault-chrome-extension"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="block w-fit px-6 py-3 border duration-300 bg-white/2 border-white/10 hover:bg-white/10 hover:border-white hover:text-white text-white/30 squircle-md backdrop-blur-3xl font-inter-bold"
+                                    >
+                                        <i className="ti ti-code text-xl mr-1 align-middle inline-block -mt-0.5" /> View source code
+                                    </a>
+                                </div>
                             </div>
                         </div>
 

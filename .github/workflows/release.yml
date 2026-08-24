@@ -71,6 +71,7 @@ jobs:
           SHA: ${{ github.sha }}
         run: |
           gh release create "${TAG}" \
+            --repo "${GITHUB_REPOSITORY}" \
             --target "${SHA}" \
             --title "${TAG}" \
             --generate-notes

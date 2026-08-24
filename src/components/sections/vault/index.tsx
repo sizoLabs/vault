@@ -153,7 +153,7 @@ const Vault = (props: VaultProps) => {
 
     if(vaultData) return (
         <>
-            <div className="relative bg-white/2 border-white/10 w-full h-full squircle-md border overflow-hidden">
+            <div className="relative lite:bg-darker bg-white/2 border-white/10 w-full h-full squircle-md border overflow-hidden">
 
                 <div className="absolute inset-0 overflow-y-scroll no-scrollbar-but-scroll">
 
@@ -243,7 +243,7 @@ const Vault = (props: VaultProps) => {
 
                             <div className="hidden md:block w-full sm:w-fit">
                                 <button
-                                    className="flex flex-col items-center justify-center px-10 py-5 sm:min-w-50 w-full h-full squircle-md border border-white/10 hover:border-white/50 hover:bg-white/10 duration-300 backdrop-blur-2xl cursor-pointer text-white/50 hover:text-white"
+                                    className="flex flex-col items-center justify-center px-10 py-5 sm:min-w-50 w-full h-full squircle-md border border-white/10 hover:border-white/50 hover:bg-white/10 duration-300 backdrop-blur-2xl cursor-pointer text-white/50 hover:text-white lite:bg-darker lite:border-white/10 lite:duration-0 lite:backdrop-blur-none lite:hover:bg-darker"
                                     onClick={ () => handleCreateService() }
                                 >
                                     <i className="ti ti-plus text-8xl mb-2" />

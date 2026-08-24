@@ -60,7 +60,7 @@ const SortableVault = ({ vault, active, onClick }: { vault: any, active: boolean
                     active={active}
                     show={true}
                     onClick={onClick}
-                    className={`w-full backdrop-blur-xl ${isDragging ? "bg-primary/40! border-primary! shadow-xl" : ""}`}
+                    className={`w-full backdrop-blur-xl lite:backdrop-blur-none ${isDragging ? "bg-primary/40! border-primary! shadow-xl" : ""}`}
                 />
             </div>
         </div>
@@ -198,7 +198,7 @@ const Sidebar = ({
 
             <div
                 ref={panelRef}
-                className="bg-white/2 border-white/10 border squircle-md pb-0 w-full h-full md:shrink-0 hidden md:block overflow-hidden"
+                className="lite:bg-darker lite:border-white/10 bg-white/2 border-white/10 border squircle-md pb-0 w-full h-full md:shrink-0 hidden md:block overflow-hidden"
                 style={{ width: panelWidth, maxWidth: "100%" }}
             >
                 <div className="relative flex flex-row items-center justify-left px-3 pt-3 mb-1">

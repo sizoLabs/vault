@@ -23,7 +23,7 @@ const AccountCard = ({
 }: AccountCardProps) => {
 
     const cardClassName = isCurrent
-        ? "border-primary bg-primary/10!"
+        ? "lite:bg-darker! border-primary bg-primary/10!"
         : isSelectable
             ? "border-white/10 hover:bg-primary/15 hover:border-primary hover:shadow-xl hover:-translate-y-0.5 cursor-pointer"
             : "border-white/10 cursor-not-allowed opacity-80"
@@ -31,7 +31,7 @@ const AccountCard = ({
     return (
         <div
             onClick={isSelectable ? onClick : undefined}
-            className={`z-40 relative group bg-white/2 px-5 py-5 pb-7 squircle-md border w-full duration-300 min-w-40 sm:max-w-50 flex flex-col justify-center items-center backdrop-blur-2xl cursor-pointer ${cardClassName}`}
+            className={`z-40 relative group lite:bg-darker lite:hover:bg-darker lite:backdrop-blur-none bg-white/2 px-5 py-5 pb-7 squircle-md border w-full duration-300 min-w-40 sm:max-w-50 flex flex-col justify-center items-center backdrop-blur-2xl cursor-pointer ${cardClassName}`}
         >
             <div className="font-inter-bold text-center mb-1 truncate w-full">
                 {accountName}

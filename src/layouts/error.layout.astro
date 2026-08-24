@@ -44,6 +44,27 @@
 
 	</head>
 	<body data-theme="dark" class="subpixel-antialiased">
+        <script is:inline>
+            (() => {
+                const canvas = document.createElement("canvas")
+                let softwareRenderer = true
+
+                try {
+                    const context = canvas.getContext("webgl", { failIfMajorPerformanceCaveat: true })
+                        || canvas.getContext("experimental-webgl", { failIfMajorPerformanceCaveat: true })
+                    const debugInfo = context?.getExtension("WEBGL_debug_renderer_info")
+                    const renderer = debugInfo ? String(context?.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL)).toLowerCase() : ""
+                    softwareRenderer = !context || /swiftshader|llvmpipe|software|swrast/.test(renderer)
+                } catch {
+                    softwareRenderer = true
+                }
+
+                if (softwareRenderer) {
+                    document.documentElement.dataset.theme = "lite"
+                    document.body.dataset.theme = "lite"
+                }
+            })()
+        </script>
         <script is:inline set:html={`window.__VAULT_CONFIG__ = ${runtimeConfig};`} />
 	    <slot />
 	</body>

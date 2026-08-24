@@ -16,6 +16,7 @@ import {
 import Logo from "@component/ui/global/logo"
 import OpenAnimation from "@component/sections/access/open-animation"
 import Footer from "@component/global/footer"
+import Lite from "@component/global/lite"
 import Version from "@component/sections/settings/version"
 
 interface AccessProps {
@@ -206,13 +207,15 @@ const Access = (props: AccessProps) => {
         : getAccountIcon(selectedAccount)
 
     return (
-        <div className="relative bg-white/2 border-white/10 w-full h-full squircle-md border overflow-hidden">
+        <div className="relative lite:bg-darker lite:border-white/10 bg-white/2 border-white/10 w-full h-full squircle-md border overflow-hidden">
 
             <Version />
 
             <div className="absolute inset-0 overflow-y-scroll no-scrollbar-but-scroll">
 
-                <div className="z-50 relative mx-auto flex min-h-full w-full max-w-full flex-col items-center justify-center p-5 md:max-w-300">
+                <div className="z-50 mx-auto flex min-h-full w-full max-w-full flex-col items-center justify-center p-5 md:max-w-300">
+
+                    <Lite />
                     
                     <Logo />
 
@@ -250,7 +253,7 @@ const Access = (props: AccessProps) => {
                                     </button>
 
                                     { dropdownOpen && (
-                                        <ul className="absolute left-0 right-0 mt-0.5 max-h-60 overflow-y-auto squircle-md bg-white/5 backdrop-blur-xl border border-white/30">
+                                        <ul className="absolute left-0 right-0 mt-0.5 max-h-60 overflow-y-auto squircle-md bg-white/5 backdrop-blur-xl lite:backdrop-blur-none border border-white/30">
                                             <li
                                                 key="new"
                                                 onClick={() => {
@@ -258,7 +261,7 @@ const Access = (props: AccessProps) => {
                                                     setAccountName('Personal Account')
                                                     setDropdownOpen(false)
                                                 }}
-                                                className="px-5 py-3 cursor-pointer hover:bg-white/10 border-b border-white/10 last:border-transparent"
+                                                className="px-5 py-3 cursor-pointer hover:bg-white/10 border-b border-white/10 last:border-transparent lite:bg-darker lite:hover:bg-darker lite:hover:text-primary"
                                             >
                                                 <div className="flex items-center justify-center gap-2">
                                                     <i className="ti ti-user-plus text-lg" />
@@ -293,7 +296,7 @@ const Access = (props: AccessProps) => {
                                                             setAccountName(label)
                                                             setDropdownOpen(false)
                                                         }}
-                                                        className="px-5 py-3 cursor-pointer hover:bg-white/10 text-center border-b border-white/10 last:border-transparent"
+                                                        className="px-5 py-3 cursor-pointer hover:bg-white/10 text-center border-b border-white/10 last:border-transparent lite:bg-darker lite:hover:bg-darker lite:hover:text-primary"
                                                     >
                                                         <div className="flex flex-col items-center justify-center gap-2">
                                                             <div className="font-inter-medium text-lg">

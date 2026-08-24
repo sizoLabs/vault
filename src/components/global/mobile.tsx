@@ -39,7 +39,7 @@ export default function MobileMenu({
             {/* Mobile Menu Overlay */}
 
             <div
-                className="fixed inset-0 bg-darker/10 md:hidden z-999 backdrop-blur-3xl"
+                className="fixed inset-0 bg-darker/10 md:hidden z-999 backdrop-blur-3xl lite:backdrop-blur-none"
                 onClick={onClose}
             />
 

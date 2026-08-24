@@ -1,7 +1,7 @@
 /* Inputs */
 
 .form {
-    @apply w-full bg-white/2 border border-white/10
+    @apply w-full bg-white/2 border border-white/10 lite:bg-darker
 }
 
 .form .container {
@@ -25,7 +25,7 @@
 }
 
 .form .container .input input {
-    @apply font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white
+    @apply lite:bg-darker lite:border-white/10 font-inter-medium h-fit w-full px-3 py-2 border duration-300 bg-white/5 border-white/20 focus:bg-white/10 focus:border-white/50 hover:bg-white/10 hover:border-white/50 hover:text-white
 }
 
 /* Switch Input */
@@ -41,7 +41,7 @@
 .form .switch .slider {
     corner-shape: squircle;
     border-radius: 100px;
-    @apply absolute cursor-pointer top-0 left-0 right-0 bottom-0 dark:bg-white/5 bg-darker/5 duration-300 rounded-full border border-darker/10 dark:border-white/20 hover:border-white/50
+    @apply absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-white/5 duration-300 rounded-full border border-white/20 hover:border-white/50 lite:bg-darker
 }
 
 .form .switch .slider:before {

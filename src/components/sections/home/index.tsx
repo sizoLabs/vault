@@ -7,6 +7,7 @@ import { getAlphabetCount } from "@logic/alphabet"
 import { applyThemeColor } from "@logic/settings"
 
 import Logo from "../../ui/global/logo"
+import Lite from "@component/global/lite"
 import Block from "@component/ui/main/block"
 import Footer from "@component/global/footer"
 import Version from "@component/sections/settings/version"
@@ -78,13 +79,15 @@ const Home = (props: HomeProps) => {
     }, [accountId])
 
     return (
-        <div className="relative bg-white/2 border-white/10 w-full h-full squircle-md border overflow-hidden">
+        <div className="relative lite:bg-darker bg-white/2 border-white/10 w-full h-full squircle-md border overflow-hidden">
 
             <Version />
 
             <div className="absolute inset-0 overflow-y-scroll no-scrollbar-but-scroll">
 
-                <div className="z-50 relative mx-auto flex min-h-full w-full max-w-full flex-col items-center justify-center p-5 md:max-w-300">
+                <div className="z-50 mx-auto flex min-h-full w-full max-w-full flex-col items-center justify-center p-5 md:max-w-300">
+
+                    <Lite />
                     
                     <Logo />
 

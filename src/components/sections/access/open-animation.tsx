@@ -7,7 +7,7 @@ export default function OpenVault(props: OpenVaultProps) {
     const { vaultOpened } = props
 
     return (
-        <div className="backdrop-blur-3xl h-full w-full absolute z-90 flex flex-col justify-center items-center transition-opacity duration-300 ease-out opacity-100 pointer-events-auto">
+        <div className="backdrop-blur-3xl lite:hidden h-full w-full absolute z-90 flex flex-col justify-center items-center transition-opacity duration-300 ease-out opacity-100 pointer-events-auto">
             <div className="w-50 h-50 md:w-100 md:h-100">
                 <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g clipPath="url(#vault_rect)">

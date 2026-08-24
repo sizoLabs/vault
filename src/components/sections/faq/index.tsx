@@ -345,13 +345,13 @@ export default function FAQPage() {
 
     return (
         <>
-            <div className="relative h-full w-full overflow-hidden squircle-md border border-white/10 bg-white/2">
+            <div className="relative lite:bg-darker lite:border-white/10 h-full w-full overflow-hidden squircle-md border border-white/10 bg-white/2">
 
-                <div className="absolute -top-60 -left-100 opacity-5 -z-1 mask-to-bottom">
+                <div className="absolute -top-60 -left-100 opacity-5 z-1 mask-to-bottom">
                     <i className="ti ti-question-mark text-[1200px]" />
                 </div>
 
-                <div className="flex h-full flex-col gap-5 md:gap-8 px-5 py-5 md:px-10 md:py-8">
+                <div className="z-20 relative flex h-full flex-col gap-5 md:gap-8 px-5 py-5 md:px-10 md:py-8">
 
                     <h2
                         onClick={() => setActiveItemId(null)}
@@ -374,7 +374,7 @@ export default function FAQPage() {
                                         type="button"
                                         aria-pressed={isActive}
                                         onClick={() => setActiveItemId(item.id)}
-                                        className={`group flex justify-start flex-col w-full items-start gap-0 md:gap-3 squircle-md md:squircle-lg border px-3 md:px-6 py-3 md:py-6 text-left transition-all duration-300 cursor-pointer ${
+                                        className={`lite:bg-darker group lite:hover:bg-darker lite:hover:text-primary! flex justify-start flex-col w-full items-start gap-0 md:gap-3 squircle-md md:squircle-lg border px-3 md:px-6 py-3 md:py-6 text-left transition-all duration-300 cursor-pointer ${
                                             isActive
                                                 ? "border-primary bg-primary/10 text-white"
                                                 : "border-white/10 bg-white/2 text-white/75 hover:border-white/20 hover:bg-white/10 hover:text-white"

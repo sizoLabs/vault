@@ -21,7 +21,7 @@ html {
 
 body {
     word-break: break-word;
-    @apply h-full w-full bg-white dark:bg-darker dark:text-white text-white scroll-smooth font-inter text-[15px] antialiased md:subpixel-antialiased overflow-x-hidden selection:text-primary selection:bg-primary/10
+    @apply h-full w-full bg-white dark:bg-darker dark:text-white lite:bg-darker lite:text-white text-white scroll-smooth font-inter text-[15px] antialiased md:subpixel-antialiased overflow-x-hidden selection:text-primary selection:bg-primary/10
 }
 
 *:focus, *:focus-visible {

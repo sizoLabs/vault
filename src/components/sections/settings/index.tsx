@@ -292,7 +292,7 @@ const Settings = (props: SettingsProps) => {
     }, [account])
 
     if(settings && settings.length > 0) return (
-        <div className="relative bg-white/2 border-white/10 w-full h-full squircle-md border overflow-hidden">
+        <div className="relative lite:bg-darker bg-white/2 border-white/10 w-full h-full squircle-md border overflow-hidden">
 
             <div className="absolute inset-0 overflow-y-scroll no-scrollbar-but-scroll min-h-full">
 

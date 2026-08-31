@@ -33,7 +33,7 @@ For generated service passwords, VAULT uses the following inputs:
 * Service or account identifier
 * Character set
 * Password length
-* Password-generation version, when applicable
+* Password-generation version
 
 These values are processed using SHA-512 through the Web Crypto API. The resulting deterministic hash is then used as the seed for a deterministic pseudo-random generator, which selects characters from the configured character set until the requested password length is reached.
 
